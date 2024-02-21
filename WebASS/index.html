@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Simple template</title>
+  </head>
+  <script>const importObject = {
+    imports: { imported_func: (arg) => console.log(arg) },
+  };
+  WebAssembly.instantiateStreaming(fetch("simple.wasm"), importObject).then(
+  (obj) => {
+   obj.instance.exports.exported_func();
+   const result = obj.instance.exports.sum(3,4) 
+   console.log(result);
+   document.getElementById("test").textContent = result
+  }
+  )
+  
+ 
+
+  </script>
+  <body>
+    <h1 id="test"></h1>
+    
+  </body>
+</html>
