@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Simple template</title>
+  </head>
+  <script>const importObject = {
+    imports: { imported_func: (arg) => console.log(arg) },
+  };
+  WebAssembly.instantiateStreaming(fetch("sumofarray.wasm"), importObject).then(
+  (obj) => {
+   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+   const numBytes = numbers.length * 4;
+   const ptr = obj.instance.exports.memory.buffer.byteLength;
+   obj.instance.exports.memory.grow(numBytes);
+   const data = new Uint32Array(obj.instance.exports.memory.buffer, ptr, numbers.length);
+   for (let i = 0; i < numbers.length; i++) {
+      data[i] = numbers[i];
+    }
+  const result = obj.instance.exports.sum(ptr, numbers.length);
+
+   console.log(result);
+   document.getElementById("test").textContent = result
+  }
+  )
+  
+ 
+
+  </script>
+  <body>
+    <h1 id="test"></h1>
+    
+  </body>
+</html>
