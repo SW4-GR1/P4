@@ -1,0 +1,8 @@
+
+(ocamllex
+ (modules lexer))
+(executable
+ (name main)
+ (libraries str)
+ (promote (until-clean))
+ (flags ()))
