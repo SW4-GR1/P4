@@ -11,18 +11,16 @@ let next_line lexbuf =
     }
 }
 
-let space = ' ' | '\t'
-let comment = "//" [^'\n']* | "(*"
-let newline = '\r' | '\n' | "\r\n"
-
+let space = [' ' '\t']
+let newline = ['\r' '\n']
 let digit = ['0'-'9']
-let alpha = ['a'-'z' 'A'-'Z']
+let alpha = ['a'-'z' 'A'-'Z' '_']
 let integer = '-'? digit+
-let ident = (alpha) (alpha|digit|'_')*
-
+let ident = (alpha) (alpha|digit)*
 
 rule token = parse
-[' ' '\t' '\n']
+
+(* [' ' '\t' '\n']
     { token lexbuf }
 |  ['+']
     { ADD }
@@ -31,4 +29,22 @@ rule token = parse
 |  digit+ as lxm
     { INT (int_of_string lxm) }
 | eof
-    { EOF }
+    { EOF } *)
+
+  | space+              { token lexbuf }
+  | newline+            { token lexbuf }
+  | '+'                 { ADD }
+  | '*'                 { MUL }
+  | integer as lxm      { INT (int_of_string lxm) }
+  | ident as id         { IDENT id }
+  | "(*"                { comment lexbuf }
+  | "//"                { line_comment lexbuf }
+  | eof                 { EOF }
+
+and comment = parse 
+  | "*)"                { token lexbuf }
+  | _                   { comment lexbuf }
+
+and line_comment = parse 
+  | '\n'                { token lexbuf }
+  | _                   { line_comment lexbuf }
