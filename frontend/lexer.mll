@@ -9,8 +9,6 @@ let next_line lexbuf =
       pos with pos_bol = lexbuf.lex_curr_pos;
                pos_lnum = pos.pos_lnum +1
     }
-
-
 }
 
 let space = ' ' | '\t'
@@ -30,7 +28,7 @@ rule token = parse
     { ADD }
 |  ['*']
     { MUL }
-|  ['0'-'9']+ as lxm
+|  digit+ as lxm
     { INT (int_of_string lxm) }
 | eof
     { EOF }

@@ -1,8 +1,17 @@
 # 1 "lexer.mll"
  
     open Token
+    open Lexing
 
-# 6 "lexer.ml"
+let next_line lexbuf = 
+  let pos = lexbuf.lex_curr_p in 
+  lexbuf.lex_curr_p <- 
+    {
+      pos with pos_bol = lexbuf.lex_curr_pos;
+               pos_lnum = pos.pos_lnum +1
+    }
+
+# 15 "lexer.ml"
 let __ocaml_lex_tables = {
   Lexing.lex_base =
    "\000\000\251\255\010\000\253\255\254\255\255\255";
@@ -99,34 +108,34 @@ let rec token lexbuf =
 and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 7 "lexer.mll"
+# 26 "lexer.mll"
     ( token lexbuf )
-# 105 "lexer.ml"
+# 114 "lexer.ml"
 
   | 1 ->
-# 9 "lexer.mll"
+# 28 "lexer.mll"
     ( ADD )
-# 110 "lexer.ml"
+# 119 "lexer.ml"
 
   | 2 ->
-# 11 "lexer.mll"
+# 30 "lexer.mll"
     ( MUL )
-# 115 "lexer.ml"
+# 124 "lexer.ml"
 
   | 3 ->
 let
-# 12 "lexer.mll"
-                 lxm
-# 121 "lexer.ml"
+# 31 "lexer.mll"
+             lxm
+# 130 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 13 "lexer.mll"
+# 32 "lexer.mll"
     ( INT (int_of_string lxm) )
-# 125 "lexer.ml"
+# 134 "lexer.ml"
 
   | 4 ->
-# 15 "lexer.mll"
+# 34 "lexer.mll"
     ( EOF )
-# 130 "lexer.ml"
+# 139 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf;
       __ocaml_lex_token_rec lexbuf __ocaml_lex_state
