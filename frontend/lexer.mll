@@ -43,8 +43,10 @@ rule token = parse
 
 and comment = parse 
   | "*)"                { token lexbuf }
+  | eof                 { failwith "Lexer - unterminated multi-line comment" }
   | _                   { comment lexbuf }
 
 and line_comment = parse 
   | '\n'                { token lexbuf }
+  | eof                 { EOF }
   | _                   { line_comment lexbuf }

@@ -4,3 +4,4 @@ type tok =
   | MUL
   | INT of int
   | EOF
+  | IDENT of string

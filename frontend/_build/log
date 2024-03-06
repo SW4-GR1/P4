@@ -3,7 +3,7 @@
 # Shared cache: disabled
 # Workspace root: "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend"
 # Auto-detected concurrency: 12
-$ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\OCaml64\tmp\dune_e37525_output
+$ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\OCaml64\tmp\dune_60dc19_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -134,3 +134,30 @@ $ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\O
 #      ; windows_unicode = true
 #      }
 #  }
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl token.ml) > _build/default/.main.eobjs/token.ml.d
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/token.cmo -c -impl token.ml)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/lexer.cmo -c -impl lexer.ml)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/main.cmo -c -impl main.ml)
+> File "main.ml", lines 11-15, characters 15-16:
+> 11 | ...............function
+> 12 |   | ADD -> "ADD"
+> 13 |   | MUL -> "MUL"
+> 14 |   | INT i -> sprintf "INT %d" i
+> 15 |   | EOF -> "EOF"
+> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+> Here is an example of a case that is not matched:
+> IDENT _
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/lexer.cmx -c -impl lexer.ml)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/token.cmx -c -impl token.ml)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
+> File "main.ml", lines 11-15, characters 15-16:
+> 11 | ...............function
+> 12 |   | ADD -> "ADD"
+> 13 |   | MUL -> "MUL"
+> 14 |   | INT i -> sprintf "INT %d" i
+> 15 |   | EOF -> "EOF"
+> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+> Here is an example of a case that is not matched:
+> IDENT _
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -o main.exe C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml\str.cmxa -I C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml .main.eobjs/native/token.cmx .main.eobjs/native/lexer.cmx .main.eobjs/native/main.cmx)
+# Promoting "_build/default/main.exe" to "main.exe"
