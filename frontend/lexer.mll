@@ -13,8 +13,8 @@ let next_line lexbuf =
     }
 }
 
-let space = [' ' '\t']
-let newline = ['\r' '\n']
+let space = ' '| '\t'
+let newline = '\r' | '\n' | "\r\n"
 let digit = ['0'-'9']
 let alpha = ['a'-'z' 'A'-'Z' '_']
 let integer = '-'? digit+
@@ -33,8 +33,8 @@ rule token = parse
 | eof
     { EOF } *)
 
+  | newline             {next_line lexbuf; token lexbuf }
   | space+              { token lexbuf }
-  | newline+            { token lexbuf }
   | '+'                 { ADD }
   | '*'                 { MUL }
   | integer as lxm      { INT (int_of_string lxm) }
@@ -45,10 +45,11 @@ rule token = parse
 
 and comment = parse 
   | "*)"                { token lexbuf }
+  | newline             { next_line lexbuf; comment lexbuf}
   | eof                 { raise(Lexing_error "Lexer - unterminated multi-line comment") }
   | _                   { comment lexbuf }
 
 and line_comment = parse 
-  | '\n'                { token lexbuf }
+  | newline             { next_line lexbuf; token lexbuf }
   | eof                 { EOF }
   | _                   { line_comment lexbuf }
