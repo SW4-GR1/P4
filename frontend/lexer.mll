@@ -1,5 +1,5 @@
 {
-    open Token
+    open Parser
     open Lexing
 
 let next_line lexbuf = 
