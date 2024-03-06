@@ -15,7 +15,8 @@ let pp_token = function
   | MUL -> "MUL"
   | INT i -> sprintf "INT %d" i
   | EOF -> "EOF"
-  | IDENT id -> sprintf "IDENT %s" id 
+  | IDENT id -> sprintf "IDENT %s" id
+  | NEWLINE -> "NEWLINE"
 
 let main =
   if Array.length Sys.argv < 2 then

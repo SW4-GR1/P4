@@ -8,4 +8,4 @@ main.exe:
 clean:
 		dune clean
 
-.PHONY: all clean main.exe
+.PHONY: all main.exe clean

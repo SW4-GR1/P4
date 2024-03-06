@@ -13,9 +13,12 @@ let get_token_list lexbuf =
 let pp_token = function
   | ADD -> "ADD"
   | MUL -> "MUL"
+  | SUB -> "SUB"
+  | DIV -> "DIVs"
   | INT i -> sprintf "INT %d" i
   | EOF -> "EOF"
-  | IDENT id -> sprintf "IDENT %s" id 
+  | IDENT id -> sprintf "IDENT %s" id
+  | NEWLINE -> "NEWLINE"
 
 let main =
   if Array.length Sys.argv < 2 then

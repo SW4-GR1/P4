@@ -36,7 +36,9 @@ rule token = parse
   | newline             {next_line lexbuf; token lexbuf }
   | space+              { token lexbuf }
   | '+'                 { ADD }
+  | '-'                 { SUB }
   | '*'                 { MUL }
+  | '/'                 { DIV }  
   | integer as lxm      { INT (int_of_string lxm) }
   | ident as id         { IDENT id }
   | "(*"                { comment lexbuf }

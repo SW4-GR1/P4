@@ -13,7 +13,7 @@ let next_line lexbuf =
     }
 }
 
-let space = [' ' '\t']
+let space = ' '| '\t'
 let newline = '\r' | '\n' | "\r\n"
 let digit = ['0'-'9']
 let alpha = ['a'-'z' 'A'-'Z' '_']
