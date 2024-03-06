@@ -14,7 +14,7 @@ let pp_token = function
   | ADD -> "ADD"
   | MUL -> "MUL"
   | SUB -> "SUB"
-  | DIV -> "DIVs"
+  | DIV -> "DIV"
   | INT i -> sprintf "INT %d" i
   | EOF -> "EOF"
   | IDENT id -> sprintf "IDENT %s" id

@@ -33,7 +33,7 @@ rule token = parse
 | eof
     { EOF } *)
 
-  | newline             {next_line lexbuf; token lexbuf }
+  | newline             { next_line lexbuf; token lexbuf }
   | space+              { token lexbuf }
   | '+'                 { ADD }
   | '-'                 { SUB }
@@ -41,17 +41,33 @@ rule token = parse
   | '/'                 { DIV }  
   | integer as lxm      { INT (int_of_string lxm) }
   | ident as id         { IDENT id }
-  | "(*"                { comment lexbuf }
-  | "//"                { line_comment lexbuf }
+  | "/*"                { multi_line_comment lexbuf }
+  | "//"                { single_line_comment lexbuf }
   | eof                 { EOF }
 
-and comment = parse 
-  | "*)"                { token lexbuf }
-  | newline             { next_line lexbuf; comment lexbuf}
+and multi_line_comment = parse 
+  | "*/"                { token lexbuf }
+  | newline             { next_line lexbuf; multi_line_comment lexbuf}
   | eof                 { raise(Lexing_error "Lexer - unterminated multi-line comment") }
-  | _                   { comment lexbuf }
+  | _                   { multi_line_comment lexbuf }
 
-and line_comment = parse 
+and single_line_comment = parse 
   | newline             { next_line lexbuf; token lexbuf }
   | eof                 { EOF }
-  | _                   { line_comment lexbuf }
+  | _                   { single_line_comment lexbuf }
+
+
+
+  (* let int[] x = [...,...];
+     let int[4] x = [x1,x2,x3,x4]; 
+     let matrix[3,3] mat;
+     let matrix[3,3] mat = setMat([vec1, vec2, vec3]);
+     let vec[3] ==> matrix[3,1]
+     mat.setVec(1, newVec([7,6,6]));
+     mat.setMat([vec1, vec2, vec3]);
+     
+    let vec[4] vecx = mat.getVec(2)
+    
+     let matrix[4,4] mat4;
+     let vec[4]
+      *)
