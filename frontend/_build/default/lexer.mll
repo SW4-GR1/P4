@@ -2,6 +2,8 @@
     open Parser
     open Lexing
 
+exception Lexing_error of string
+
 let next_line lexbuf = 
   let pos = lexbuf.lex_curr_p in 
   lexbuf.lex_curr_p <- 
@@ -43,7 +45,7 @@ rule token = parse
 
 and comment = parse 
   | "*)"                { token lexbuf }
-  | eof                 { failwith "Lexer - unterminated multi-line comment" }
+  | eof                 { raise(Lexing_error "Lexer - unterminated multi-line comment") }
   | _                   { comment lexbuf }
 
 and line_comment = parse 

@@ -3,6 +3,8 @@
     open Parser
     open Lexing
 
+exception Lexing_error of string
+
 let next_line lexbuf = 
   let pos = lexbuf.lex_curr_p in 
   lexbuf.lex_curr_p <- 
@@ -11,7 +13,7 @@ let next_line lexbuf =
                pos_lnum = pos.pos_lnum +1
     }
 
-# 15 "lexer.ml"
+# 17 "lexer.ml"
 let __ocaml_lex_tables = {
   Lexing.lex_base =
    "\000\000\247\255\011\000\002\000\075\000\150\000\160\000\252\255\
@@ -152,59 +154,59 @@ let rec token lexbuf =
 and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 34 "lexer.mll"
+# 36 "lexer.mll"
                         ( token lexbuf )
-# 158 "lexer.ml"
+# 160 "lexer.ml"
 
   | 1 ->
-# 35 "lexer.mll"
+# 37 "lexer.mll"
                         ( token lexbuf )
-# 163 "lexer.ml"
+# 165 "lexer.ml"
 
   | 2 ->
-# 36 "lexer.mll"
+# 38 "lexer.mll"
                         ( ADD )
-# 168 "lexer.ml"
+# 170 "lexer.ml"
 
   | 3 ->
-# 37 "lexer.mll"
+# 39 "lexer.mll"
                         ( MUL )
-# 173 "lexer.ml"
+# 175 "lexer.ml"
 
   | 4 ->
 let
-# 38 "lexer.mll"
+# 40 "lexer.mll"
                lxm
-# 179 "lexer.ml"
+# 181 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 38 "lexer.mll"
+# 40 "lexer.mll"
                         ( INT (int_of_string lxm) )
-# 183 "lexer.ml"
+# 185 "lexer.ml"
 
   | 5 ->
 let
-# 39 "lexer.mll"
+# 41 "lexer.mll"
              id
-# 189 "lexer.ml"
+# 191 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 39 "lexer.mll"
+# 41 "lexer.mll"
                         ( IDENT id )
-# 193 "lexer.ml"
+# 195 "lexer.ml"
 
   | 6 ->
-# 40 "lexer.mll"
+# 42 "lexer.mll"
                         ( comment lexbuf )
-# 198 "lexer.ml"
+# 200 "lexer.ml"
 
   | 7 ->
-# 41 "lexer.mll"
+# 43 "lexer.mll"
                         ( line_comment lexbuf )
-# 203 "lexer.ml"
+# 205 "lexer.ml"
 
   | 8 ->
-# 42 "lexer.mll"
+# 44 "lexer.mll"
                         ( EOF )
-# 208 "lexer.ml"
+# 210 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf;
       __ocaml_lex_token_rec lexbuf __ocaml_lex_state
@@ -214,19 +216,19 @@ and comment lexbuf =
 and __ocaml_lex_comment_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 45 "lexer.mll"
+# 47 "lexer.mll"
                         ( token lexbuf )
-# 220 "lexer.ml"
+# 222 "lexer.ml"
 
   | 1 ->
-# 46 "lexer.mll"
-                        ( failwith "Lexer - unterminated multi-line comment" )
-# 225 "lexer.ml"
+# 48 "lexer.mll"
+                        ( raise(Lexing_error "Lexer - unterminated multi-line comment") )
+# 227 "lexer.ml"
 
   | 2 ->
-# 47 "lexer.mll"
+# 49 "lexer.mll"
                         ( comment lexbuf )
-# 230 "lexer.ml"
+# 232 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf;
       __ocaml_lex_comment_rec lexbuf __ocaml_lex_state
@@ -236,19 +238,19 @@ and line_comment lexbuf =
 and __ocaml_lex_line_comment_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 50 "lexer.mll"
+# 52 "lexer.mll"
                         ( token lexbuf )
-# 242 "lexer.ml"
+# 244 "lexer.ml"
 
   | 1 ->
-# 51 "lexer.mll"
+# 53 "lexer.mll"
                         ( EOF )
-# 247 "lexer.ml"
+# 249 "lexer.ml"
 
   | 2 ->
-# 52 "lexer.mll"
+# 54 "lexer.mll"
                         ( line_comment lexbuf )
-# 252 "lexer.ml"
+# 254 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf;
       __ocaml_lex_line_comment_rec lexbuf __ocaml_lex_state
