@@ -1,9 +1,9 @@
-# C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\dune.exe exec ./main.exe test.yay
+# C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\dune.exe build main.exe
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Workspace root: "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend"
 # Auto-detected concurrency: 12
-$ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\OCaml64\tmp\dune_8c84ea_output
+$ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\OCaml64\tmp\dune_6a446a_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -134,11 +134,49 @@ $ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\O
 #      ; windows_unicode = true
 #      }
 #  }
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl main.ml) > _build/default/.main.eobjs/main.ml.d
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl Ast.ml) > _build/default/.main.eobjs/Ast.ml.d
 $ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamllex.exe -q -o lexer.ml lexer.mll)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\menhir.exe --explain --dump parser.mly --base parser --infer-write-query parser__mock.ml.mock)
+> File "parser.mly", line 8, characters 7-9:
+> Warning: the token IF is unused.
 $ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl lexer.ml) > _build/default/.main.eobjs/lexer.ml.d
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl parser__mock.ml.mock) > _build/default/.main.eobjs/parser__mock.ml.mock.d
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/ast.cmo -c -impl Ast.ml)
+$ (cd _build/.sandbox/a33d467224091dd5de37ebc735b1dadf/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -I .main.eobjs/byte -short-paths -i -impl parser__mock.ml.mock) > _build/.sandbox/a33d467224091dd5de37ebc735b1dadf/default/parser__mock.mli.inferred
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\menhir.exe --explain --dump parser.mly --base parser --infer-read-reply parser__mock.mli.inferred)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -intf parser.mli) > _build/default/.main.eobjs/parser.mli.d
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl parser.ml) > _build/default/.main.eobjs/parser.ml.d
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/parser.cmi -c -intf parser.mli)
 $ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/lexer.cmo -c -impl lexer.ml)
 $ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/main.cmo -c -impl main.ml)
+> File "main.ml", lines 13-20, characters 15-37:
+> 13 | ...............function
+> 14 |   | ADD -> "ADD"
+> 15 |   | MUL -> "MUL"
+> 16 |   | SUB -> "SUB"
+> 17 |   | DIV -> "DIV"
+> 18 |   | INT i -> sprintf "INT %d" i
+> 19 |   | EOF -> "EOF"
+> 20 |   | IDENT id -> sprintf "IDENT %s" id
+> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+> Here is an example of a case that is not matched:
+> IF
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/ast.cmx -c -impl Ast.ml)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/parser.cmx -c -impl parser.ml)
 $ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/lexer.cmx -c -impl lexer.ml)
 $ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
+> File "main.ml", lines 13-20, characters 15-37:
+> 13 | ...............function
+> 14 |   | ADD -> "ADD"
+> 15 |   | MUL -> "MUL"
+> 16 |   | SUB -> "SUB"
+> 17 |   | DIV -> "DIV"
+> 18 |   | INT i -> sprintf "INT %d" i
+> 19 |   | EOF -> "EOF"
+> 20 |   | IDENT id -> sprintf "IDENT %s" id
+> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+> Here is an example of a case that is not matched:
+> IF
 $ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -o main.exe C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml\str.cmxa -I C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml .main.eobjs/native/ast.cmx .main.eobjs/native/parser.cmx .main.eobjs/native/lexer.cmx .main.eobjs/native/main.cmx)
 # Promoting "_build/default/main.exe" to "main.exe"

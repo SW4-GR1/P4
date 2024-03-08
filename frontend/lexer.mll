@@ -11,36 +11,35 @@ let next_line lexbuf =
       pos with pos_bol = lexbuf.lex_curr_pos;
                pos_lnum = pos.pos_lnum +1
     }
+
+let kwd_table = 
+["if", IF;]
+
+let id_or_kwd = 
+    let h = Hashtbl.create 30 in
+    List.iter (fun(s,t) -> Hashtbl.add h s t) kwd_table;
+    fun s ->
+        let s = String.lowercase_ascii s in 
+        try List.assoc s kwd_table with _ -> IDENT s
+
 }
 
-let space = ' '| '\t'
-let newline = '\r' | '\n' | "\r\n"
+let space = [' ' '\t']
+let newline = ['\r'  '\n']
 let digit = ['0'-'9']
 let alpha = ['a'-'z' 'A'-'Z' '_']
 let integer = '-'? digit+
 let ident = (alpha) (alpha|digit)*
 
 rule token = parse
-
-(* [' ' '\t' '\n']
-    { token lexbuf }
-|  ['+']
-    { ADD }
-|  ['*']
-    { MUL }
-|  digit+ as lxm
-    { INT (int_of_string lxm) }
-| eof
-    { EOF } *)
-
   | newline             { next_line lexbuf; token lexbuf }
   | space+              { token lexbuf }
   | '+'                 { ADD }
   | '-'                 { SUB }
   | '*'                 { MUL }
   | '/'                 { DIV }  
-  | integer as lxm      { INT (int_of_string lxm) }
-  | ident as id         { IDENT id }
+  | integer as c        { INT (int_of_string c) }
+  | ident as id         { id_or_kwd id }
   | "/*"                { multi_line_comment lexbuf }
   | "//"                { single_line_comment lexbuf }
   | eof                 { EOF }
@@ -55,19 +54,3 @@ and single_line_comment = parse
   | newline             { next_line lexbuf; token lexbuf }
   | eof                 { EOF }
   | _                   { single_line_comment lexbuf }
-
-
-
-  (* let int[] x = [...,...];
-     let int[4] x = [x1,x2,x3,x4]; 
-     let matrix[3,3] mat;
-     let matrix[3,3] mat = setMat([vec1, vec2, vec3]);
-     let vec[3] ==> matrix[3,1]
-     mat.setVec(1, newVec([7,6,6]));
-     mat.setMat([vec1, vec2, vec3]);
-     
-    let vec[4] vecx = mat.getVec(2)
-    
-     let matrix[4,4] mat4;
-     let vec[4]
-      *)

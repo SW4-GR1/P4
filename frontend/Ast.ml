@@ -8,6 +8,7 @@ type expr =
 type stmt =
   | Ssimple of expr
   | Slist of stmt list
+  | IF
 
 (* function declaration *)
 (* type fun = {
