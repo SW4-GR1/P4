@@ -47,7 +47,7 @@ let () =
 
     if !parse_only then exit 0;
 
-    (* Pretty_printer.pp p *)
+    Pretty_printer.ppParse p
 
   with
     | Lexer.Lexing_error c ->
