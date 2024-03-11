@@ -3,7 +3,7 @@
 # Shared cache: disabled
 # Workspace root: "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend"
 # Auto-detected concurrency: 12
-$ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\OCaml64\tmp\dune_ad2acb_output
+$ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\OCaml64\tmp\dune_d9bd85_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -134,16 +134,3 @@ $ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\O
 #      ; windows_unicode = true
 #      }
 #  }
-$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl main.ml) > _build/default/.main.eobjs/main.ml.d
-$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/main.cmo -c -impl main.ml)
-> File "main.ml", line 45, characters 8-9:
-> 45 |     let p = Parser.prog Lexer.token buf in
->              ^
-> Warning 26 [unused-var]: unused variable p.
-$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
-> File "main.ml", line 45, characters 8-9:
-> 45 |     let p = Parser.prog Lexer.token buf in
->              ^
-> Warning 26 [unused-var]: unused variable p.
-$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -o main.exe C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml\str.cmxa -I C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml .main.eobjs/native/ast.cmx .main.eobjs/native/parser.cmx .main.eobjs/native/lexer.cmx .main.eobjs/native/main.cmx)
-# Promoting "_build/default/main.exe" to "main.exe"

@@ -1,84 +1,98 @@
 
-
-Data Types:
+(●'◡'●)
+Data Types:  // 👍
 let int = 32 
 let long_int = 64
+bool = {true, false}
 
 let float = 0.32
 let long_float = 0.64
 
-Arithmetic operators:
-+ - * / % ++ --
+Arithmetic operators: 👍
++ - * / % ++ -- 
+2^4 sqrt(4) pow(2,4) root(3,8) = 2
+max(), min(), avg([])
 
-Logical operators:
-and or not
+Logical operators: 👍 ( && || )?? 
+and, or & not 
 
-Comprison operators:
-== != < > <= >= 
+Comprison operators: 👍
+== != < > <= >= - evaluates to bool
 
 
-assignment operators:
+assignment operators: 👍
 = += -= *= /=
 
-Indentation:
+Indentation: 👍
 Arbitrary, all whitespace ignored.
-Seperate statements by ; or {}
+Separate statements by ; or {}
 
-bitwise operators: I vote no - magnus
-bitAnd bitOr bitXor bitNeg
+Data structures: 👍
+array: let int[4] arr = [x1,x2,x3,x4]; 
+matrix: let int<2,3> mat; ⋯ or ⋮ <veclength, # of vecs>
+  mat = <vec1, vec2, vec3, vec4, vec5>
+  mat = <<3,1>, <3,2>> 
+  mat<1,1> = 1 
+  mat<1> = <3,1>?????????? nice 1 indeksering
+  col = mat<:1> first column of matrix 
+Vector: let int<2> vec;
 
-Data structures: 
-array: let int[4] x = [x1,x2,x3,x4]; 
-matrix: let matrix[2,2] mat; 
-let vec[2] vec ==> matrix[2,1] vec //implicit description of vector not actually in lang
 
+Build in functions // change pending: 👍
 
-
-Build in functions // change pending:
-Define matrix, takes matrix: mat.setMat([vec1, vec2]); ved ikke med det her, synes kun man skal kunne gøre det ved assignment operator
+Define matrix, takes matrix: mat.setMat([vec1, vec2, vec3,...vec 10]); ved ikke med det her, synes kun man skal kunne gøre det ved assignment operator
 Add matrix: matAdd(mat1, mat2); 
-Substrac matrix: matSub(mat1, mat2);
+Substract matrix: matSub(mat1, mat2);
 Scale matrix: matScale(mat, int);
 Transpose matrix: matTrans(mat); 
-Determinant matrix: matDet(mat);
+Determinant matrix: matDet(mat); 
+Eigenvalue matrix: matEigenValue(mat);
+Eigenvector matrix: matEigenVector(mat);
+Solver for linear system: matSolveLinearSystem(mat);
+QR factorization: matQR(mat);
+Norm L1/L2: matNormLi(mat);
+Dimensions: matrixD(mat);
+WRITE MORE MATRIX FUNCTIONS!!!! IDENTITY, 0S, 1S...................... 
 
 
+---control statements--- 👍
+if (expression) {} else {}
+x = expression ? statement : statement -- Ternary expression my beloved darling r.i.p (Keep your hopes up)🤔
 
+---function declaration--- 👍
 
-
-
-
----function declaration---
-//i like this, looks more like mathematical function in header
-dec f(int x, int y) : int {
-  int res = x+y
-  return res
-}
-
-func int (int x, int y) 
- if (x > 0)
-  x + y
-  done 
- x - y
- done 
-    
+ int f(int x, int y){
+  return x+y;
+ }
     
 
----Loops---
+---Loops--- 👍
 for (int i = 0; i < 10; i++) {
 
 }
 ====================
 
-while (true) {
+while (true) { 👍
 
 }
 ====================
 
-do {
+for i in range of 1000 👎maybe
+for row in matrix👎maybe
 
-} while (true)
-====================
 
-for i in range of 1000 
-for row in matrix
+Name suggestions: at a later moment
+WebMath - .wm
+WSAL - Webassembly Simple Algorithm Language - .wsal
+ocamlyacc yacc = yet another compiler compiler
+just ano
+eht rof egauagnal xirtam ret
+numatix - Numbers and Matrix - .NaM
+.numa
+.numex
+
+
+LinearLang: Inspired by WebAssembly’s linear memory model, 
+this name indicates a language that operates within a streamlined, linear framework.
+
+Byzing - Byte and Zing slang in GEN Z world meaning Energy 🤬
