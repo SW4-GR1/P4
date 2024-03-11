@@ -83,16 +83,17 @@ for row in matrix👎maybe
 
 Name suggestions: at a later moment
 WebMath - .wm
+
 WSAL - Webassembly Simple Algorithm Language - .wsal
+
 ocamlyacc yacc = yet another compiler compiler
-just ano
-eht rof egauagnal xirtam ret
+
 numatix - Numbers and Matrix - .NaM
 .numa
 .numex
-
+WALL - Webassembly Logical Language
 
 LinearLang: Inspired by WebAssembly’s linear memory model, 
-this name indicates a language that operates within a streamlined, linear framework.
+.ll
 
 Byzing - Byte and Zing slang in GEN Z world meaning Energy 🤬
