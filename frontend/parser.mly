@@ -3,6 +3,7 @@
 %}
 // separated_list(separator, type to look for)
 %token ADD MUL SUB DIV EOF
+%token LT GT EQ NEQ LE GE
 %token<int> INT
 %token <string> IDENT
 %token IF

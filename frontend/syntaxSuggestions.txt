@@ -9,12 +9,21 @@ let float = 0.32
 let long_float = 0.64
 
 Arithmetic operators: 👍
-+ - * / % ++ -- 
-2^4 sqrt(4) pow(2,4) root(3,8) = 2
-max(), min(), avg([])
++ 
+- 
+* 
+/ 
+% 
+++ -- 
+sqrt() pow() root()
+max()
+min()
+avg([])
 
-Logical operators: 👍 ( && || )?? 
-and, or & not 
+Logical operators: 👍 
+and
+or
+not 
 
 Comprison operators: 👍
 == != < > <= >= - evaluates to bool
