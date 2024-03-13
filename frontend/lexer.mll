@@ -38,6 +38,8 @@ rule token = parse
   | '-'                 { SUB }
   | '*'                 { MUL }
   | '/'                 { DIV }
+  | "++"                { INC }
+  | "--"                { DEC }
   | "<"                 { LT }
   | ">"                 { GT }
   | "=="                { EQ }

@@ -2,7 +2,7 @@
     open Ast
 %}
 // separated_list(separator, type to look for)
-%token ADD MUL SUB DIV EOF
+%token ADD MUL SUB DIV EOF INC DEC
 %token LT GT EQ NEQ LE GE
 %token<int> INT
 %token <string> IDENT
