@@ -40,12 +40,18 @@ rule token = parse
   | '/'                 { DIV }
   | "++"                { INC }
   | "--"                { DEC }
-  | "<"                 { LT }
-  | ">"                 { GT }
+  | '<'                 { LT }
+  | '>'                 { GT }
   | "=="                { EQ }
   | "!="                { NEQ }
   | "<="                { LE }
-  | ">="                { GE }  
+  | ">="                { GE }
+  | '('                 { LPAREN }
+  | ')'                 { RPAREN }
+  | '{'                 { LBRACE }
+  | '}'                 { RBRACE }
+  | ','                 { COMMA }
+  | "return"            { RETURN }
   | integer as c        { INT (int_of_string c) }
   | ident as id         { id_or_kwd id }
   | "/*"                { multi_line_comment lexbuf }
