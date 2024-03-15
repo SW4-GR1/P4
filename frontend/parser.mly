@@ -25,7 +25,7 @@ prog:
     s = stmt* EOF { { main = Slist s } }
 
 stmt:
-    f = function_def {f}
+    f = function_def { f }
     | e = expr { Ssimple(e) }
     | IF e = expr LBRACE s = stmt* RBRACE {Sif(e, Slist s, Slist [])}
     | IF e = expr LBRACE s1 = stmt* RBRACE ELSE LBRACE s2 = stmt* RBRACE {Sif(e, Slist s1, Slist s2)}

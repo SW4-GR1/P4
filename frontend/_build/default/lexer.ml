@@ -15,7 +15,7 @@ let next_line lexbuf =
 
 let kwd_table = [
   "if", IF;
-  "else", ELSE
+  "else", ELSE;
   ]
 
 let id_or_kwd = 

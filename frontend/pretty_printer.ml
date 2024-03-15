@@ -17,6 +17,7 @@ let rec pp_stmt = function
   | Slist exprs -> let stmt_list = List.map pp_stmt exprs in
                   String.concat "\n" stmt_list
   | Ssimple e -> pp_expr e
+  | Sif (s, e1, e2) -> "if" ^ " ( " ^ pp_expr s ^ " ) " ^ " { " ^ pp_stmt e1 ^ " } " ^ " else" ^ " { " ^ pp_stmt e2 ^ " } "  
 
 let pp_prog prog =
   pp_stmt prog.main
