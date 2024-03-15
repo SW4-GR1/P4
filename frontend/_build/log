@@ -1,9 +1,9 @@
-# D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\dune.exe exec ./main.exe test.yay
+# C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\dune.exe build main.exe
 # OCAMLPARAM: unset
 # Shared cache: disabled
-# Workspace root: "D:\\OCaml64\\home\\Thoma\\Github\\P4\\frontend"
-# Auto-detected concurrency: 8
-$ D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > D:\OCaml64\tmp\dune_703b5a_output
+# Workspace root: "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend"
+# Auto-detected concurrency: 12
+$ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\OCaml64\tmp\dune_72f053_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -13,51 +13,53 @@ $ D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > D:\OC
 #  ; fdo_target_exe = None
 #  ; build_dir = "default"
 #  ; toplevel_path =
-#      Some External "D:/OCaml64/home/Thoma/.opam/4.14.0+mingw64c/lib/toplevel"
+#      Some
+#        External "C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/toplevel"
 #  ; ocaml_bin =
-#      External "D:\\OCaml64\\home\\Thoma\\.opam\\4.14.0+mingw64c\\bin"
+#      External "C:\\OCaml64\\home\\Magnus\\.opam\\4.14.0+mingw64c\\bin"
 #  ; ocaml =
 #      Ok
 #        External
-#          "D:\\OCaml64\\home\\Thoma\\.opam\\4.14.0+mingw64c\\bin\\ocaml.exe"
+#          "C:\\OCaml64\\home\\Magnus\\.opam\\4.14.0+mingw64c\\bin\\ocaml.exe"
 #  ; ocamlc =
 #      External
-#        "D:\\OCaml64\\home\\Thoma\\.opam\\4.14.0+mingw64c\\bin\\ocamlc.opt.exe"
+#        "C:\\OCaml64\\home\\Magnus\\.opam\\4.14.0+mingw64c\\bin\\ocamlc.opt.exe"
 #  ; ocamlopt =
 #      Ok
 #        External
-#          "D:\\OCaml64\\home\\Thoma\\.opam\\4.14.0+mingw64c\\bin\\ocamlopt.opt.exe"
+#          "C:\\OCaml64\\home\\Magnus\\.opam\\4.14.0+mingw64c\\bin\\ocamlopt.opt.exe"
 #  ; ocamldep =
 #      Ok
 #        External
-#          "D:\\OCaml64\\home\\Thoma\\.opam\\4.14.0+mingw64c\\bin\\ocamldep.opt.exe"
+#          "C:\\OCaml64\\home\\Magnus\\.opam\\4.14.0+mingw64c\\bin\\ocamldep.opt.exe"
 #  ; ocamlmklib =
 #      Ok
 #        External
-#          "D:\\OCaml64\\home\\Thoma\\.opam\\4.14.0+mingw64c\\bin\\ocamlmklib.opt.exe"
+#          "C:\\OCaml64\\home\\Magnus\\.opam\\4.14.0+mingw64c\\bin\\ocamlmklib.opt.exe"
 #  ; env =
 #      map
 #        { "DUNE_OCAML_HARDCODED" :
-#            "D:\\\\OCaml64\\\\home\\\\Thoma\\\\.opam\\\\4.14.0+mingw64c\\lib"
+#            "C:\\\\OCaml64\\\\home\\\\Magnus\\\\.opam\\\\4.14.0+mingw64c\\lib"
 #        ; "DUNE_OCAML_STDLIB" :
-#            "D:/OCaml64/home/Thoma/.opam/4.14.0+mingw64c/lib/ocaml"
-#        ; "DUNE_SOURCEROOT" : "D:\\OCaml64\\home\\Thoma\\Github\\P4\\frontend"
+#            "C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml"
+#        ; "DUNE_SOURCEROOT" :
+#            "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend"
 #        ; "INSIDE_DUNE" :
-#            "D:\\OCaml64\\home\\Thoma\\Github\\P4\\frontend\\_build/default"
+#            "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend\\_build/default"
 #        ; "MANPATH" :
-#            "D:\\OCaml64\\home\\Thoma\\Github\\P4\\frontend\\_build/install/default/bin"
+#            "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend\\_build/install/default/bin"
 #        ; "OCAML_COLOR" : "always"
 #        ; "OCAMLFIND_IGNORE_DUPS_IN" :
-#            "D:\\OCaml64\\home\\Thoma\\Github\\P4\\frontend\\_build/install/default/lib"
+#            "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend\\_build/install/default/lib"
 #        ; "OCAMLPATH" :
-#            "D:\\OCaml64\\home\\Thoma\\Github\\P4\\frontend\\_build/install/default/lib"
+#            "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend\\_build/install/default/lib"
 #        ; "OCAMLTOP_INCLUDE_PATH" :
-#            "D:\\OCaml64\\home\\Thoma\\Github\\P4\\frontend\\_build/install/default/lib/toplevel"
+#            "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend\\_build/install/default/lib/toplevel"
 #        ; "OPAMCOLOR" : "always"
 #        }
 #  ; findlib_paths =
 #      [ External
-#          "D:\\\\OCaml64\\\\home\\\\Thoma\\\\.opam\\\\4.14.0+mingw64c\\lib"
+#          "C:\\\\OCaml64\\\\home\\\\Magnus\\\\.opam\\\\4.14.0+mingw64c\\lib"
 #      ]
 #  ; arch_sixtyfour = true
 #  ; natdynlink_supported = true
@@ -67,7 +69,7 @@ $ D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > D:\OC
 #      ; standard_library_default =
 #          "C:/cygwin/home/appveyor/.opam/4.14.0+mingw64c/lib/ocaml"
 #      ; standard_library =
-#          "D:/OCaml64/home/Thoma/.opam/4.14.0+mingw64c/lib/ocaml"
+#          "C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml"
 #      ; standard_runtime = "the_standard_runtime_variable_was_deleted"
 #      ; ccomp_type = "cc"
 #      ; c_compiler = "x86_64-w64-mingw32-gcc"
@@ -132,7 +134,7 @@ $ D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > D:\OC
 #      ; windows_unicode = true
 #      }
 #  }
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\menhir.exe --explain --dump parser.mly --base parser --infer-write-query parser__mock.ml.mock)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\menhir.exe --explain --dump parser.mly --base parser --infer-write-query parser__mock.ml.mock)
 > File "parser.mly", line 5, characters 31-34:
 > Warning: the token DEC is unused.
 > File "parser.mly", line 6, characters 13-15:
@@ -141,8 +143,6 @@ $ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\menhir.e
 > Warning: the token GE is unused.
 > File "parser.mly", line 6, characters 10-12:
 > Warning: the token GT is unused.
-> File "parser.mly", line 10, characters 7-9:
-> Warning: the token IF is unused.
 > File "parser.mly", line 5, characters 27-30:
 > Warning: the token INC is unused.
 > File "parser.mly", line 6, characters 20-22:
@@ -153,21 +153,25 @@ $ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\menhir.e
 > Warning: the token NEQ is unused.
 > File "parser.mly", line 7, characters 41-47:
 > Warning: the token RETURN is unused.
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl parser__mock.ml.mock) > _build/default/.main.eobjs/parser__mock.ml.mock.d
-$ (cd _build/.sandbox/d62ad49c77e638a7b3d351db7b6c978b/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -I .main.eobjs/byte -short-paths -i -impl parser__mock.ml.mock) > _build/.sandbox/d62ad49c77e638a7b3d351db7b6c978b/default/parser__mock.mli.inferred
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\menhir.exe --explain --dump parser.mly --base parser --infer-read-reply parser__mock.mli.inferred)
-> Warning: one state has shift/reduce conflicts.
-> Warning: one shift/reduce conflict was arbitrarily resolved.
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -intf parser.mli) > _build/default/.main.eobjs/parser.mli.d
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl parser.ml) > _build/default/.main.eobjs/parser.ml.d
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/pretty_printer.cmo -c -impl pretty_printer.ml)
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/parser.cmi -c -intf parser.mli)
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/lexer.cmo -c -impl lexer.ml)
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/main.cmo -c -impl main.ml)
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/ast.cmx -c -impl Ast.ml)
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/parser.cmx -c -impl parser.ml)
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/pretty_printer.cmx -c -impl pretty_printer.ml)
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/lexer.cmx -c -impl lexer.ml)
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
-$ (cd _build/default && D:\OCaml64\home\Thoma\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -o main.exe D:/OCaml64/home/Thoma/.opam/4.14.0+mingw64c/lib/ocaml\str.cmxa -I D:/OCaml64/home/Thoma/.opam/4.14.0+mingw64c/lib/ocaml .main.eobjs/native/ast.cmx .main.eobjs/native/parser.cmx .main.eobjs/native/lexer.cmx .main.eobjs/native/pretty_printer.cmx .main.eobjs/native/main.cmx)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl parser__mock.ml.mock) > _build/default/.main.eobjs/parser__mock.ml.mock.d
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl Ast.ml) > _build/default/.main.eobjs/Ast.ml.d
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/ast.cmo -c -impl Ast.ml)
+$ (cd _build/.sandbox/2ba955e7608808636cac12c4e596f7b2/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -I .main.eobjs/byte -short-paths -i -impl parser__mock.ml.mock) > _build/.sandbox/2ba955e7608808636cac12c4e596f7b2/default/parser__mock.mli.inferred
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\menhir.exe --explain --dump parser.mly --base parser --infer-read-reply parser__mock.mli.inferred)
+> File "parser.mly", line 16, characters 0-9:
+> Warning: the precedence level assigned to ELSE is never useful.
+> File "parser.mly", line 15, characters 0-9:
+> Warning: the precedence level assigned to IF is never useful.
+> Warning: 2 states have shift/reduce conflicts.
+> Warning: 2 shift/reduce conflicts were arbitrarily resolved.
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -intf parser.mli) > _build/default/.main.eobjs/parser.mli.d
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl parser.ml) > _build/default/.main.eobjs/parser.ml.d
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/parser.cmi -c -intf parser.mli)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/lexer.cmo -c -impl lexer.ml)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/main.cmo -c -impl main.ml)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/ast.cmx -c -impl Ast.ml)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/lexer.cmx -c -impl lexer.ml)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/parser.cmx -c -impl parser.ml)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
+$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -o main.exe C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml\str.cmxa -I C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml .main.eobjs/native/ast.cmx .main.eobjs/native/parser.cmx .main.eobjs/native/lexer.cmx .main.eobjs/native/pretty_printer.cmx .main.eobjs/native/main.cmx)
 # Promoting "_build/default/main.exe" to "main.exe"

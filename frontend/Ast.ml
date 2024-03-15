@@ -9,7 +9,7 @@ type stmt =
   | Function of int * string * (string * int) list * stmt list
   | Ssimple of expr
   | Slist of stmt list
-  | IF
+  | Sif of expr * stmt * stmt
 
 (* function declaration *)
 (* type fun = {

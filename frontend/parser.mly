@@ -7,10 +7,14 @@
 %token LPAREN RPAREN LBRACE RBRACE COMMA RETURN
 %token<int> INT
 %token <string> IDENT
-%token IF
+%token IF ELSE
 
 %left ADD SUB
 %left MUL DIV
+%nonassoc uminus
+%nonassoc IF
+%nonassoc ELSE
+
 
 %type<Ast.prog> prog
 
@@ -23,6 +27,8 @@ prog:
 stmt:
     f = function_def {f}
     | e = expr { Ssimple(e) }
+    | IF e = expr LBRACE s = stmt* RBRACE {Sif(e, Slist s, Slist [])}
+    | IF e = expr LBRACE s1 = stmt* RBRACE ELSE LBRACE s2 = stmt* RBRACE {Sif(e, Slist s1, Slist s2)}
 
 function_def:
     | t = INT id = IDENT LPAREN params = param_list RPAREN LBRACE stmts = stmt* RBRACE
@@ -41,6 +47,7 @@ expr:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
     | i = INT                        { EConst(i) }
     | id = IDENT                     { EIdent(id) }
+    | SUB e = expr %prec uminus      { EBinop(Sub, EConst 0, e) }
 
 
 %inline op:

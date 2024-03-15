@@ -12,8 +12,10 @@ let next_line lexbuf =
                pos_lnum = pos.pos_lnum +1
     }
 
-let kwd_table = 
-["if", IF;]
+let kwd_table = [
+  "if", IF;
+  "else", ELSE
+  ]
 
 let id_or_kwd = 
     let h = Hashtbl.create 30 in
