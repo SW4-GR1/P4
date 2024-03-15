@@ -21,19 +21,19 @@ prog:
     s = stmt* EOF { { main = Slist s } }
 
 stmt:
-    f = function_definition {f}
-    e = expr { Ssimple(e) }
+    f = function_def {f}
+    | e = expr { Ssimple(e) }
 
 function_def:
-    | type = INT id = IDENT LPAREN params = param_list RPAREN LBRACE stmts = stmt_list RBRACE
-      { Function (type, id, params, stmts) }
+    | t = INT id = IDENT LPAREN params = param_list RPAREN LBRACE stmts = stmt* RBRACE
+      { Function (t, id, params, stmts) }
 
 param_list:
     | { [] }
     | param COMMA param_list { $1 :: $3 }
 
 param:
-    | id = IDENT type = int { (id, type) }
+    | id = IDENT t = INT { (id, t) }
 
 // needs more to handle the statement of the function
 

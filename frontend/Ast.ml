@@ -6,6 +6,7 @@ type expr =
   | EBinop of binop * expr * expr
 
 type stmt =
+  | Function of int * string * (string * int) list * stmt list
   | Ssimple of expr
   | Slist of stmt list
   | IF

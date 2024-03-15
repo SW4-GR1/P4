@@ -37,7 +37,21 @@ rule token = parse
   | '+'                 { ADD }
   | '-'                 { SUB }
   | '*'                 { MUL }
-  | '/'                 { DIV }  
+  | '/'                 { DIV }
+  | "++"                { INC }
+  | "--"                { DEC }
+  | '<'                 { LT }
+  | '>'                 { GT }
+  | "=="                { EQ }
+  | "!="                { NEQ }
+  | "<="                { LE }
+  | ">="                { GE }
+  | '('                 { LPAREN }
+  | ')'                 { RPAREN }
+  | '{'                 { LBRACE }
+  | '}'                 { RBRACE }
+  | ','                 { COMMA }
+  | "return"            { RETURN }
   | integer as c        { INT (int_of_string c) }
   | ident as id         { id_or_kwd id }
   | "/*"                { multi_line_comment lexbuf }
