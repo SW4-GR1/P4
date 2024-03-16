@@ -15,6 +15,9 @@ let next_line lexbuf =
 let kwd_table = [
   "if", IF;
   "else", ELSE;
+  "return", RETURN;
+  "int", INT_TY;
+  "str", STR_TY;
   ]
 
 let id_or_kwd = 
@@ -53,6 +56,7 @@ rule token = parse
   | '{'                 { LBRACE }
   | '}'                 { RBRACE }
   | ','                 { COMMA }
+  | ';'                 { END }
   | "return"            { RETURN }
   | integer as c        { INT (int_of_string c) }
   | ident as id         { id_or_kwd id }

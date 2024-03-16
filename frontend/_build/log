@@ -3,7 +3,7 @@
 # Shared cache: disabled
 # Workspace root: "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend"
 # Auto-detected concurrency: 12
-$ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\OCaml64\tmp\dune_524d5a_output
+$ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\OCaml64\tmp\dune_e864e4_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -134,28 +134,3 @@ $ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\O
 #      ; windows_unicode = true
 #      }
 #  }
-$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamldep.opt.exe -modules -impl pretty_printer.ml) > _build/default/.main.eobjs/pretty_printer.ml.d
-$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/pretty_printer.cmo -c -impl pretty_printer.ml)
-> File "pretty_printer.ml", lines 16-20, characters 18-123:
-> 16 | ..................function
-> 17 |   | Slist exprs -> let stmt_list = List.map pp_stmt exprs in
-> 18 |                   String.concat "\n" stmt_list
-> 19 |   | Ssimple e -> pp_expr e
-> 20 |   | Sif (s, e1, e2) -> "if" ^ " ( " ^ pp_expr s ^ " ) " ^ " { " ^ pp_stmt e1 ^ " } " ^ " else" ^ " { " ^ pp_stmt e2 ^ " } "..
-> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> Function (_, _, _, _)
-$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/main.cmo -c -impl main.ml)
-$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/pretty_printer.cmx -c -impl pretty_printer.ml)
-> File "pretty_printer.ml", lines 16-20, characters 18-123:
-> 16 | ..................function
-> 17 |   | Slist exprs -> let stmt_list = List.map pp_stmt exprs in
-> 18 |                   String.concat "\n" stmt_list
-> 19 |   | Ssimple e -> pp_expr e
-> 20 |   | Sif (s, e1, e2) -> "if" ^ " ( " ^ pp_expr s ^ " ) " ^ " { " ^ pp_stmt e1 ^ " } " ^ " else" ^ " { " ^ pp_stmt e2 ^ " } "..
-> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> Function (_, _, _, _)
-$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o .main.eobjs/native/main.cmx -c -impl main.ml)
-$ (cd _build/default && C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlopt.opt.exe -g -o main.exe C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml\str.cmxa -I C:/OCaml64/home/Magnus/.opam/4.14.0+mingw64c/lib/ocaml .main.eobjs/native/ast.cmx .main.eobjs/native/parser.cmx .main.eobjs/native/lexer.cmx .main.eobjs/native/pretty_printer.cmx .main.eobjs/native/main.cmx)
-# Promoting "_build/default/main.exe" to "main.exe"
