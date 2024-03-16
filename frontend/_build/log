@@ -1,9 +1,9 @@
-# C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\dune.exe build main.exe
+# C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\dune.exe exec ./main.exe tests/simpleBinop.yay
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Workspace root: "C:\\Users\\Magnus\\Documents\\aau\\sw4\\P4\\frontend"
 # Auto-detected concurrency: 12
-$ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\OCaml64\tmp\dune_e864e4_output
+$ C:\OCaml64\home\Magnus\.opam\4.14.0+mingw64c\bin\ocamlc.opt.exe -config > C:\OCaml64\tmp\dune_0f879b_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"

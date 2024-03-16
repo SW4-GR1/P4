@@ -31,12 +31,12 @@ prog:
 
 stmt:
     | e = expr END { Ssimple(e) }  
-    | IF e = expr LBRACE s = stmt+ RBRACE {Sif(e, Slist s, Slist [])}
+    | IF e = expr LBRACE s = stmt RBRACE {Sif(e, s, Slist [])}
     | IF e = expr LBRACE s1 = stmt RBRACE ELSE LBRACE s2 = stmt RBRACE {Sif(e, s1, s2)}
 ;
 
 return_stmt:
-    | RETURN e = expr END? { Sreturn(e) }
+    | RETURN e = expr END?{ Sreturn(e) }
 ;
 
 function_def:
@@ -59,8 +59,8 @@ expr:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
     | i = INT                        { EConst(i) }
     | id = IDENT                     { EIdent(id) }
-    | SUB e = expr %prec uminus      { EBinop(Sub, EConst 0, e) }
     | LPAREN e = expr RPAREN         { e }
+    | SUB e = expr %prec uminus      { EBinop(Sub, EConst 0, e) }
 ;
 
 %inline op:

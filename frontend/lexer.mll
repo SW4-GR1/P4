@@ -33,7 +33,8 @@ let space = [' ' '\t']
 let newline = ['\r'  '\n']
 let digit = ['0'-'9']
 let alpha = ['a'-'z' 'A'-'Z' '_']
-let integer = '-'? digit+
+(* let integer = '-'? digit+ *)
+let integer = digit+
 let ident = (alpha) (alpha|digit)*
 
 rule token = parse
