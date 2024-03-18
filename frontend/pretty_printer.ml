@@ -42,7 +42,14 @@ let rec pp_stmt = function
                 "( return " ^ (expr_str) ^ " )"
   | Sassign(t, id, e) -> "( let " ^ pp_types t ^ " " ^ id ^ " = " ^ pp_expr e ^ " )"
   | Sreass(id, e) -> "( " ^ id ^ " = " ^ pp_expr e ^ " )"
-                       
+  | Sfor(ass, c, reass, s) -> 
+    let ass_str = pp_stmt ass in
+    let cond_str = pp_cond c in
+    let reass_str = pp_stmt reass in
+    let stmt_str = pp_stmt s in
+    "for (" ^ ass_str ^ "; " ^ cond_str ^ "; " ^ reass_str ^ ") {\n" ^ stmt_str ^ "\n}"
+            
+  
 let rec pp_func_list funcs =
   match funcs with
   | [] -> ""

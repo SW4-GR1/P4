@@ -52,14 +52,12 @@ if_stmt:
     | IF LPAREN c = cond RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { Sif(c, Slist s1, Slist s2) }
 ;
 
-
 loop_stmt:
     | f = for_loop { f } 
 
 for_loop:
     | FOR LPAREN
-        ass = assignment END
-        c = cond END
+        ass = assignment c = cond END
         reass = reassign RPAREN 
         LBRACE s = stmt+ RBRACE { Sfor(ass, c, reass, Slist s) }
 
