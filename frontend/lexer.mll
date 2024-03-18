@@ -20,6 +20,7 @@ let kwd_table = [
   "str", STR_TY;
   "let", LET;
   "for", FOR;
+  "while", WHILE;
   ]
 
 let id_or_kwd = 

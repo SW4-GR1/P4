@@ -48,6 +48,7 @@ let rec pp_stmt = function
     let reass_str = pp_stmt reass in
     let stmt_str = pp_stmt s in
     "for (" ^ ass_str ^ "; " ^ cond_str ^ "; " ^ reass_str ^ ") {\n" ^ stmt_str ^ "\n}"
+  | Swhile(c, s) -> "while (" ^ pp_cond c ^ ") {\n" ^ pp_stmt s ^ "\n}"
             
   
 let rec pp_func_list funcs =

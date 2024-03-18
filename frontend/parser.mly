@@ -10,7 +10,7 @@
 %token<bool> BOOL
 %token INT_TY STR_TY
 %token IF ELSE
-%token FOR
+%token FOR WHILE
 
 %left ADD SUB
 %left MUL DIV
@@ -54,6 +54,7 @@ if_stmt:
 
 loop_stmt:
     | f = for_loop { f } 
+    | w = while_loop { w }
 
 for_loop:
     | FOR LPAREN
@@ -61,6 +62,9 @@ for_loop:
         reass = reassign RPAREN 
         LBRACE s = stmt+ RBRACE { Sfor(ass, c, reass, Slist s) }
 
+while_loop:
+    | WHILE LPAREN c = cond RPAREN 
+        LBRACE s = stmt+ RBRACE { Swhile(c, Slist s) }
 
 return_stmt:
     | RETURN e = expr END?{ Sreturn(e) }

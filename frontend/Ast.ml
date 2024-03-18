@@ -19,6 +19,7 @@ type stmt =
   | Sassign of type_ident * string * expr
   | Sreass of string * expr
   | Sfor of stmt * expr * stmt * stmt
+  | Swhile of expr * stmt
   
 (* function declaration *)
 type func = {
