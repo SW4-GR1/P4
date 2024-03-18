@@ -5,7 +5,7 @@ all:
 main.exe:
 		dune build main.exe
 
-tests: main.exe
+tests:
 		for f in tests/*.yay; do dune exec ./main.exe $$f; done
 
 clean:
