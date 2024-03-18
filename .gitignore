@@ -22,3 +22,5 @@
 
 # Local OPAM switch
 _opam/i
+
+*.txt

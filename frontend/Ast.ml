@@ -1,26 +1,28 @@
 type binop = Add | Mul | Sub | Div
 
+type type_ident = Int_ty | Str_ty
+
 type expr =
   | EConst of int
   | EIdent of string
   | EBinop of binop * expr * expr
 
 type stmt =
-  | Function of int * string * (string * int) list * stmt list
   | Ssimple of expr
   | Slist of stmt list
-  | IF
-
+  | Sif of expr * stmt * stmt
+  | Sreturn of expr
+  
 (* function declaration *)
-(* type fun = {
-  name : string
-  args : string list
-  body : stmt
-  } *)
+type func = {
+  fun_type : type_ident;
+  name : string;
+  args : (type_ident * string) list;
+  body : stmt; }
 
 
 (* program of list of function declarations, followed by a statement *)
 type prog = {
-  (* funDecs : fun list *)
-  main : stmt
+  funDecs : func list;
+  main : stmt;
 }

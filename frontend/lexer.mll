@@ -12,8 +12,13 @@ let next_line lexbuf =
                pos_lnum = pos.pos_lnum +1
     }
 
-let kwd_table = 
-["if", IF;]
+let kwd_table = [
+  "if", IF;
+  "else", ELSE;
+  "return", RETURN;
+  "int", INT_TY;
+  "str", STR_TY;
+  ]
 
 let id_or_kwd = 
     let h = Hashtbl.create 30 in
@@ -28,7 +33,8 @@ let space = [' ' '\t']
 let newline = ['\r'  '\n']
 let digit = ['0'-'9']
 let alpha = ['a'-'z' 'A'-'Z' '_']
-let integer = '-'? digit+
+(* let integer = '-'? digit+ *)
+let integer = digit+
 let ident = (alpha) (alpha|digit)*
 
 rule token = parse
@@ -51,6 +57,7 @@ rule token = parse
   | '{'                 { LBRACE }
   | '}'                 { RBRACE }
   | ','                 { COMMA }
+  | ';'                 { END }
   | "return"            { RETURN }
   | integer as c        { INT (int_of_string c) }
   | ident as id         { id_or_kwd id }
