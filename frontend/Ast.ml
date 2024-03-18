@@ -2,10 +2,14 @@ type binop = Add | Mul | Sub | Div
 
 type type_ident = Int_ty | Str_ty
 
+type cond_binop = Lt
+
 type expr =
+  | EBool of bool
   | EConst of int
   | EIdent of string
   | EBinop of binop * expr * expr
+  | ECond of cond_binop * expr * expr
 
 type stmt =
   | Ssimple of expr
@@ -14,6 +18,7 @@ type stmt =
   | Sreturn of expr
   | Sassign of type_ident * string * expr
   | Sreass of string * expr
+  | Sfor of stmt * expr * stmt * stmt
   
 (* function declaration *)
 type func = {

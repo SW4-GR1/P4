@@ -7,8 +7,10 @@
 %token LPAREN RPAREN LBRACE RBRACE COMMA RETURN END ASSIGN LET
 %token<int> INT
 %token<string> IDENT
+%token<bool> BOOL
 %token INT_TY STR_TY
 %token IF ELSE
+%token FOR
 
 %left ADD SUB
 %left MUL DIV
@@ -32,11 +34,35 @@ prog:
 
 stmt:
     | e = expr END { Ssimple(e) }  
-    | LET t = ty id = IDENT ASSIGN e = expr END { Sassign(t, id, e) }
-    | id = IDENT ASSIGN e = expr END { Sreass(id, e) }
-    | IF LPAREN e = expr RPAREN LBRACE s = stmt RBRACE { Sif(e, s, Slist []) }
-    | IF LPAREN e = expr RPAREN LBRACE s1 = stmt RBRACE ELSE LBRACE s2 = stmt RBRACE { Sif(e, s1, s2) }
+    | i_stmt = if_stmt { i_stmt }
+    | ass = assignment { ass }
+    | loop = loop_stmt { loop }
 ;
+
+assignment:
+    | LET t = ty id = IDENT ASSIGN e = expr END { Sassign(t, id, e) }
+    | reass = reassign { reass }
+
+reassign:
+    | id = IDENT ASSIGN e = expr END { Sreass(id, e) }
+
+
+if_stmt:
+    | IF LPAREN c = cond RPAREN LBRACE s = stmt+ RBRACE { Sif(c, Slist s, Slist []) }
+    | IF LPAREN c = cond RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { Sif(c, Slist s1, Slist s2) }
+;
+
+
+loop_stmt:
+    | f = for_loop { f } 
+
+for_loop:
+    | FOR LPAREN
+        ass = assignment END
+        c = cond END
+        reass = reassign RPAREN 
+        LBRACE s = stmt+ RBRACE { Sfor(ass, c, reass, Slist s) }
+
 
 return_stmt:
     | RETURN e = expr END?{ Sreturn(e) }
@@ -62,8 +88,14 @@ expr:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
     | i = INT                        { EConst(i) }
     | id = IDENT                     { EIdent(id) }
+    | condition = cond               { condition }
     | LPAREN e = expr RPAREN         { e }
     | SUB e = expr %prec uminus      { EBinop(Sub, EConst 0, e) }
+;
+
+cond:
+    | b = BOOL { EBool(b) }
+    | e1 = expr o = c_op e2 = expr { ECond(o, e1, e2) }
 ;
 
 %inline op:
@@ -76,4 +108,8 @@ expr:
 %inline ty:
 | INT_TY { Int_ty }
 | STR_TY { Str_ty }
+;
+
+%inline c_op:
+| LT { Lt }
 ;

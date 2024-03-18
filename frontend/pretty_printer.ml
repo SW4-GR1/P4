@@ -6,28 +6,38 @@ let rec pp_types = function
   | Int_ty -> "int"
   | Str_ty -> "str"
   
-let rec pp_expr = function
-| EConst n -> string_of_int n
-| EIdent x -> x
-| EBinop (op, e1, e2) -> 
-  let op_str = match op with
-  | Add -> "+"
-  | Sub -> "-"
-  | Mul -> "*"
-  | Div -> "/" in
-  "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
+
+let rec pp_cond = function
+  | EBool b -> string_of_bool b
+  | ECond(op, e1, e2) ->
+    let op_str = match op with
+    | Lt -> "<" in
+    "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
     
+
+and pp_expr = function
+  | EConst n -> string_of_int n
+  | EIdent x -> x
+  | EBinop (op, e1, e2) -> 
+    let op_str = match op with
+    | Add -> "+"
+    | Sub -> "-"
+    | Mul -> "*"
+    | Div -> "/" in
+    "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
+  | ECond(op, e1, e2) -> pp_cond (ECond(op, e1, e2)) 
+
 
 let rec pp_stmt = function
   | Slist exprs -> let stmt_list = List.map pp_stmt exprs in
                   String.concat "\n" stmt_list
   | Ssimple e -> let expr_str = pp_expr e in
                      "( "^ (expr_str) ^ " )"
-  | Sif (s, e1, e2) -> 
+  | Sif (c, e1, e2) -> 
     let else_block = match e2 with
       | Slist[] -> ""
-      | _ -> "else" ^ " { " ^ pp_stmt e2 ^ " } " in
-      "if " ^ "( "^  pp_expr s ^  " )" ^  " { " ^ pp_stmt e1 ^ " } " ^ else_block
+      | _ -> "else" ^ " { \n" ^ pp_stmt e2 ^ " \n}\n " in
+      "if " ^ "( "^  pp_cond c ^  " )" ^  " { \n" ^ pp_stmt e1 ^ " \n}\n" ^ else_block
   | Sreturn e -> let expr_str = pp_expr e in
                 "( return " ^ (expr_str) ^ " )"
   | Sassign(t, id, e) -> "( let " ^ pp_types t ^ " " ^ id ^ " = " ^ pp_expr e ^ " )"

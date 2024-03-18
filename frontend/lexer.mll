@@ -19,6 +19,7 @@ let kwd_table = [
   "int", INT_TY;
   "str", STR_TY;
   "let", LET;
+  "for", FOR;
   ]
 
 let id_or_kwd = 
