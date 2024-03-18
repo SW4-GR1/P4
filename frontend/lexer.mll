@@ -18,6 +18,7 @@ let kwd_table = [
   "return", RETURN;
   "int", INT_TY;
   "str", STR_TY;
+  "let", LET;
   ]
 
 let id_or_kwd = 
@@ -33,13 +34,13 @@ let space = [' ' '\t']
 let newline = ['\r'  '\n']
 let digit = ['0'-'9']
 let alpha = ['a'-'z' 'A'-'Z' '_']
-(* let integer = '-'? digit+ *)
 let integer = digit+
 let ident = (alpha) (alpha|digit)*
 
 rule token = parse
   | newline             { next_line lexbuf; token lexbuf }
   | space+              { token lexbuf }
+  | '='                 { ASSIGN }
   | '+'                 { ADD }
   | '-'                 { SUB }
   | '*'                 { MUL }

@@ -30,6 +30,8 @@ let rec pp_stmt = function
       "if " ^ "( "^  pp_expr s ^  " )" ^  " { " ^ pp_stmt e1 ^ " } " ^ else_block
   | Sreturn e -> let expr_str = pp_expr e in
                 "( return " ^ (expr_str) ^ " )"
+  | Sassign(t, id, e) -> "( let " ^ pp_types t ^ " " ^ id ^ " = " ^ pp_expr e ^ " )"
+  | Sreass(id, e) -> "( " ^ id ^ " = " ^ pp_expr e ^ " )"
                        
 let rec pp_func_list funcs =
   match funcs with

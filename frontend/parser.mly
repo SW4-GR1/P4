@@ -1,12 +1,12 @@
 %{
     open Ast
 %}
-// separated_list(separator, type to look for)
+
 %token ADD MUL SUB DIV EOF INC DEC
 %token LT GT EQ NEQ LE GE
-%token LPAREN RPAREN LBRACE RBRACE COMMA RETURN END
+%token LPAREN RPAREN LBRACE RBRACE COMMA RETURN END ASSIGN LET
 %token<int> INT
-%token <string> IDENT
+%token<string> IDENT
 %token INT_TY STR_TY
 %token IF ELSE
 
@@ -21,7 +21,8 @@
 
 %start prog
 %%
-
+//loops
+//assignments
 prog:
     funcs = function_def*
     s = stmt* 
@@ -31,8 +32,10 @@ prog:
 
 stmt:
     | e = expr END { Ssimple(e) }  
-    | IF e = expr LBRACE s = stmt RBRACE {Sif(e, s, Slist [])}
-    | IF e = expr LBRACE s1 = stmt RBRACE ELSE LBRACE s2 = stmt RBRACE {Sif(e, s1, s2)}
+    | LET t = ty id = IDENT ASSIGN e = expr END { Sassign(t, id, e) }
+    | id = IDENT ASSIGN e = expr END { Sreass(id, e) }
+    | IF LPAREN e = expr RPAREN LBRACE s = stmt RBRACE { Sif(e, s, Slist []) }
+    | IF LPAREN e = expr RPAREN LBRACE s1 = stmt RBRACE ELSE LBRACE s2 = stmt RBRACE { Sif(e, s1, s2) }
 ;
 
 return_stmt:

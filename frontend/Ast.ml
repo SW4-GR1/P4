@@ -12,6 +12,8 @@ type stmt =
   | Slist of stmt list
   | Sif of expr * stmt * stmt
   | Sreturn of expr
+  | Sassign of type_ident * string * expr
+  | Sreass of string * expr
   
 (* function declaration *)
 type func = {
