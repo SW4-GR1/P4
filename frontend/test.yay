@@ -1,2 +1,1 @@
-int f (int x) {return y}
-let int a = 1;
+f(a);

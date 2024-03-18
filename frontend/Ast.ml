@@ -10,6 +10,7 @@ type expr =
   | EIdent of string
   | EBinop of binop * expr * expr
   | ECond of cond_binop * expr * expr
+  | EFcall of string * expr list
 
 type stmt =
   | Ssimple of expr

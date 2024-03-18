@@ -66,6 +66,9 @@ while_loop:
     | WHILE LPAREN c = cond RPAREN 
         LBRACE s = stmt+ RBRACE { Swhile(c, Slist s) }
 
+function_call:
+    | id = IDENT LPAREN arg_list = separated_list(COMMA, expr) RPAREN { EFcall(id,arg_list ) }
+
 return_stmt:
     | RETURN e = expr END?{ Sreturn(e) }
 ;
@@ -93,6 +96,7 @@ expr:
     | condition = cond               { condition }
     | LPAREN e = expr RPAREN         { e }
     | SUB e = expr %prec uminus      { EBinop(Sub, EConst 0, e) }
+    | f_call = function_call         { f_call }
 ;
 
 cond:

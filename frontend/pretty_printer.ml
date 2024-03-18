@@ -26,6 +26,9 @@ and pp_expr = function
     | Div -> "/" in
     "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
   | ECond(op, e1, e2) -> pp_cond (ECond(op, e1, e2)) 
+  | EFcall(id, args) -> 
+    let args_str = String.concat ", " (List.map pp_expr args) in
+    id ^ "( " ^ args_str ^ " )"
 
 
 let rec pp_stmt = function
