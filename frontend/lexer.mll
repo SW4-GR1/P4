@@ -51,12 +51,15 @@ rule token = parse
   | '/'                 { DIV }
   | "++"                { INC }
   | "--"                { DEC }
+  | "And"               { AND }
+  | "Or"                { OR }
+  | "Not"               { NOT }
   | '<'                 { LT }
   | '>'                 { GT }
   | "=="                { EQ }
   | "!="                { NEQ }
-  | "<="                { LE }
-  | ">="                { GE }
+  | "<="                { LEQ }
+  | ">="                { GEQ }
   | '('                 { LPAREN }
   | ')'                 { RPAREN }
   | '{'                 { LBRACE }

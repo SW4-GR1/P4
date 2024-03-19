@@ -2,7 +2,9 @@ type binop = Add | Mul | Sub | Div
 
 type type_ident = Int_ty | Str_ty
 
-type cond_binop = Lt
+type cond_binop = Lt | Gt | Eq | Neq | Leq | Geq
+
+(* expression *)
 
 type expr =
   | EBool of bool
