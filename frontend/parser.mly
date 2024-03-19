@@ -4,11 +4,12 @@
 
 %token ADD MUL SUB DIV EOF INC DEC
 %token LT GT EQ NEQ LE GE
-%token LPAREN RPAREN LBRACE RBRACE COMMA RETURN END ASSIGN LET
+%token LPAREN RPAREN LBRACE RBRACE COMMA DOT RETURN END ASSIGN LET
 %token<int> INT
+%token<float> FLOAT
 %token<string> IDENT
 %token<bool> BOOL
-%token INT_TY STR_TY
+%token INT_TY STR_TY FLOAT_TY
 %token IF ELSE
 %token FOR WHILE
 
@@ -92,6 +93,7 @@ func_body:
 expr:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
     | i = INT                        { EConst(i) }
+    | fl = FLOAT                     { EFloat(fl)}
     | id = IDENT                     { EIdent(id) }
     | condition = cond               { condition }
     | LPAREN e = expr RPAREN         { e }

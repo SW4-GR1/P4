@@ -17,6 +17,7 @@ let rec pp_cond = function
 
 and pp_expr = function
   | EConst n -> string_of_int n
+  | EFloat fl -> string_of_float fl
   | EIdent x -> x
   | EBinop (op, e1, e2) -> 
     let op_str = match op with

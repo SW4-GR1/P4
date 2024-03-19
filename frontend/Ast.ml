@@ -7,6 +7,7 @@ type cond_binop = Lt
 type expr =
   | EBool of bool
   | EConst of int
+  | EFloat of float
   | EIdent of string
   | EBinop of binop * expr * expr
   | ECond of cond_binop * expr * expr

@@ -17,6 +17,7 @@ let kwd_table = [
   "else", ELSE;
   "return", RETURN;
   "int", INT_TY;
+  "float", FLOAT_TY;
   "str", STR_TY;
   "let", LET;
   "for", FOR;
@@ -37,6 +38,7 @@ let newline = ['\r'  '\n']
 let digit = ['0'-'9']
 let alpha = ['a'-'z' 'A'-'Z' '_']
 let integer = digit+
+let float = digit+ '.' digit+
 let ident = (alpha) (alpha|digit)*
 
 rule token = parse
@@ -60,9 +62,11 @@ rule token = parse
   | '{'                 { LBRACE }
   | '}'                 { RBRACE }
   | ','                 { COMMA }
+  | '.'                 { DOT }
   | ';'                 { END }
   | "return"            { RETURN }
   | integer as c        { INT (int_of_string c) }
+  | float as fl         { FLOAT (float_of_string fl) }
   | ident as id         { id_or_kwd id }
   | "/*"                { multi_line_comment lexbuf }
   | "//"                { single_line_comment lexbuf }
