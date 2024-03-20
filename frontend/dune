@@ -8,4 +8,5 @@
  (name main)
  (libraries str)
  (promote (until-clean))
- (flags ()))
+ (flags ())
+ (modules_without_implementation ptree ttree))
