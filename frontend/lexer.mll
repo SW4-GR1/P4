@@ -51,9 +51,9 @@ rule token = parse
   | '/'                 { DIV }
   | "++"                { INC }
   | "--"                { DEC }
-  | "And"               { AND }
-  | "Or"                { OR }
-  | "Not"               { NOT }
+  | "and"               { AND }
+  | "or"                { OR }
+  | "not"               { NOT }
   | '<'                 { LT }
   | '>'                 { GT }
   | "=="                { EQ }

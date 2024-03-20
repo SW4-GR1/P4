@@ -4,7 +4,9 @@ type type_ident = Int_ty | Str_ty
 
 type cond_binop = Lt | Gt | Eq | Neq | Leq | Geq
 
-(* expression *)
+type log_op = And | Or
+
+(* type of expression *)
 
 type expr =
   | EBool of bool
@@ -13,7 +15,11 @@ type expr =
   | EIdent of string
   | EBinop of binop * expr * expr
   | ECond of cond_binop * expr * expr
+  | ELog of log_op * expr * expr
+  | ENot of expr
   | EFcall of string * expr list
+
+(* statement *)
 
 type stmt =
   | Ssimple of expr

@@ -19,7 +19,13 @@ let rec pp_cond = function
     | Geq -> ">="
    in
     "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
-    
+  | ELog (l_op, e1, e2) -> 
+    let op_str = match l_op with
+    | And -> "and"
+    | Or -> "or" in
+    "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
+  | ENot (e) -> "not" ^ " " ^ pp_expr e
+  
 
 and pp_expr = function
   | EConst n -> string_of_int n
@@ -32,7 +38,9 @@ and pp_expr = function
     | Mul -> "*"
     | Div -> "/" in
     "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
-  | ECond(op, e1, e2) -> pp_cond (ECond(op, e1, e2)) 
+  | ECond(op, e1, e2) -> pp_cond (ECond(op, e1, e2))
+  | ELog(op, e1, e2) -> pp_cond (ELog(op, e1, e2))
+  | ENot(e) -> pp_cond (ENot(e))
   | EFcall(id, args) -> 
     let args_str = String.concat ", " (List.map pp_expr args) in
     id ^ "( " ^ args_str ^ " )"

@@ -103,7 +103,10 @@ expr:
 
 cond:
     | b = BOOL { EBool(b) }
+    | e1 = expr o= l_op e2 = expr  { ELog(o, e1, e2) }
     | e1 = expr o = c_op e2 = expr { ECond(o, e1, e2) }
+    | NOT e = expr { ENot(e) }
+    
 ;
 
 %inline op:
@@ -117,6 +120,11 @@ cond:
 | INT_TY { Int_ty }
 | STR_TY { Str_ty }
 ;
+
+%inline l_op:
+| AND { And }
+| OR { Or }
+
 
 %inline c_op:
 | LT { Lt }
