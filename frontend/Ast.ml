@@ -1,6 +1,8 @@
 type binop = Add | Mul | Sub | Div
 
-type type_ident = Int_ty | Str_ty
+type unop = Inc | Dec 
+
+type type_ident = Int_ty | Float_ty | Str_ty
 
 type cond_binop = Lt | Gt | Eq | Neq | Leq | Geq
 
@@ -14,6 +16,7 @@ type expr =
   | EFloat of float
   | EIdent of string
   | EBinop of binop * expr * expr
+  | EUnop of string * unop
   | ECond of cond_binop * expr * expr
   | ELog of log_op * expr * expr
   | ENot of expr
@@ -27,6 +30,7 @@ type stmt =
   | Sif of expr * stmt * stmt
   | Sreturn of expr
   | Sassign of type_ident * string * expr
+  | Sdecl of type_ident * string
   | Sreass of string * expr
   | Sfor of stmt * expr * stmt * stmt
   | Swhile of expr * stmt
