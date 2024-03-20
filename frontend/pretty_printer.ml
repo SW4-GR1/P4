@@ -5,6 +5,7 @@ open Ast
 let rec pp_types = function
   | Int_ty -> "int"
   | Str_ty -> "str"
+  | Float_ty -> "float"
   
 
 let rec pp_cond = function
@@ -26,6 +27,12 @@ and pp_expr = function
     | Mul -> "*"
     | Div -> "/" in
     "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
+    | EUnop (id, unop) -> 
+      let unop_str = match unop with
+      | Inc -> "++"
+      | Dec -> "--"
+      in let id_str = id in
+      "(" ^ id_str ^ unop_str ^ ")"
   | ECond(op, e1, e2) -> pp_cond (ECond(op, e1, e2)) 
   | EFcall(id, args) -> 
     let args_str = String.concat ", " (List.map pp_expr args) in
@@ -46,6 +53,7 @@ let rec pp_stmt = function
                 "( return " ^ (expr_str) ^ " )"
   | Sassign(t, id, e) -> "( let " ^ pp_types t ^ " " ^ id ^ " = " ^ pp_expr e ^ " )"
   | Sreass(id, e) -> "( " ^ id ^ " = " ^ pp_expr e ^ " )"
+  | Sdecl(t, id) -> Printf.sprintf "( let %s %s )" (pp_types t) id
   | Sfor(ass, c, reass, s) -> 
     let ass_str = pp_stmt ass in
     let cond_str = pp_cond c in

@@ -42,6 +42,7 @@ stmt:
 
 assignment:
     | LET t = ty id = IDENT ASSIGN e = expr END { Sassign(t, id, e) }
+    | LET t = ty id = IDENT END { Sdecl(t, id) }
     | reass = reassign { reass }
 
 reassign:
@@ -92,6 +93,7 @@ func_body:
 
 expr:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
+    | id = IDENT u = unop            { EUnop(id, u) }
     | i = INT                        { EConst(i) }
     | fl = FLOAT                     { EFloat(fl)}
     | id = IDENT                     { EIdent(id) }
@@ -113,8 +115,14 @@ cond:
 | DIV { Div }
 ;
 
+%inline unop:
+| INC { Inc }
+| DEC { Dec }
+;
+
 %inline ty:
 | INT_TY { Int_ty }
+| FLOAT_TY { Float_ty }
 | STR_TY { Str_ty }
 ;
 
