@@ -6,10 +6,10 @@ let rec pp_types = function
   | Int_ty -> "int"
   | Str_ty -> "str"
   | Float_ty -> "float"
+  | Bool_ty -> "bool" 
   
 
 let rec pp_cond = function
-  | EBool b -> string_of_bool b
   | ECond(op, e1, e2) ->
     let op_str = match op with
     | Lt -> "<"
@@ -31,6 +31,7 @@ let rec pp_cond = function
 and pp_expr = function
   | EConst n -> string_of_int n
   | EFloat fl -> string_of_float fl
+  | EBool b -> string_of_bool b
   | EIdent x -> x
   | EBinop (op, e1, e2) -> 
     let op_str = match op with

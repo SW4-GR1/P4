@@ -9,7 +9,7 @@
 %token<float> FLOAT
 %token<string> IDENT
 %token<bool> BOOL
-%token INT_TY STR_TY FLOAT_TY
+%token INT_TY STR_TY FLOAT_TY BOOL_TY
 %token IF ELSE
 %token FOR WHILE
 
@@ -96,6 +96,7 @@ expr:
     | id = IDENT u = unop            { EUnop(id, u) }
     | i = INT                        { EConst(i) }
     | fl = FLOAT                     { EFloat(fl)}
+    | bl = BOOL                      { EBool(bl)}
     | id = IDENT                     { EIdent(id) }
     | condition = cond               { condition }
     | LPAREN e = expr RPAREN         { e }
@@ -126,6 +127,7 @@ cond:
 %inline ty:
 | INT_TY { Int_ty }
 | FLOAT_TY { Float_ty }
+| BOOL_TY { Bool_ty }
 | STR_TY { Str_ty }
 ;
 

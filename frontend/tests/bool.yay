@@ -1,0 +1,8 @@
+bool f() {
+    return 1
+}
+
+let bool a = true;
+let bool a = hey;
+let bool b = 2;
+
