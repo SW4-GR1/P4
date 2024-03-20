@@ -19,3 +19,10 @@ let remove n (SymTab stab) =
 let remove_many ns (SymTab stab) = 
   SymTab (List.filter (fun(x, _) -> 
     ! (List.exists (fun y -> y == x) ns)) stab)
+
+let combine (SymTab t1) (SymTab t2) = 
+  Symtab (t1 @ t2)
+
+let fromList l = Symtab l
+
+let toList (Symtab lst) = lst
