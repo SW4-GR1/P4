@@ -39,7 +39,7 @@ and pp_expr = function
     | Mul -> "*"
     | Div -> "/" in
     "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
-    | EUnop (id, unop) -> 
+  | EUnop (id, unop) -> 
       let unop_str = match unop with
       | Inc -> "++"
       | Dec -> "--"
