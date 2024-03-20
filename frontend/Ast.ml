@@ -10,6 +10,11 @@ type log_op = And | Or
 
 (* type of expression *)
 
+type export = 
+  | Xexport of string
+  | Xlist of export list
+
+
 type expr =
   | EBool of bool
   | EConst of int
@@ -22,11 +27,13 @@ type expr =
   | ENot of expr
   | EFcall of string * expr list
 
-(* statement *)
 
+
+(* type of statement *)
 type stmt =
   | Ssimple of expr
   | Slist of stmt list
+  | Sfunc of func
   | Sif of expr * stmt * stmt
   | Sreturn of expr
   | Sassign of type_ident * string * expr
@@ -34,17 +41,17 @@ type stmt =
   | Sreass of string * expr
   | Sfor of stmt * expr * stmt * stmt
   | Swhile of expr * stmt
-  
-(* function declaration *)
-type func = {
+and func = {
   fun_type : type_ident;
   name : string;
   args : (type_ident * string) list;
-  body : stmt; }
+  body : stmt; 
+}
+
 
 
 (* program of list of function declarations, followed by a statement *)
 type prog = {
-  funDecs : func list;
+  exports : export list;
   main : stmt;
 }

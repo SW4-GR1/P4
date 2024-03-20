@@ -76,19 +76,27 @@ let rec pp_stmt = function
     let stmt_str = pp_stmt s in
     "for (" ^ ass_str ^ "; " ^ cond_str ^ "; " ^ reass_str ^ ") {\n" ^ stmt_str ^ "\n}"
   | Swhile(c, s) -> "while (" ^ pp_cond c ^ ") {\n" ^ pp_stmt s ^ "\n}"
+  | Sfunc(func) -> pp_func func 
+
+and pp_func func =
+  let arg_strs = List.map (fun (type_ident, name) -> pp_types type_ident ^ " " ^ name) func.args in
+  let args_str = String.concat ", " arg_strs in
+  let body_str = pp_stmt func.body in
+  pp_types func.fun_type ^ " " ^ func.name ^ "(" ^ args_str ^ ") {\n" ^
+  body_str ^ "\n}\n"
             
-  
-let rec pp_func_list funcs =
-  match funcs with
+let rec pp_export = function
+  | Xexport str -> "export " ^ str
+
+let rec pp_export_list exports =
+  match exports with
   | [] -> ""
-  | func :: rest ->
-    let arg_strs = List.map (fun (type_ident, name) -> pp_types type_ident ^ " " ^ name) func.args in
-    let args_str = String.concat ", " arg_strs in
-    let body_str = pp_stmt func.body in
-    pp_types func.fun_type ^ " " ^ func.name ^ "(" ^ args_str ^ ") {\n" ^
-    body_str ^ "\n}\n" ^ pp_func_list rest
+  | _ ->
+    String.concat "\n" (List.map pp_export exports) 
+
+
 
 let pp_prog prog =
-  let fun_decs_str = pp_func_list prog.funDecs in
+  let exports_str = pp_export_list prog.exports in
   let main_str = pp_stmt prog.main in
-  fun_decs_str ^ "\n" ^ main_str
+  exports_str ^ "\n" ^ main_str

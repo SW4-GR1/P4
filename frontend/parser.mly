@@ -4,7 +4,7 @@
 
 %token ADD MUL SUB DIV EOF INC DEC
 %token LT GT EQ NEQ LEQ GEQ AND OR NOT
-%token LPAREN RPAREN LBRACE RBRACE COMMA DOT RETURN END ASSIGN LET
+%token LPAREN RPAREN LBRACE RBRACE COMMA DOT RETURN END ASSIGN LET EXPORT
 %token<int> INT
 %token<float> FLOAT
 %token<string> IDENT
@@ -27,17 +27,21 @@
 //loops
 //assignments
 prog:
-    funcs = function_def*
+    exports = export*
     s = stmt* 
     EOF
-      { { funDecs = funcs; main = Slist s } }
+      { { exports = exports; main = Slist s } }
 ;
+
+export:
+    | LBRACE EXPORT id = IDENT RBRACE { Xexport(id) }
 
 stmt:
     | e = expr END { Ssimple(e) }  
     | i_stmt = if_stmt { i_stmt }
     | ass = assignment { ass }
     | loop = loop_stmt { loop }
+    | func = function_def {func}
 ;
 
 assignment:
@@ -79,7 +83,7 @@ function_def:
     t = ty id = IDENT 
         LPAREN arg_list = separated_list(COMMA, param) RPAREN
         LBRACE body = func_body RBRACE 
-            { {fun_type = t; name = id; args = arg_list; body = body} }
+            { Sfunc{fun_type = t; name = id; args = arg_list; body = body} }
 ;
 
 param:

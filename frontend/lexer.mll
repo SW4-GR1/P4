@@ -70,6 +70,7 @@ rule token = parse
   | '.'                 { DOT }
   | ';'                 { END }
   | "return"            { RETURN }
+  | "export"            { EXPORT }
   | integer as c        { INT (int_of_string c) }
   | float as fl         { FLOAT (float_of_string fl) }
   | bool as bl          { BOOL (bool_of_string bl) }
