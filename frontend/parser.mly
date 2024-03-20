@@ -3,7 +3,7 @@
 %}
 
 %token ADD MUL SUB DIV EOF INC DEC
-%token LT GT EQ NEQ LE GE
+%token LT GT EQ NEQ LEQ GEQ AND OR NOT
 %token LPAREN RPAREN LBRACE RBRACE COMMA DOT RETURN END ASSIGN LET
 %token<int> INT
 %token<float> FLOAT
@@ -128,4 +128,9 @@ cond:
 
 %inline c_op:
 | LT { Lt }
+| GT { Gt }
+| EQ { Eq }
+| NEQ { Neq }
+| LEQ { Leq }
+| GEQ { Geq }
 ;

@@ -12,7 +12,13 @@ let rec pp_cond = function
   | EBool b -> string_of_bool b
   | ECond(op, e1, e2) ->
     let op_str = match op with
-    | Lt -> "<" in
+    | Lt -> "<"
+    | Gt -> ">"
+    | Eq -> "=="
+    | Neq -> "!="
+    | Leq -> "<="
+    | Geq -> ">="
+   in
     "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
     
 
