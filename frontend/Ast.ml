@@ -26,6 +26,7 @@ type expr =
   | ELog of log_op * expr * expr
   | ENot of expr
   | EFcall of string * expr list
+  | Earray of expr list
 
 
 
@@ -37,8 +38,12 @@ type stmt =
   | Sif of expr * stmt * stmt
   | Sreturn of expr
   | Sassign of type_ident * string * expr
-  | Sdecl of type_ident * string
+  | Sdecl of type_ident * string 
   | Sreass of string * expr
+  | Sarr_decl of type_ident * expr * string
+  | Sarr_assign of type_ident * expr * string * expr list
+  | Sarr_reassign of string * expr list 
+  | Sarr_reassign_elem of string * expr * expr
   | Sfor of stmt * expr * stmt * stmt
   | Swhile of expr * stmt
 and func = {

@@ -39,15 +39,22 @@ export:
 stmt:
     | e = expr END { Ssimple(e) }  
     | i_stmt = if_stmt { i_stmt }
+    | decl = declarations { decl }
     | ass = assignment { ass }
     | loop = loop_stmt { loop }
     | func = function_def {func}
 ;
 
+declarations:
+    | LET t = ty id = IDENT END { Sdecl(t, id) } // Variables
+    | LET t = ty LBRACKET e1 = expr RBRACKET id = IDENT END {Sarr_decl(t, e1, id)} // Arrays  
+
+
 assignment:
     | LET t = ty id = IDENT ASSIGN e = expr END { Sassign(t, id, e) }
-    | LET t = ty id = IDENT END { Sdecl(t, id) }
     | reass = reassign { reass }
+    | arr = array_assign {arr}
+    | arr_reass = array_reassign {arr_reass}
 
 reassign:
     | id = IDENT ASSIGN e = expr END { Sreass(id, e) }
@@ -95,12 +102,18 @@ func_body:
         { Slist (stmts @ [r]) }
 ;
 
-array:
-    | LET t = ty LBRACKET e1 = expr RBRACKET i = id ASSIGN LBRACKET array_body* RBRACKET END
+array_assign:
+    | LET t = ty LBRACKET e1 = expr RBRACKET id = IDENT ASSIGN LBRACKET body = array_body RBRACKET END {Sarr_assign(t, e1, id, body)}
+
+array_reassign:
+    | id = IDENT ASSIGN LBRACKET body = array_body RBRACKET END {Sarr_reassign(id, body)}
+    | id = IDENT LBRACKET e1 = expr RBRACKET ASSIGN e2 = expr END {Sarr_reassign_elem(id, e1, e2)}
 
 array_body: 
     | e = expr { [e] }
-    | e = expr COMMA array_body { e :: array_body }
+    | e = expr COMMA body = array_body { e :: body }
+    
+
 
 expr:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
@@ -113,6 +126,7 @@ expr:
     | LPAREN e = expr RPAREN         { e }
     | SUB e = expr %prec uminus      { EBinop(Sub, EConst 0, e) }
     | f_call = function_call         { f_call }
+    | LBRACKET body = array_body RBRACKET { Earray(body) }
 ;
 
 cond:
