@@ -4,7 +4,7 @@
 
 %token ADD MUL SUB DIV EOF INC DEC
 %token LT GT EQ NEQ LEQ GEQ AND OR NOT
-%token LPAREN RPAREN LBRACE RBRACE COMMA DOT RETURN END ASSIGN LET
+%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END ASSIGN LET
 %token<int> INT
 %token<float> FLOAT
 %token<string> IDENT
@@ -90,6 +90,13 @@ func_body:
     | stmts = separated_list(END, stmt) r = return_stmt
         { Slist (stmts @ [r]) }
 ;
+
+array:
+    | LET t = ty LBRACKET e1 = expr RBRACKET i = id ASSIGN LBRACKET array_body* RBRACKET END
+
+array_body: 
+    | e = expr { [e] }
+    | e = expr COMMA array_body { e :: array_body }
 
 expr:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
