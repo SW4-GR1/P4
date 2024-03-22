@@ -18,6 +18,7 @@ let kwd_table = [
   "return", RETURN;
   "int", INT_TY;
   "float", FLOAT_TY;
+  "bool", BOOL_TY;
   "str", STR_TY;
   "let", LET;
   "for", FOR;
@@ -40,6 +41,7 @@ let alpha = ['a'-'z' 'A'-'Z' '_']
 let integer = digit+
 let float = digit+ '.' digit+
 let ident = (alpha) (alpha|digit)*
+let bool = "true" | "false"
 
 rule token = parse
   | newline             { next_line lexbuf; token lexbuf }
@@ -51,9 +53,9 @@ rule token = parse
   | '/'                 { DIV }
   | "++"                { INC }
   | "--"                { DEC }
-  | "And"               { AND }
-  | "Or"                { OR }
-  | "Not"               { NOT }
+  | "and"               { AND }
+  | "or"                { OR }
+  | "not"               { NOT }
   | '<'                 { LT }
   | '>'                 { GT }
   | "=="                { EQ }
@@ -70,8 +72,10 @@ rule token = parse
   | '.'                 { DOT }
   | ';'                 { END }
   | "return"            { RETURN }
+  | "export"            { EXPORT }
   | integer as c        { INT (int_of_string c) }
   | float as fl         { FLOAT (float_of_string fl) }
+  | bool as bl          { BOOL (bool_of_string bl) }
   | ident as id         { id_or_kwd id }
   | "/*"                { multi_line_comment lexbuf }
   | "//"                { single_line_comment lexbuf }

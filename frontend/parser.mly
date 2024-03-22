@@ -4,12 +4,12 @@
 
 %token ADD MUL SUB DIV EOF INC DEC
 %token LT GT EQ NEQ LEQ GEQ AND OR NOT
-%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END ASSIGN LET
+%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END ASSIGN LET EXPORT
 %token<int> INT
 %token<float> FLOAT
 %token<string> IDENT
 %token<bool> BOOL
-%token INT_TY STR_TY FLOAT_TY
+%token INT_TY STR_TY FLOAT_TY BOOL_TY
 %token IF ELSE
 %token FOR WHILE
 
@@ -27,17 +27,21 @@
 //loops
 //assignments
 prog:
-    funcs = function_def*
+    exports = export*
     s = stmt* 
     EOF
-      { { funDecs = funcs; main = Slist s } }
+      { { exports = exports; main = Slist s } }
 ;
+
+export:
+    | LBRACE EXPORT id = IDENT RBRACE { Xexport(id) }
 
 stmt:
     | e = expr END { Ssimple(e) }  
     | i_stmt = if_stmt { i_stmt }
     | ass = assignment { ass }
     | loop = loop_stmt { loop }
+    | func = function_def {func}
 ;
 
 assignment:
@@ -79,7 +83,7 @@ function_def:
     t = ty id = IDENT 
         LPAREN arg_list = separated_list(COMMA, param) RPAREN
         LBRACE body = func_body RBRACE 
-            { {fun_type = t; name = id; args = arg_list; body = body} }
+            { Sfunc{fun_type = t; name = id; args = arg_list; body = body} }
 ;
 
 param:
@@ -103,6 +107,7 @@ expr:
     | id = IDENT u = unop            { EUnop(id, u) }
     | i = INT                        { EConst(i) }
     | fl = FLOAT                     { EFloat(fl)}
+    | bl = BOOL                      { EBool(bl)}
     | id = IDENT                     { EIdent(id) }
     | condition = cond               { condition }
     | LPAREN e = expr RPAREN         { e }
@@ -112,7 +117,10 @@ expr:
 
 cond:
     | b = BOOL { EBool(b) }
+    | e1 = expr o= l_op e2 = expr  { ELog(o, e1, e2) }
     | e1 = expr o = c_op e2 = expr { ECond(o, e1, e2) }
+    | NOT e = expr { ENot(e) }
+    
 ;
 
 %inline op:
@@ -130,8 +138,14 @@ cond:
 %inline ty:
 | INT_TY { Int_ty }
 | FLOAT_TY { Float_ty }
+| BOOL_TY { Bool_ty }
 | STR_TY { Str_ty }
 ;
+
+%inline l_op:
+| AND { And }
+| OR { Or }
+
 
 %inline c_op:
 | LT { Lt }
