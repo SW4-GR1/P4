@@ -1,9 +1,27 @@
 open Format
 open Lexing
+open Ptree
 
 let parse_only = ref false
 let type_only = ref false
 
+
+let convert_prog_to_file (prog : Ast.prog) : Ptree.file =
+  let convert_stmt_to_ptree_stmt (stmt : Ast.stmt) : Ptree.stmt =
+    match stmt with
+    | Ast.Ssimple expr -> Ptree.Ssimple expr
+    | Ast.Slist stmts -> Ptree.Slist (List.map convert_stmt_to_ptree_stmt stmts)
+    | Ast.Sfunc fdec -> 
+      let ptree_fdec = {
+        Ptree.fun_ty = fdec.Ast.fun_ty;
+        Ptree.fun_name = fdec.Ast.fun_name;
+        Ptree.fun_args = fdec.Ast.fun_args;
+        Ptree.fun_body = convert_stmt_to_ptree_stmt fdec.Ast.fun_body;
+      } in
+      Ptree.Sfunc ptree_fdec
+  in
+  let ptree_stmts = List.map convert_stmt_to_ptree_stmt prog.Ast.stmts in
+  ("", ptree_stmts)
 (* let () := parse_only true 
    let _ = ! parse_only*)
 
@@ -52,7 +70,7 @@ let () =
     let parsetree = Pretty_printer.pp_prog p in
     if !parse_only then exit 0 else
       let _ = print_endline parsetree in
-      let _p = Typechecker.program p in 
+      let _p = Typechecker.program (convert_prog_to_file p) in 
       if !type_only then exit 0 else 
         print_endline _p
     

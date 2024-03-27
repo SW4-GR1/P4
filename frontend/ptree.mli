@@ -1,14 +1,18 @@
 type loc = Lexing.position * Lexing.position
 
-type ident { id : string; id_loc: loc }
+type ident = { id : string; id_loc: loc }
 
 type ty = 
   | Tint
+  | Tbool
 
 (* type unop = Unot | Uminus *)
 
 type binop = 
   Badd | Bsub | Bmul | Bdiv
+
+type cond =
+ Cand
 
 type expr =
   { expr_node: expr_node;
@@ -16,8 +20,10 @@ type expr =
 
 and expr_node = 
   | Econst of int
+  | Ebool of bool
   | Eident of ident
-  | EBinop of binop * expr * expr
+  | Ebinop of binop * expr * expr
+  | Econd of cond * expr * expr
 
 type assign_var = ty * ident * expr
 
@@ -28,19 +34,19 @@ type stmt =
 and stmt_node = 
   | Sexpr of expr
   | Slist of stmt list
+  | Sfun of fun_dec
 
+and arg_dec = ty * ident
 
-
-type arg_dec = ty * ident
-
-type fun_dec = {
-  fun_typ : typ;
+and fun_dec = {
+  fun_ty : ty;
   fun_name : ident;
   fun_args : arg_dec list;
   fun_body : stmt
 }
 
-type funs_decs = 
-  | DFun of fun_dec
+type export = 
+ | Xexport of string
 
-type file = fun_decs list * stmt list
+
+type file = export list * stmt list
