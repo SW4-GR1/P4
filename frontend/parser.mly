@@ -38,26 +38,43 @@ export:
 
 stmt:
     | e = expr END { Ssimple(e) }  
-    | i_stmt = if_stmt { i_stmt }
+    | c_stmt = control_stmt { c_stmt }
     | decl = declarations { decl }
     | ass = assignment { ass }
-    | loop = loop_stmt { loop }
     | func = function_def {func}
 ;
 
+control_stmt:
+    | i_stmt = if_stmt {i_stmt}
+    | loop = loop_stmt {loop}
+
+
 declarations:
-    | LET t = ty id = IDENT END { Sdecl(t, id) } // Variables
-    | LET t = ty LBRACKET e1 = expr RBRACKET id = IDENT END {Sarr_decl(t, e1, id)} // Arrays  
+    | LET d_type = dec_type {d_type}
+
+dec_type:
+    | t = ty id = IDENT e = assign_opt END {Sdecl(t, id, e)} // variables
+    | d_struc = data_struc_dec {d_struc} // datastructures
+
+assign_opt:
+    | ASSIGN e = expr { Some e }
+    | { None }
+
+
+data_struc_dec:
+    | t = ty LBRACKET e1 = expr RBRACKET id = IDENT body = array_body_opt END {Sarr_decl(t, e1, id, body)} // array 
+
+array_body_opt:
+    | ASSIGN LBRACKET body = array_body RBRACKET { Some body}
+    | { None }
 
 
 assignment:
-    | LET t = ty id = IDENT ASSIGN e = expr END { Sassign(t, id, e) }
-    | reass = reassign { reass }
-    | arr = array_assign {arr}
-    | arr_reass = array_reassign {arr_reass}
+    | ass = assign { ass }
+    | arr_ass = array_assign {arr_ass}
 
-reassign:
-    | id = IDENT ASSIGN e = expr END { Sreass(id, e) }
+assign:
+    | id = IDENT ASSIGN e = expr END { Sass(id, e) }
 
 
 if_stmt:
@@ -71,9 +88,9 @@ loop_stmt:
 
 for_loop:
     | FOR LPAREN
-        ass = assignment c = cond END
-        reass = reassign RPAREN 
-        LBRACE s = stmt+ RBRACE { Sfor(ass, c, reass, Slist s) }
+        decl = declarations c = cond END
+        ass = assign RPAREN 
+        LBRACE s = stmt+ RBRACE { Sfor(decl, c, ass, Slist s) }
 
 while_loop:
     | WHILE LPAREN c = cond RPAREN 
@@ -102,17 +119,9 @@ func_body:
         { Slist (stmts @ [r]) }
 ;
 
-
-array_declaration:
-    | LET t = ty LBRACKET e1 = expr RBRACKET id = IDENT END {Sarr_decl(t, e1, id)}
-
 array_assign:
-    | LET t = ty LBRACKET e1 = expr RBRACKET id = IDENT ASSIGN LBRACKET body = array_body RBRACKET END {Sarr_assign(t, e1, id, body)}
-
-
-array_reassign:
-    | id = IDENT ASSIGN LBRACKET body = array_body RBRACKET END {Sarr_reassign(id, body)}
-    | id = IDENT LBRACKET e1 = expr RBRACKET ASSIGN e2 = expr END {Sarr_reassign_elem(id, e1, e2)}
+    | id = IDENT ASSIGN LBRACKET body = array_body RBRACKET END {Sarr_assign(id, body)}
+    | id = IDENT LBRACKET e1 = expr RBRACKET ASSIGN e2 = expr END {Sarr_assign_elem(id, e1, e2)}
 
 array_body: 
     | e = expr { [e] }

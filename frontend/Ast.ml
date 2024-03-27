@@ -38,12 +38,11 @@ type stmt =
   | Sif of expr * stmt * stmt
   | Sreturn of expr
   | Sassign of type_ident * string * expr
-  | Sdecl of type_ident * string 
-  | Sreass of string * expr
-  | Sarr_decl of type_ident * expr * string
-  | Sarr_assign of type_ident * expr * string * expr list
-  | Sarr_reassign of string * expr list 
-  | Sarr_reassign_elem of string * expr * expr
+  | Sdecl of type_ident * string * expr option 
+  | Sass of string * expr
+  | Sarr_decl of type_ident * expr * string * expr list option
+  | Sarr_assign of string * expr list 
+  | Sarr_assign_elem of string * expr * expr
   | Sfor of stmt * expr * stmt * stmt
   | Swhile of expr * stmt
 and func = {
