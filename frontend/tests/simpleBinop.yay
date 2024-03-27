@@ -7,3 +7,6 @@ let float x = 2;
 let float k;
 x++;
 let int[2] numbers = [1,2];
+let int[2] numbers1;
+x = [1,2];
+x[1] = 23;

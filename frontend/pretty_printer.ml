@@ -59,7 +59,7 @@ let rec pp_array_body body =
   | [] -> ""
   | [e] -> pp_expr e
   | e::es -> pp_expr e ^ ", " ^ pp_array_body es
-  
+
 
 let rec pp_stmt = function
   | Slist exprs -> let stmt_list = List.map pp_stmt exprs in
@@ -84,7 +84,11 @@ let rec pp_stmt = function
     "for (" ^ ass_str ^ "; " ^ cond_str ^ "; " ^ reass_str ^ ") {\n" ^ stmt_str ^ "\n}"
   | Swhile(c, s) -> "while (" ^ pp_cond c ^ ") {\n" ^ pp_stmt s ^ "\n}"
   | Sfunc(func) -> pp_func func 
+  | Sarr_decl(t, e1, id) -> "let " ^ pp_types t ^ " " ^ id ^ "[" ^ pp_expr e1 ^ "]"
   | Sarr_assign(t, e1, id, body) -> "let " ^ pp_types t ^ " " ^ id ^ "[" ^ pp_expr e1 ^ "] = [" ^ pp_array_body body ^ "]"
+  | Sarr_reassign(id, body) -> id ^ " = [" ^ pp_array_body body ^ "]" 
+  | Sarr_reassign_elem(id, e1, e2) -> id ^ "[" ^ pp_expr e1 ^ "]" ^ " = " ^ pp_expr e2 
+  | _ -> failwith "Unexpected case encountered in pp_stmt"
 
 and pp_func func =
   let arg_strs = List.map (fun (type_ident, name) -> pp_types type_ident ^ " " ^ name) func.args in

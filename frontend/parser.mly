@@ -102,8 +102,13 @@ func_body:
         { Slist (stmts @ [r]) }
 ;
 
+
+array_declaration:
+    | LET t = ty LBRACKET e1 = expr RBRACKET id = IDENT END {Sarr_decl(t, e1, id)}
+
 array_assign:
     | LET t = ty LBRACKET e1 = expr RBRACKET id = IDENT ASSIGN LBRACKET body = array_body RBRACKET END {Sarr_assign(t, e1, id, body)}
+
 
 array_reassign:
     | id = IDENT ASSIGN LBRACKET body = array_body RBRACKET END {Sarr_reassign(id, body)}
@@ -112,8 +117,6 @@ array_reassign:
 array_body: 
     | e = expr { [e] }
     | e = expr COMMA body = array_body { e :: body }
-    
-
 
 expr:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
