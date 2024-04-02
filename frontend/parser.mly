@@ -4,7 +4,7 @@
 
 %token ADD MUL SUB DIV MOD EOF INC DEC
 %token LT GT EQ NEQ LEQ GEQ AND OR NOT
-%token LPAREN RPAREN LBRACE RBRACE COMMA DOT RETURN END ASSIGN LET EXPORT
+%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END ASSIGN LET EXPORT
 %token<int> INT
 %token<float> FLOAT
 %token<string> IDENT
@@ -42,19 +42,43 @@ export:
 
 stmt:
     | e = expr END { Ssimple(e) }  
-    | i_stmt = if_stmt { i_stmt }
+    | c_stmt = control_stmt { c_stmt }
+    | decl = declarations { decl }
     | ass = assignment { ass }
-    | loop = loop_stmt { loop }
     | func = function_def {func}
 ;
 
-assignment:
-    | LET t = ty id = IDENT ASSIGN e = expr END { Sassign(t, id, e) }
-    | LET t = ty id = IDENT END { Sdecl(t, id) }
-    | reass = reassign { reass }
+control_stmt:
+    | i_stmt = if_stmt {i_stmt}
+    | loop = loop_stmt {loop}
 
-reassign:
-    | id = IDENT ASSIGN e = expr END { Sreass(id, e) }
+
+declarations:
+    | LET d_type = dec_type {d_type}
+
+dec_type:
+    | t = ty id = IDENT e = assign_opt END {Sdecl(t, id, e)} // variables
+    | d_struc = data_struc_dec {d_struc} // datastructures
+
+assign_opt:
+    | ASSIGN e = expr { Some e }
+    | { None }
+
+
+data_struc_dec:
+    | t = ty LBRACKET e1 = expr RBRACKET id = IDENT body = array_body_opt END {Sarr_decl(t, e1, id, body)} // array 
+
+array_body_opt:
+    | ASSIGN LBRACKET body = array_body RBRACKET { Some body}
+    | { None }
+
+
+assignment:
+    | ass = assign { ass }
+    | arr_ass = array_assign {arr_ass}
+
+assign:
+    | id = IDENT ASSIGN e = expr END { Sass(id, e) }
 
 
 if_stmt:
@@ -68,9 +92,9 @@ loop_stmt:
 
 for_loop:
     | FOR LPAREN
-        ass = assignment c = cond END
-        reass = reassign RPAREN 
-        LBRACE s = stmt+ RBRACE { Sfor(ass, c, reass, Slist s) }
+        decl = declarations c = cond END
+        ass = assign RPAREN 
+        LBRACE s = stmt+ RBRACE { Sfor(decl, c, ass, Slist s) }
 
 while_loop:
     | WHILE LPAREN c = cond RPAREN 
@@ -99,6 +123,14 @@ func_body:
         { Slist (stmts @ [r]) }
 ;
 
+array_assign:
+    | id = IDENT ASSIGN LBRACKET body = array_body RBRACKET END {Sarr_assign(id, body)}
+    | id = IDENT LBRACKET e1 = expr RBRACKET ASSIGN e2 = expr END {Sarr_assign_elem(id, e1, e2)}
+
+array_body: 
+    | e = expr { [e] }
+    | e = expr COMMA body = array_body { e :: body }
+
 expr:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
     | id = IDENT u = unop            { EUnop(id, u) }
@@ -110,6 +142,7 @@ expr:
     | LPAREN e = expr RPAREN         { e }
     | SUB e = expr %prec uminus      { EBinop(Sub, EConst 0, e) }
     | f_call = function_call         { f_call }
+    | LBRACKET body = array_body RBRACKET { Earray(body) }
 ;
 
 cond:
