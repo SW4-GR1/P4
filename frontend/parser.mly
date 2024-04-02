@@ -2,7 +2,7 @@
     open Ast
 %}
 
-%token ADD MUL SUB DIV EOF INC DEC
+%token ADD MUL SUB DIV MOD EOF INC DEC
 %token LT GT EQ NEQ LEQ GEQ AND OR NOT
 %token LPAREN RPAREN LBRACE RBRACE COMMA DOT RETURN END ASSIGN LET EXPORT
 %token<int> INT
@@ -14,7 +14,7 @@
 %token FOR WHILE
 
 %left ADD SUB
-%left MUL DIV
+%left MUL DIV MOD
 %nonassoc uminus
 %nonassoc IF
 %nonassoc ELSE
@@ -27,14 +27,18 @@
 //loops
 //assignments
 prog:
-    exports = export*
+    exports = exports
     s = stmt* 
     EOF
       { { exports = exports; main = Slist s } }
+    | s = stmt* EOF { { exports = []; main = Slist s } }
 ;
 
+exports:
+    LBRACE export = export* RBRACE { export }
+
 export:
-    | LBRACE EXPORT id = IDENT RBRACE { Xexport(id) }
+    |  EXPORT id = IDENT END  { Xexport(id) }
 
 stmt:
     | e = expr END { Ssimple(e) }  
@@ -121,6 +125,7 @@ cond:
 | SUB { Sub }
 | MUL { Mul }
 | DIV { Div }
+| MOD { Mod }
 ;
 
 %inline unop:

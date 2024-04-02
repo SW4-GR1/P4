@@ -38,7 +38,8 @@ and pp_expr = function
     | Add -> "+"
     | Sub -> "-"
     | Mul -> "*"
-    | Div -> "/" in
+    | Div -> "/"
+    | Mod -> "%" in
     "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
   | EUnop (id, unop) -> 
       let unop_str = match unop with
@@ -86,13 +87,19 @@ and pp_func func =
   body_str ^ "\n}\n"
             
 let rec pp_export = function
-  | Xexport str -> "export " ^ str
+  | Xexport str -> match str with 
+  | "" -> ""
+  | _ ->  "export " ^ str ^ ";"
 
 let rec pp_export_list exports =
   match exports with
   | [] -> ""
+  | [Xexport("")] -> ""
   | _ ->
-    String.concat "\n" (List.map pp_export exports) 
+    let list_str = String.concat "\n"(List.map pp_export exports) in
+    "{" ^ list_str ^ "}"
+    
+    
 
 
 

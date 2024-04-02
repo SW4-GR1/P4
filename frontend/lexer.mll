@@ -51,6 +51,7 @@ rule token = parse
   | '-'                 { SUB }
   | '*'                 { MUL }
   | '/'                 { DIV }
+  | '%'                 { MOD }
   | "++"                { INC }
   | "--"                { DEC }
   | "and"               { AND }

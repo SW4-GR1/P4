@@ -1,4 +1,4 @@
-type binop = Add | Mul | Sub | Div
+type binop = Add | Mul | Sub | Div | Mod
 
 type unop = Inc | Dec 
 
