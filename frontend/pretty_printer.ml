@@ -4,8 +4,9 @@ open Ast
 
 let rec pp_types = function
   | Int_ty -> "int"
-  | Str_ty -> "str"
   | Float_ty -> "float"
+  | Long_float_ty -> "long float"
+  | Long_int_ty -> "long int"
   | Bool_ty -> "bool" 
 
 

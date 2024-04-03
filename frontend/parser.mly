@@ -4,12 +4,13 @@
 
 %token ADD MUL SUB DIV MOD EOF INC DEC
 %token LT GT EQ NEQ LEQ GEQ AND OR NOT
-%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END ASSIGN LET EXPORT
+%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END LET EXPORT
+%token ASSIGN (*Tilføj andre assignment operatorer (+=, -=) etc *)
 %token<int> INT
 %token<float> FLOAT
 %token<string> IDENT
 %token<bool> BOOL
-%token INT_TY STR_TY FLOAT_TY BOOL_TY
+%token INT_TY FLOAT_TY LONG_INT_TY LONG_FLOAT_TY BOOL_TY
 %token IF ELSE
 %token FOR WHILE
 
@@ -94,11 +95,15 @@ for_loop:
     | FOR LPAREN
         decl = declarations c = cond END
         ass = assign RPAREN 
-        LBRACE s = stmt+ RBRACE { Sfor(decl, c, ass, Slist s) }
+        s = block { Sfor(decl, c, ass, Slist s) }
 
 while_loop:
     | WHILE LPAREN c = cond RPAREN 
-        LBRACE s = stmt+ RBRACE { Swhile(c, Slist s) }
+        s = block { Swhile(c, Slist s) }
+
+
+block:
+    | LBRACE s = stmt+ RBRACE {s}
 
 function_call:
     | id = IDENT LPAREN arg_list = separated_list(COMMA, expr) RPAREN { EFcall(id,arg_list ) }
@@ -166,11 +171,13 @@ cond:
 | DEC { Dec }
 ;
 
-%inline ty:
+%inline ty: (*Tilføj long int og float *)
 | INT_TY { Int_ty }
 | FLOAT_TY { Float_ty }
+| LONG_INT_TY { Long_int_ty } 
+| LONG_FLOAT_TY { Long_float_ty }
 | BOOL_TY { Bool_ty }
-| STR_TY { Str_ty }
+
 ;
 
 %inline l_op:

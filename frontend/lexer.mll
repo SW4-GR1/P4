@@ -18,8 +18,9 @@ let kwd_table = [
   "return", RETURN;
   "int", INT_TY;
   "float", FLOAT_TY;
+  "long_int", LONG_INT_TY;
+  "long_float", LONG_FLOAT_TY;
   "bool", BOOL_TY;
-  "str", STR_TY;
   "let", LET;
   "for", FOR;
   "while", WHILE;
