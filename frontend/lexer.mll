@@ -48,6 +48,10 @@ rule token = parse
   | newline             { next_line lexbuf; token lexbuf }
   | space+              { token lexbuf }
   | '='                 { ASSIGN }
+  | "+="                { ADD_ASSIGN }
+  | "-="                { SUB_ASSIGN }
+  | "*="                { MUL_ASSIGN }
+  | "/="                { DIV_ASSIGN }
   | '+'                 { ADD }
   | '-'                 { SUB }
   | '*'                 { MUL }

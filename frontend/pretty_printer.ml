@@ -67,6 +67,13 @@ let rec pp_array_body body =
   | [e] -> pp_expr e
   | e::es -> pp_expr e ^ ", " ^ pp_array_body es
 
+let pp_a_op = function
+  | Assign -> "="
+  | Add_assign -> "+="
+  | Sub_assign -> "-="
+  | Mul_assign -> "*="
+  | Div_assign -> "/="
+
 
 let rec pp_stmt = function
   | Slist exprs -> let stmt_list = List.map pp_stmt exprs in
@@ -80,7 +87,8 @@ let rec pp_stmt = function
       "if " ^ "( "^  pp_cond c ^  " )" ^  " { \n" ^ pp_stmt e1 ^ " \n}\n" ^ else_block
   | Sreturn e -> let expr_str = pp_expr e in
                 "( return " ^ (expr_str) ^ " )"
-  | Sass(id, e) -> "( " ^ id ^ " = " ^ pp_expr e ^ " )"
+  | Sass(id, a_op, e) -> let a_op_str = pp_a_op a_op in
+    "( " ^ id ^ " " ^ a_op_str ^ " " ^ pp_expr e ^ " )" 
   | Sdecl(t, id, expr_opt) -> 
     let decl_str = "let " ^ pp_types t ^ " " ^ id in
     begin match expr_opt with
@@ -101,8 +109,8 @@ let rec pp_stmt = function
     | Some body -> decl_str ^ " = [" ^ pp_array_body body ^ "]"
     | None -> decl_str
     end
-  | Sarr_assign(id, body) -> id ^ " = [" ^ pp_array_body body ^ "]" 
-  | Sarr_assign_elem(id, e1, e2) -> id ^ "[" ^ pp_expr e1 ^ "]" ^ " = " ^ pp_expr e2 
+  | Sarr_assign(id, a_op, body) -> let a_op_str = pp_a_op a_op in id ^ " " ^ a_op_str ^ " " ^ "[" ^ pp_array_body body ^ "]" 
+  | Sarr_assign_elem(id, e1, a_op, e2) -> let a_op_str = pp_a_op a_op in id ^ "[" ^ pp_expr e1 ^ "]" ^ " " ^ a_op_str ^ " " ^ pp_expr e2 
   | _ -> failwith "Unexpected case encountered in pp_stmt"
 
 and pp_func func =

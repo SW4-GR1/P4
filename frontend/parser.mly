@@ -5,7 +5,7 @@
 %token ADD MUL SUB DIV MOD EOF INC DEC
 %token LT GT EQ NEQ LEQ GEQ AND OR NOT
 %token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END LET EXPORT
-%token ASSIGN (*Tilføj andre assignment operatorer (+=, -=) etc *)
+%token ASSIGN ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
 %token<int> INT
 %token<float> FLOAT
 %token<string> IDENT
@@ -79,7 +79,7 @@ assignment:
     | arr_ass = array_assign {arr_ass}
 
 assign:
-    | id = IDENT ASSIGN e = expr END { Sass(id, e) }
+    | id = IDENT ass_op = a_op e = expr END { Sass(id, ass_op, e) }
 
 
 if_stmt:
@@ -129,8 +129,8 @@ func_body:
 ;
 
 array_assign:
-    | id = IDENT ASSIGN LBRACKET body = array_body RBRACKET END {Sarr_assign(id, body)}
-    | id = IDENT LBRACKET e1 = expr RBRACKET ASSIGN e2 = expr END {Sarr_assign_elem(id, e1, e2)}
+    | id = IDENT ass_op = a_op LBRACKET body = array_body RBRACKET END {Sarr_assign(id, ass_op, body)}
+    | id = IDENT LBRACKET e1 = expr RBRACKET ass_op = a_op e2 = expr END {Sarr_assign_elem(id, e1, ass_op, e2)}
 
 array_body: 
     | e = expr { [e] }
@@ -171,7 +171,7 @@ cond:
 | DEC { Dec }
 ;
 
-%inline ty: (*Tilføj long int og float *)
+%inline ty: 
 | INT_TY { Int_ty }
 | FLOAT_TY { Float_ty }
 | LONG_INT_TY { Long_int_ty } 
@@ -184,6 +184,12 @@ cond:
 | AND { And }
 | OR { Or }
 
+%inline a_op:
+| ASSIGN { Assign }
+| ADD_ASSIGN { Add_assign }
+| SUB_ASSIGN { Sub_assign }
+| MUL_ASSIGN { Mul_assign }
+| DIV_ASSIGN { Div_assign }
 
 %inline c_op:
 | LT { Lt }
