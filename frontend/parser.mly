@@ -2,19 +2,20 @@
     open Ast
 %}
 
-%token ADD MUL SUB DIV EOF INC DEC
+%token ADD MUL SUB DIV MOD EOF INC DEC
 %token LT GT EQ NEQ LEQ GEQ AND OR NOT
-%token LPAREN RPAREN LBRACE RBRACE COMMA DOT RETURN END ASSIGN LET
+%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END LET EXPORT
+%token ASSIGN ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
 %token<int> INT
 %token<float> FLOAT
 %token<string> IDENT
 %token<bool> BOOL
-%token INT_TY STR_TY FLOAT_TY
+%token INT_TY FLOAT_TY LONG_INT_TY LONG_FLOAT_TY BOOL_TY
 %token IF ELSE
 %token FOR WHILE
 
 %left ADD SUB
-%left MUL DIV
+%left MUL DIV MOD
 %nonassoc uminus
 %nonassoc IF
 %nonassoc ELSE
@@ -27,25 +28,58 @@
 //loops
 //assignments
 prog:
-    funcs = function_def*
+    exports = exports
     s = stmt* 
     EOF
-      { { funDecs = funcs; main = Slist s } }
+      { { exports = exports; main = Slist s } }
+    | s = stmt* EOF { { exports = []; main = Slist s } }
 ;
+
+exports:
+    LBRACE export = export* RBRACE { export }
+
+export:
+    |  EXPORT id = IDENT END  { Xexport(id) }
 
 stmt:
     | e = expr END { Ssimple(e) }  
-    | i_stmt = if_stmt { i_stmt }
+    | c_stmt = control_stmt { c_stmt }
+    | decl = declarations { decl }
     | ass = assignment { ass }
-    | loop = loop_stmt { loop }
+    | func = function_def {func}
 ;
 
-assignment:
-    | LET t = ty id = IDENT ASSIGN e = expr END { Sassign(t, id, e) }
-    | reass = reassign { reass }
+control_stmt:
+    | i_stmt = if_stmt {i_stmt}
+    | loop = loop_stmt {loop}
 
-reassign:
-    | id = IDENT ASSIGN e = expr END { Sreass(id, e) }
+
+declarations:
+    | LET d_type = dec_type {d_type}
+
+dec_type:
+    | t = ty id = IDENT e = assign_opt END {Sdecl(t, id, e)} // variables
+    | d_struc = data_struc_dec {d_struc} // datastructures
+
+assign_opt:
+    | ASSIGN e = expr { Some e }
+    | { None }
+
+
+data_struc_dec:
+    | t = ty LBRACKET e1 = expr RBRACKET id = IDENT body = array_body_opt END {Sarr_decl(t, e1, id, body)} // array 
+
+array_body_opt:
+    | ASSIGN LBRACKET body = array_body RBRACKET { Some body}
+    | { None }
+
+
+assignment:
+    | ass = assign { ass }
+    | arr_ass = array_assign {arr_ass}
+
+assign:
+    | id = IDENT ass_op = a_op e = expr END { Sass(id, ass_op, e) }
 
 
 if_stmt:
@@ -59,13 +93,17 @@ loop_stmt:
 
 for_loop:
     | FOR LPAREN
-        ass = assignment c = cond END
-        reass = reassign RPAREN 
-        LBRACE s = stmt+ RBRACE { Sfor(ass, c, reass, Slist s) }
+        decl = declarations c = cond END
+        ass = assign RPAREN 
+        s = block { Sfor(decl, c, ass, Slist s) }
 
 while_loop:
     | WHILE LPAREN c = cond RPAREN 
-        LBRACE s = stmt+ RBRACE { Swhile(c, Slist s) }
+        s = block { Swhile(c, Slist s) }
+
+
+block:
+    | LBRACE s = stmt+ RBRACE {s}
 
 function_call:
     | id = IDENT LPAREN arg_list = separated_list(COMMA, expr) RPAREN { EFcall(id,arg_list ) }
@@ -78,7 +116,7 @@ function_def:
     t = ty id = IDENT 
         LPAREN arg_list = separated_list(COMMA, param) RPAREN
         LBRACE body = func_body RBRACE 
-            { {fun_type = t; name = id; args = arg_list; body = body} }
+            { Sfunc{fun_type = t; name = id; args = arg_list; body = body} }
 ;
 
 param:
@@ -90,20 +128,34 @@ func_body:
         { Slist (stmts @ [r]) }
 ;
 
+array_assign:
+    | id = IDENT ass_op = a_op LBRACKET body = array_body RBRACKET END {Sarr_assign(id, ass_op, body)}
+    | id = IDENT LBRACKET e1 = expr RBRACKET ass_op = a_op e2 = expr END {Sarr_assign_elem(id, e1, ass_op, e2)}
+
+array_body: 
+    | e = expr { [e] }
+    | e = expr COMMA body = array_body { e :: body }
+
 expr:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
+    | id = IDENT u = unop            { EUnop(id, u) }
     | i = INT                        { EConst(i) }
     | fl = FLOAT                     { EFloat(fl)}
+    | bl = BOOL                      { EBool(bl)}
     | id = IDENT                     { EIdent(id) }
     | condition = cond               { condition }
     | LPAREN e = expr RPAREN         { e }
     | SUB e = expr %prec uminus      { EBinop(Sub, EConst 0, e) }
     | f_call = function_call         { f_call }
+    | LBRACKET body = array_body RBRACKET { Earray(body) }
 ;
 
 cond:
     | b = BOOL { EBool(b) }
+    | e1 = expr o= l_op e2 = expr  { ELog(o, e1, e2) }
     | e1 = expr o = c_op e2 = expr { ECond(o, e1, e2) }
+    | NOT e = expr { ENot(e) }
+    
 ;
 
 %inline op:
@@ -111,12 +163,33 @@ cond:
 | SUB { Sub }
 | MUL { Mul }
 | DIV { Div }
+| MOD { Mod }
 ;
 
-%inline ty:
-| INT_TY { Int_ty }
-| STR_TY { Str_ty }
+%inline unop:
+| INC { Inc }
+| DEC { Dec }
 ;
+
+%inline ty: 
+| INT_TY { Int_ty }
+| FLOAT_TY { Float_ty }
+| LONG_INT_TY { Long_int_ty } 
+| LONG_FLOAT_TY { Long_float_ty }
+| BOOL_TY { Bool_ty }
+
+;
+
+%inline l_op:
+| AND { And }
+| OR { Or }
+
+%inline a_op:
+| ASSIGN { Assign }
+| ADD_ASSIGN { Add_assign }
+| SUB_ASSIGN { Sub_assign }
+| MUL_ASSIGN { Mul_assign }
+| DIV_ASSIGN { Div_assign }
 
 %inline c_op:
 | LT { Lt }
