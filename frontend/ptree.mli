@@ -32,7 +32,7 @@ type stmt =
     stmt_loc : loc }
 
 and stmt_node = 
-  | Sexpr of expr
+  | Ssimple of expr
   | Slist of stmt list
   | Sfun of fun_dec
 

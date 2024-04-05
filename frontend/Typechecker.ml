@@ -39,8 +39,8 @@ type varTable = ty symTab
 let init_fun_table : funTable =
   SymTab.fromList [
     (* ("int" (Int_ty, [Int_ty, Int_ty], (0,0))); Example *)
+    (* ("matMul" (Mat_ty, [Mat_ty, Mat_ty], (0,0))); *)
   ]
-
 let pp_funtype (args_res : ty list * ty) : string = 
   let (args, res) = args_res in
   match args with
@@ -58,6 +58,7 @@ let check_eq_type t1 t2 = match t1, t2 with
   | Tint, Tint -> true
   | _, _ -> false
 
+
 let rec checkBinop (ftab : funTable) (vtab : varTable) 
   (pos : loc) (t : ty) (e1 : Ptree.expr) (e2 : Ptree.expr) 
   : ty * expr * expr =
@@ -66,13 +67,10 @@ let rec checkBinop (ftab : funTable) (vtab : varTable)
   if (t = t1 && t = t2) then (t, e1', e2') 
   else incompatible_types t1 t2 
 
-
-
-
 and checkExp (ftab : funTable) (vtab : varTable) (exp : Ptree.expr) : ty * expr =
   let expr_node = exp.expr_node in
   match expr_node with
-  | Econst(c) -> ( Tint,  { expr_node = Econst(c); expr_ty = Tint } )
+  | Econst(c) -> ( Tint,  { expr_node = Econst(c); expr_ty = Tint } ) (*2*3+5*6*)
   | Ebool(b)  -> ( Tbool, { expr_node = Ebool(b); expr_ty = Tbool } )
 
   | Ebinop(op, e1, e2) ->
