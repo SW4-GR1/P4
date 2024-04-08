@@ -7,7 +7,7 @@ let type_to_string = function
 (* parse tree types to type tree types*)
 
 let ty_of_pty = function 
-  | Ast.Tint -> Tint
+  | Ast.Int_ty -> Tint
 
 let loc_of_ploc (ploc : Ast.loc) : loc = ploc
 
@@ -47,7 +47,7 @@ let pp_funtype (args_res : ty list * ty) : string =
   | [] -> "() -> " ^ type_to_string res
   | args -> (String.concat ", " (List.map type_to_string args))
             ^ " -> " ^ type_to_string res
-let check_unique (vl : (Ast.ty * Ast.ident) list) =
+let check_unique (vl : (Ast.Int_ty * Ast.ident) list) =
   let set = Hashtbl.create 8 in 
   let check (_, {Ast.id = x}) =
     if Hashtbl.mem set x then duplicated_field x;
