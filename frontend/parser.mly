@@ -69,10 +69,14 @@ assign_opt:
 data_struc_dec:
     | t = ty LBRACKET e1 = expr RBRACKET id = IDENT body = array_body_opt END {Sarr_decl(t, e1, id, body)} // array 
     | t = ty LT e1 = expr GT id = IDENT body = vector_body_opt END {Svec_decl(t, e1, id, body)} // vector
+    | t = ty LT e1 = expr COMMA e2 =expr GT id = IDENT body = matrix_body_opt END {Smat_decl(t, e1, e2, id, body)}
 
 
+matrix_body_opt:
+    | ASSIGN body = matrix { Some body}
+    | { None }
 vector_body_opt:
-    | ASSIGN LT body = expr_body GT { Some body}
+    | ASSIGN body = vector { Some body}
     | { None }
 
 array_body_opt:
@@ -138,8 +142,11 @@ func_body:
 data_struc_assign:
     | id = IDENT ass_op = a_op LBRACKET body = expr_body RBRACKET END {Sarr_assign(id, ass_op, body)}
     | id = IDENT LBRACKET e1 = expr RBRACKET ass_op = a_op e2 = expr END {Sarr_assign_elem(id, e1, ass_op, e2)}
-    | id = IDENT ass_op = a_op LT body = expr_body GT END {Svec_assign(id, ass_op, body)}
+    | id = IDENT ass_op = a_op body = vector END {Svec_assign(id, ass_op, body)}
     | id = IDENT LT e1 = expr GT ass_op = a_op e2 = expr END {Svec_assign_elem(id, e1, ass_op, e2)}
+    | id = IDENT ass_op = a_op body = matrix END {Smat_assign(id, ass_op, body)}
+    | id = IDENT LT e1 = expr COMMA e2 = expr GT ass_op = a_op e3 = expr END {Smat_assign_elem(id, e1, e2, ass_op, e3)}
+
 
 
 expr_body: 
@@ -158,8 +165,22 @@ expr:
     | SUB e = expr %prec uminus      { EBinop(Sub, EConst 0, e) }
     | f_call = function_call         { f_call }
     | LBRACKET body = expr_body RBRACKET { Earray(body) }
-    | LT body = expr_body GT { Evec(body)}
+    | body = vector { Evector(body)}
+    | body = matrix {Ematrix(body)}
 ;
+
+matrix:
+    | LT body = matrix_body GT {body}
+
+matrix_body:
+    | v = vector vs = vector_opt {v :: vs}
+
+vector_opt:
+    | COMMA v = vector vs = vector_opt {v :: vs}
+    | { [] }
+
+vector:
+    | LT body = expr_body GT {body}
 
 cond:
     | b = BOOL { EBool(b) }

@@ -29,7 +29,8 @@ type expr =
   | ENot of expr
   | EFcall of string * expr list
   | Earray of expr list
-  | Evec of expr list
+  | Evector of expr list
+  | Ematrix of expr list list
 
 
 
@@ -48,6 +49,9 @@ type stmt =
   | Svec_decl of type_ident * expr * string * expr list option
   | Svec_assign of string * assign_type * expr list 
   | Svec_assign_elem of string * expr * assign_type * expr
+  | Smat_decl of type_ident * expr * expr * string * expr list list option
+  | Smat_assign of string * assign_type * expr list list
+  | Smat_assign_elem of string * expr * expr * assign_type * expr
   | Sfor of stmt * expr * stmt * stmt
   | Swhile of expr * stmt
 and func = {
