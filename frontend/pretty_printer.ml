@@ -10,10 +10,6 @@ let rec pp_types = function
   | Bool_ty -> "bool" 
 
 
-
-
-
-
 let rec pp_cond = function
   | ECond(op, e1, e2) ->
     let op_str = match op with

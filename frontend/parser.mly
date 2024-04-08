@@ -109,7 +109,7 @@ for_loop:
     | FOR LPAREN
         decl = declarations c = cond END
         ass = assign RPAREN 
-        s = block { Sfor(decl, c, ass, 
+        s = block { Sfor(decl, c, { stmt_node = ass; stmt_loc = $startpos, $endpos } , 
         { stmt_node = s; stmt_loc = $startpos, $endpos }) }
 ;
 
