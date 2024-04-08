@@ -9,7 +9,7 @@ type ty =
  | Tbool
  | Tmat
  | Tvec
- | Tarr of val_ty
+ | Tarr of val_type
 
 type binop = Ptree.binop
 

@@ -37,28 +37,27 @@ type varTable = ty symTab
 
 
 let init_fun_table : funTable = 
-  let init_fun_table : funTable = 
-    SymTab.fromList [
-      ("matMul", (Tmat, [Tmat, Tmat], (Lexing.dummy_pos, Lexing.dummy_pos)));
-      ("matAdd", (Tmat, [Tmat, Tmat], (0,0)));
-      ("matSub", (Tmat, [Tmat, Tnmat], (0,0)));
-      ("matScale", (Tmat, [Tmat, val_type], (0,0)));
-      ("matTrans", (Tmat, [Tmat], (0,0)));
-      ("matDet", (val_type, [Tmat], (0,0)));
-      ("matEigenVector", (Tarr(Tvec), [Tmat],(0,0)));
-      ("matEigenValue", (Tarr(Tint), [Tmat], (0,0)));
-      ("matEigenValue", (Tarr(Tint), [Tmat], (0,0)));
-      ("matSolveLinearSystem", (Tmat, [Tmat, Tmat], (0,0)));
-      ("matQR", (Tarr(Tmat), [Tmat], (0,0)));
-      ("matNormL1", (val_type, [Tmat],(0,0)));
-      ("matrixD", (Tarr(Tint), [Tmat], (0,0)));
-      ("sqrt", (val_type, [val_type], (0,0)));
-      ("pow", (val_type, [val_type, val_type], (0,0)));
-      ("root", (val_type, [val_type, val_type], (0,0)));
-      ("max", (val_type, [val_type, val_type],(0,0)));
-      ("min", (val_type, [val_type, val_type],(0,0)));
-      ("avg", (val_type, [Tarr(val_type)],(0,0)));
-    ]
+  SymTab.fromList [
+    ("matMul", (Tmat, [Tmat, Tmat], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matAdd", (Tmat, [Tmat, Tmat], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matSub", (Tmat, [Tmat, Tnmat], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matScale", (Tmat, [Tmat, val_type], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matTrans", (Tmat, [Tmat], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matDet", (val_type, [Tmat], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matEigenVector", (Tarr(Tvec), [Tmat],(Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matEigenValue", (Tarr(Tint), [Tmat], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matEigenValue", (Tarr(Tint), [Tmat], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matSolveLinearSystem", (Tmat, [Tmat, Tmat], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matQR", (Tarr(Tmat), [Tmat], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matNormL1", (val_type, [Tmat],(Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("matrixD", (Tarr(Tint), [Tmat], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("sqrt", (val_type, [val_type], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("pow", (val_type, [val_type, val_type], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("root", (val_type, [val_type, val_type], (Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("max", (val_type, [val_type, val_type],(Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("min", (val_type, [val_type, val_type],(Lexing.dummy_pos, Lexing.dummy_pos)));
+    ("avg", (val_type, [Tarr(val_type)],(Lexing.dummy_pos, Lexing.dummy_pos)));
+  ]
 
 
 let pp_funtype (args_res : ty list * ty) : string = 
@@ -107,6 +106,8 @@ and checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * expr =
       if check_eq_type t1 t2 
         then (t1, { expr_node = Econd(op, e1_bin, e2_bin); expr_ty = t1 } )
     else incompatible_types t1 t2
+
+(* and checkFunArg (ftab : funTable ) (vtab : vtable) (pos : loc) () *)
 
   (*
    | Ast.Ebinop (Ast.Blt | Ast.Ble | Ast.Bgt | Ast.Bge |
