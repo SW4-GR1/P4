@@ -38,9 +38,28 @@ type varTable = ty symTab
 
 let init_fun_table : funTable =
   SymTab.fromList [
-    (* ("int" (Int_ty, [Int_ty, Int_ty], (0,0))); Example *)
-    (* ("matMul" (Mat_ty, [Mat_ty, Mat_ty], (0,0))); *)
+    ("matMul" (Tmat, [Tmat, Tmat], (0,0)));
+    ("matAdd" (Tmat, [Tmat, Tmat], (0,0)));
+    ("matSub" (Tmat, [Tmat, Tnmat], (0,0)));
+    ("matScale" (Tmat, [Tmat, val_type], (0,0)));
+    ("matTrans" (Tmat, [Tmat], (0,0)));
+    ("matDet" (val_type, [Tmat], (0,0)));
+    ("matEigenVector", (Tarr(Tvec), [Tmat],(0,0)));
+    ("matEigenValue", (Tarr(Tint), [Tmat], (0,0)));
+    ("matEigenValue", (Tarr(Tint), [Tmat], (0,0)));
+    ("matSolveLinearSystem", (Tmat, [Tmat, Tmat], (0,0)));
+    ("matQR", (Tarr(Tmat), [Tmat], (0,0)));
+    ("matNormL1", (val_type, [Tmat],(0,0)));
+    ("matrixD",(Tarr(Tint), [Tmat], (0,0)));
+    ("sqrt", (val_type, [val_type], (0,0)));
+    ("pow", (val_type, [val_type, val_type], (0,0)));
+    ("root", (val_type, [val_type, val_type], (0,0)));
+    ("max", (val_type, [val_type, val_type],(0,0)));
+    ("min", (vval_type, [val_type, val_type],(0,0)));
+    ("avg", (val_type,[Tarr(val_type)],(0,0)));
   ]
+
+
 let pp_funtype (args_res : ty list * ty) : string = 
   let (args, res) = args_res in
   match args with
@@ -51,6 +70,7 @@ let check_unique (vl : (Ast.Int_ty * Ast.ident) list) =
   let set = Hashtbl.create 8 in 
   let check (_, {Ast.id = x}) =
     if Hashtbl.mem set x then duplicated_field x;
+
     Hashtbl.add set x () in
   List.iter check vl
 

@@ -2,14 +2,18 @@ type loc = Lexing.position * Lexing.position
 
 type ident = string
 
+type val_type = Tint | Tfloat | Tlongint | Tlongfloat
+
 type ty = 
- | Tint
+ | val_type
  | Tbool
+ | Tmat
+ | Tvec
+ | Tarr of val_ty
 
 type binop = Ptree.binop
 
 type cond = Ptree.cond
-
 
 type var_dec = ty * ident
 
