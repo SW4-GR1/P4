@@ -69,7 +69,7 @@ assign_opt:
 data_struc_dec:
     | t = ty LBRACKET e1 = expr RBRACKET id = IDENT body = array_body_opt END {Sarr_decl(t, e1, id, body)} // array 
     | t = ty LT e1 = expr GT id = IDENT body = vector_body_opt END {Svec_decl(t, e1, id, body)} // vector
-    | t = ty LT e1 = expr COMMA e2 =expr GT id = IDENT body = matrix_body_opt END {Smat_decl(t, e1, e2, id, body)}
+    | t = ty LT e1 = expr COMMA e2 =expr GT id = IDENT body = matrix_body_opt END {Smat_decl(t, e1, e2, id, body)} // matrix
 
 
 matrix_body_opt:
