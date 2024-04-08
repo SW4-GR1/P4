@@ -10,24 +10,32 @@
 </body>
 <script src="fibonacci.js"></script>
 <script>
+    let wasmInstance;
+    async function init() {
+        const response = await fetch("fibonacci.wasm");
+        const wasmModule = await response.arrayBuffer();
+        const obj = await WebAssembly.instantiate(wasmModule);
+        wasmInstance = obj.instance;
+    }
+
     async function test(n) {
         console.time(`JS Fibonacci Time n = ${n}`);
         let result2 = fibonacci(n)
         console.timeEnd(`JS Fibonacci Time n = ${n}`);
 
-        await WebAssembly.instantiateStreaming(fetch("fibonacci.wasm")).then(obj =>
-        {
+       
             console.time(`WA Fibonacci Time n = ${n}`);
 
-            let result = obj.instance.exports.fibonacci(n)
+            let result = wasmInstance.exports.fibonacci(n)
 
             console.timeEnd(`WA Fibonacci Time n = ${n}`);
 
             
-        })  
+        
     }
     async function runTests() {
-        for (let i = 88; i < 93; i++) {
+        await init();
+        for (let i = 80; i < 93; i++) {
             await test(i)
         }
     }
