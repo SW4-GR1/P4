@@ -7,12 +7,12 @@ let type_to_string = function
 (* parse tree types to type tree types*)
 
 let ty_of_pty = function 
-  | Ptree.Tint -> Tint
+  | Ast.Int_ty -> Tint
 
-let loc_of_ploc (ploc : Ptree.loc) : loc = ploc
+let loc_of_ploc (ploc : Ast.loc) : loc = ploc
 
 
-exception Error of Ptree.loc option * string
+exception Error of Ast.loc option * string
 
 let error ?loc msg = raise (Error (loc, msg))
 
@@ -47,9 +47,9 @@ let pp_funtype (args_res : ty list * ty) : string =
   | [] -> "() -> " ^ type_to_string res
   | args -> (String.concat ", " (List.map type_to_string args))
             ^ " -> " ^ type_to_string res
-let check_unique (vl : (Ptree.ty * Ptree.ident) list) =
+let check_unique (vl : (Ast.Int_ty * Ast.ident) list) =
   let set = Hashtbl.create 8 in 
-  let check (_, {Ptree.id = x}) =
+  let check (_, {Ast.id = x}) =
     if Hashtbl.mem set x then duplicated_field x;
     Hashtbl.add set x () in
   List.iter check vl
@@ -60,14 +60,14 @@ let check_eq_type t1 t2 = match t1, t2 with
 
 
 let rec checkBinop (ftab : funTable) (vtab : varTable) 
-  (pos : loc) (t : ty) (e1 : Ptree.expr) (e2 : Ptree.expr) 
+  (pos : loc) (t : ty) (e1 : Ast.expr) (e2 : Ast.expr) 
   : ty * expr * expr =
   let (t1, e1') = checkExp ftab vtab e1 in
   let (t2, e2') = checkExp ftab vtab e2 in
   if (t = t1 && t = t2) then (t, e1', e2') 
   else incompatible_types t1 t2 
 
-and checkExp (ftab : funTable) (vtab : varTable) (exp : Ptree.expr) : ty * expr =
+and checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * expr =
   let expr_node = exp.expr_node in
   match expr_node with
   | Econst(c) -> ( Tint,  { expr_node = Econst(c); expr_ty = Tint } ) (*2*3+5*6*)
@@ -88,9 +88,9 @@ and checkExp (ftab : funTable) (vtab : varTable) (exp : Ptree.expr) : ty * expr 
     else incompatible_types t1 t2
 
   (*
-   | Ptree.Ebinop (Ptree.Blt | Ptree.Ble | Ptree.Bgt | Ptree.Bge |
-		  Ptree.Badd | Ptree.Bsub | Ptree.Bmul | Ptree.Bdiv |
-		  Ptree.Band | Ptree.Bor as op , e1, e2) ->
+   | Ast.Ebinop (Ast.Blt | Ast.Ble | Ast.Bgt | Ast.Bge |
+		  Ast.Badd | Ast.Bsub | Ast.Bmul | Ast.Bdiv |
+		  Ast.Band | Ast.Bor as op , e1, e2) ->
       let e1 = expr env e1 in
       let e2 = expr env e2 in
       expected_type Tint e1;
@@ -98,11 +98,11 @@ and checkExp (ftab : funTable) (vtab : varTable) (exp : Ptree.expr) : ty * expr 
       Ebinop (op, e1, e2), Tint
         *)
 
-let update_fun_table (ftab : funTable) (fundec : Ptree.stmt) : funTable =
+let update_fun_table (ftab : funTable) (fundec : Ast.stmt) : funTable =
   let stmtnode = fundec.stmt_node in
   match stmtnode with
   | Sfun(fdec) -> 
-    let {Ptree.fun_ty = pty; Ptree.fun_name = ident; Ptree.fun_args = args; _} = fdec in
+    let {Ast.fun_ty = pty; Ast.fun_name = ident; Ast.fun_args = args; _} = fdec in
     let arg_types = List.map (fun (ty, _) -> ty_of_pty ty) args in
     let ident_name = ident.id in
       match lookup ident_name ftab with
@@ -112,7 +112,7 @@ let update_fun_table (ftab : funTable) (fundec : Ptree.stmt) : funTable =
   | _ -> error "Not a function"
 
 
-  let program (p : Ptree.file) : prog = 
+  let program (p : Ast.file) : prog = 
     let stmts = snd p in
     let ftab = List.fold_left update_fun_table init_fun_table stmts in
     let ftab_list = toList ftab in 
