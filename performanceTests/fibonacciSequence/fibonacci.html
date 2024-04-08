@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script src="fibonacci.js"></script>
+<script>
+    async function test(n) {
+        console.time(`JS Fibonacci Time n = ${n}`);
+        let result2 = fibonacci(n)
+        console.timeEnd(`JS Fibonacci Time n = ${n}`);
+
+        await WebAssembly.instantiateStreaming(fetch("fibonacci.wasm")).then(obj =>
+        {
+            console.time(`WA Fibonacci Time n = ${n}`);
+
+            let result = obj.instance.exports.fibonacci(n)
+
+            console.timeEnd(`WA Fibonacci Time n = ${n}`);
+
+            
+        })  
+    }
+    async function runTests() {
+        for (let i = 88; i < 93; i++) {
+            await test(i)
+        }
+    }
+    runTests();
+    
+</script>
+</html>
