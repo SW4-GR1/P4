@@ -29,6 +29,7 @@ type expr =
   | ENot of expr
   | EFcall of string * expr list
   | Earray of expr list
+  | Evec of expr list
 
 
 
@@ -44,6 +45,9 @@ type stmt =
   | Sarr_decl of type_ident * expr * string * expr list option
   | Sarr_assign of string * assign_type * expr list 
   | Sarr_assign_elem of string * expr * assign_type * expr
+  | Svec_decl of type_ident * expr * string * expr list option
+  | Svec_assign of string * assign_type * expr list 
+  | Svec_assign_elem of string * expr * assign_type * expr
   | Sfor of stmt * expr * stmt * stmt
   | Swhile of expr * stmt
 and func = {

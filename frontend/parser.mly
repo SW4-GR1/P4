@@ -68,15 +68,22 @@ assign_opt:
 
 data_struc_dec:
     | t = ty LBRACKET e1 = expr RBRACKET id = IDENT body = array_body_opt END {Sarr_decl(t, e1, id, body)} // array 
+    | t = ty LT e1 = expr GT id = IDENT body = vector_body_opt END {Svec_decl(t, e1, id, body)} // vector
+
+
+vector_body_opt:
+    | ASSIGN LT body = expr_body GT { Some body}
+    | { None }
 
 array_body_opt:
-    | ASSIGN LBRACKET body = array_body RBRACKET { Some body}
+    | ASSIGN LBRACKET body = expr_body RBRACKET { Some body}
     | { None }
 
 
 assignment:
     | ass = assign { ass }
-    | arr_ass = array_assign {arr_ass}
+    | data_struc_ass = data_struc_assign {data_struc_ass}
+    
 
 assign:
     | id = IDENT ass_op = a_op e = expr END { Sass(id, ass_op, e) }
@@ -128,13 +135,16 @@ func_body:
         { Slist (stmts @ [r]) }
 ;
 
-array_assign:
-    | id = IDENT ass_op = a_op LBRACKET body = array_body RBRACKET END {Sarr_assign(id, ass_op, body)}
+data_struc_assign:
+    | id = IDENT ass_op = a_op LBRACKET body = expr_body RBRACKET END {Sarr_assign(id, ass_op, body)}
     | id = IDENT LBRACKET e1 = expr RBRACKET ass_op = a_op e2 = expr END {Sarr_assign_elem(id, e1, ass_op, e2)}
+    | id = IDENT ass_op = a_op LT body = expr_body GT END {Svec_assign(id, ass_op, body)}
+    | id = IDENT LT e1 = expr GT ass_op = a_op e2 = expr END {Svec_assign_elem(id, e1, ass_op, e2)}
 
-array_body: 
+
+expr_body: 
     | e = expr { [e] }
-    | e = expr COMMA body = array_body { e :: body }
+    | e = expr COMMA body = expr_body { e :: body }
 
 expr:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
@@ -147,7 +157,8 @@ expr:
     | LPAREN e = expr RPAREN         { e }
     | SUB e = expr %prec uminus      { EBinop(Sub, EConst 0, e) }
     | f_call = function_call         { f_call }
-    | LBRACKET body = array_body RBRACKET { Earray(body) }
+    | LBRACKET body = expr_body RBRACKET { Earray(body) }
+    | LT body = expr_body GT { Evec(body)}
 ;
 
 cond:
