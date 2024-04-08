@@ -24,3 +24,6 @@
 _opam/i
 
 *.txt
+
+# remove vscode settings
+*.vscode/
