@@ -6,9 +6,9 @@ type ty =
  | Tint
  | Tbool
 
-type binop = Ptree.binop
+type binop = Ast.binop
 
-type cond = Ptree.cond
+type cond = Ast.cond_binop
 
 
 type var_dec = ty * ident

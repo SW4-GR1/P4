@@ -64,8 +64,8 @@ declarations:
     | LET d_type = dec_type {d_type}
 
 dec_type:
-    | t = ty id = ident e = assign_opt END { Sdecl(t, id, e) } // variables
-    | d_struc = data_struc_dec {d_struc} // datastructures
+  | t = ty id = ident e = assign_opt END { Sdecl({var_ty = t; var_name = id; var_expr = e}) } // variables
+  | d_struc = data_struc_dec { d_struc } // data structures
 
 assign_opt:
     | ASSIGN e = expr { Some e }
@@ -169,8 +169,7 @@ expr_node:
     | condition = cond               { condition.expr_node }
     | LPAREN e = expr RPAREN         { e.expr_node }
     | SUB e = expr %prec uminus      { EBinop(Sub, {
-                                        expr_node = EConst(0); expr_loc = $loc },
-                                         e) }
+                                        expr_node = EConst(0); expr_loc = $loc}, e) }
     | f_call = function_call         { f_call }
     | LBRACKET body = array_body RBRACKET { Earray(body) }
 ;

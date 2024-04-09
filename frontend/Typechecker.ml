@@ -1,6 +1,7 @@
 open SymTab
 open Ttree
 
+
 let type_to_string = function 
   | Tint -> "int"
 
@@ -35,6 +36,15 @@ let bad_arity ?loc p a =
 type funTable = (ty * ty list * loc) symTab
 type varTable = ty symTab
 
+let string_of_location ((start_pos, end_pos) : loc) : string =
+  let line = start_pos.pos_lnum in
+  let start_char = start_pos.pos_cnum - start_pos.pos_bol in
+  let end_char = end_pos.pos_cnum - end_pos.pos_bol in
+  "line " ^ string_of_int line ^ 
+  ", start column " ^ string_of_int start_char ^ 
+  ", end column " ^ string_of_int end_char
+
+
 
 let init_fun_table : funTable =
   SymTab.fromList [
@@ -47,7 +57,8 @@ let pp_funtype (args_res : ty list * ty) : string =
   | [] -> "() -> " ^ type_to_string res
   | args -> (String.concat ", " (List.map type_to_string args))
             ^ " -> " ^ type_to_string res
-let check_unique (vl : (Ast.Int_ty * Ast.ident) list) =
+
+let check_unique (vl : (Ast.type_ident * Ast.ident) list) =
   let set = Hashtbl.create 8 in 
   let check (_, {Ast.id = x}) =
     if Hashtbl.mem set x then duplicated_field x;
@@ -56,8 +67,7 @@ let check_unique (vl : (Ast.Int_ty * Ast.ident) list) =
 
 let check_eq_type t1 t2 = match t1, t2 with
   | Tint, Tint -> true
-  | _, _ -> false
-
+  | _, _ -> false 
 
 let rec checkBinop (ftab : funTable) (vtab : varTable) 
   (pos : loc) (t : ty) (e1 : Ast.expr) (e2 : Ast.expr) 
@@ -70,17 +80,17 @@ let rec checkBinop (ftab : funTable) (vtab : varTable)
 and checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * expr =
   let expr_node = exp.expr_node in
   match expr_node with
-  | Econst(c) -> ( Tint,  { expr_node = Econst(c); expr_ty = Tint } ) (*2*3+5*6*)
-  | Ebool(b)  -> ( Tbool, { expr_node = Ebool(b); expr_ty = Tbool } )
+  | EConst(c) -> ( Tint,  { expr_node = Econst(c); expr_ty = Tint } ) (*2*3+5*6*)
+  | EBool(b)  -> ( Tbool, { expr_node = Ebool(b); expr_ty = Tbool } )
 
-  | Ebinop(op, e1, e2) ->
+  | EBinop(op, e1, e2) ->
         let (t1, e1_bin) = checkExp ftab vtab e1 in
         let (t2, e2_bin) = checkExp ftab vtab e2 in
         if check_eq_type t1 t2 
           then (t1, { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t1 } )
           else incompatible_types t1 t2
 
-  | Econd(op, e1, e2) -> 
+  | ECond(op, e1, e2) -> 
       let (t1, e1_bin) = checkExp ftab vtab e1 in
       let (t2, e2_bin) = checkExp ftab vtab e2 in
       if check_eq_type t1 t2 
@@ -98,6 +108,22 @@ and checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * expr =
       Ebinop (op, e1, e2), Tint
         *)
 
+let update_var_table (vtab : varTable) (vardec : Ast.stmt) : varTable =
+  let stmtnode = vardec.stmt_node in
+  match stmtnode with 
+| Ast.Sdecl(vdec) ->
+  let { Ast.var_ty = pty; Ast.var_name = ident; Ast.var_expr = expr_opt } = vdec in
+    let ident_name = ident.id in
+    (match lookup ident_name vtab with
+    | Some _ -> 
+        let location = loc_of_ploc vardec.stmt_loc in
+        error ~loc:location ("Duplicate variable at " ^ string_of_location location) 
+    | None -> 
+        let vtab_next : varTable = bind ident_name (ty_of_pty pty) vtab in
+        vtab_next)
+  | _ -> error "Not a variable"
+
+(*
 let update_fun_table (ftab : funTable) (fundec : Ast.stmt) : funTable =
   let stmtnode = fundec.stmt_node in
   match stmtnode with
@@ -121,6 +147,8 @@ let update_fun_table (ftab : funTable) (fundec : Ast.stmt) : funTable =
       Sfun fun_dec
     ) ftab_list in
     { stmts = stmts }
+*)
+
 (* 
 
 let program p = 

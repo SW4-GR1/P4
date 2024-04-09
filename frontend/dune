@@ -9,4 +9,4 @@
  (libraries str)
  (promote (until-clean))
  (flags ())
- (modules_without_implementation ptree ttree))
+ (modules_without_implementation ttree))

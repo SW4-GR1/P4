@@ -26,7 +26,8 @@ type export =
 
 type expr =
   { expr_node: expr_node;
-    expr_loc : loc }
+    expr_loc : loc;
+    (*expr_type : type_ident*)}
 
 and expr_node =
   | EBool of bool
@@ -41,6 +42,12 @@ and expr_node =
   | EFcall of string * expr list
   | Earray of expr list
 
+type vdec = {
+  var_ty : type_ident;
+  var_name : ident;
+  var_expr : expr option;  (* This field is optional *)
+}
+
 
 type stmt = 
   { stmt_node: stmt_node;
@@ -53,7 +60,7 @@ and stmt_node =
   | Sfunc of func
   | Sif of expr * stmt * stmt
   | Sreturn of expr
-  | Sdecl of type_ident * ident * expr option 
+  | Sdecl of vdec
   | Sass of ident * assign_type * expr 
   | Sarr_decl of type_ident * expr * ident * expr list option
   | Sarr_assign of string * assign_type * expr list 
