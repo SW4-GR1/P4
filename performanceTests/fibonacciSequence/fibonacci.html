@@ -14,7 +14,9 @@
     async function init() {
         const response = await fetch("fibonacci.wasm");
         const wasmModule = await response.arrayBuffer();
+        console.time('WA instantiate')
         const obj = await WebAssembly.instantiate(wasmModule);
+        console.timeEnd('WA instantiate')
         wasmInstance = obj.instance;
     }
 

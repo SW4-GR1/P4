@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 >"Crazy Code Test"</h1>  
+</body>
+<script src="bubblesort.js"></script>
+<script> 
+    let obj;
+    
+    async function sortArray(inputArray) {
+        const instance = obj.instance;
+        const length = inputArray.length;
+        const bytesPerElement = 4; // Assuming we're sorting 32-bit integers
+        const offset = 0; // Offset in the shared memory where the array starts
+
+        const requiredMemory = (offset + length) * bytesPerElement;
+
+        if (instance.exports.memory.buffer.byteLength < requiredMemory) {
+            // required memory in pages
+            const requiredPages = Math.ceil(requiredMemory / 65536) // 65536 bytes/page
+            const currentPages = instance.exports.memory.buffer.byteLength / 65536;
+            instance.exports.memory.grow(requiredPages - currentPages);
+        }
+        // Create a typed array that shares the memory with the WebAssembly instance
+        const array = new Uint32Array(instance.exports.memory.buffer, offset, length);
+
+        // Initialize the array with some values
+        array.set(inputArray);
+
+        // Call the WebAssembly sorting function
+        instance.exports.sort(offset, length);
+
+        return array;
+    }
+
+    async function runTests(n) {
+        console.time('WA instantiate')
+        obj = await WebAssembly.instantiateStreaming(fetch('bubblesort.wasm'));
+        console.timeEnd('WA instantiate')
+
+        const inputArray = Array.from({length: n}, () => Math.floor(Math.random() * n));
+        console.time('JS sort');
+        bubblesort(inputArray);
+        console.timeEnd('JS sort');
+
+        console.time('WA sort');
+        const sortedArray = await sortArray(inputArray);
+        console.timeEnd('WA sort');
+
+        console.log('Sorted array:', sortedArray);
+    }
+
+    runTests(50000);
+
+</script>
+</html>
