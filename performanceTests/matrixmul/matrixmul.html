@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="number" id="matrixSize" value="100">
+    <button onclick="runTests()">Run tests</button>
+</body>
+<script src="matrixmul.js"> </script>
+<script>
+    let obj;
+    async function runTests() {
+        const n = document.getElementById('matrixSize').value;
+        console.log(`${n} x ${n} matrix multiplication:`);
+        console.time('WA instantiate')
+        obj = await WebAssembly.instantiateStreaming(fetch('matrixmul.wasm'));
+        console.timeEnd('WA instantiate')
+
+        const inputA = generateRandomMatrix(n, n);
+        const inputB = generateRandomMatrix(n, n);
+        console.time('JS mul');
+        matrixMul(inputA, inputB);
+        console.timeEnd('JS mul');
+
+        console.time('WA mul');
+        const result = matrixMulWS(inputA, inputB);
+        console.timeEnd('WA mul');
+
+       /*  console.log('Matrix A:', inputA);
+        console.log('Matrix B:', inputB);
+        console.log('Result matrix:', result); */
+    }
+
+    function matrixMulWS(inputA, inputB) {
+        const instance = obj.instance;
+        const matAFlat = inputA.flat();
+        const matBFlat = inputB.flat();
+        const rowsA = inputA.length;
+        const colsA = inputA[0].length;
+        const rowsB = inputB.length;
+        const colsB = inputB[0].length;
+
+        const bytesPerElement = 4; // Assuming we're multiplying 32-bit integers
+        let matALoc = 0;
+        let matBLoc = matAFlat.length * bytesPerElement;
+       
+        const matA = new Uint32Array(instance.exports.memory.buffer, matALoc, matAFlat.length);
+        matA.set(matAFlat);
+        const matB = new Uint32Array(instance.exports.memory.buffer, matBLoc, matBFlat.length);
+        matB.set(matBFlat);
+        
+        const matCLoc = instance.exports.matrixMul(matALoc, matBLoc, rowsA, colsA, rowsB, colsB);
+        
+        const matCElements = rowsA * colsB;
+        const matCFlat = new Uint32Array(instance.exports.memory.buffer, matCLoc, matCElements);
+
+        // Convert the flat array into a 2D array
+        const matC = [];
+        for (let i = 0; i < rowsA; i++) {
+            const row = [];
+            for (let j = 0; j < colsB; j++) {
+                row.push(matCFlat[i * colsB + j]);
+            }
+            matC.push(row);
+        }
+
+        return matC;
+    }
+
+    function generateRandomMatrix(n, m) {
+    const matrix = [];
+    for (let i = 0; i < n; i++) {
+        const row = [];
+        for (let j = 0; j < m; j++) {
+            row.push(Math.floor(Math.random() * 10)); // Generate a random integer between 0 and 9
+        }
+        matrix.push(row);
+    }
+    return matrix;
+    }   
+
+</script>
+</html>
