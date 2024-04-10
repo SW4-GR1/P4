@@ -9,6 +9,44 @@ let rec pp_types = function
   | Long_int_ty -> "long int"
   | Bool_ty -> "bool" 
 
+let rec pp_expr expr_instance = 
+  match expr_instance.expr_node with
+  | EConst n -> string_of_int n
+  | EFloat fl -> string_of_float fl
+  | EBool b -> string_of_bool b
+  | EIdent x -> x.id
+  | EBinop (op, e1, e2) -> 
+      let op_str = match op with
+      | Add -> "+"
+      | Sub -> "-"
+      | Mul -> "*"
+      | Div -> "/"
+      | Mod -> "%" in
+      "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
+  | EUnop (id, unop) -> 
+      let unop_str = match unop with
+      | Inc -> "++"
+      | Dec -> "--" in
+      "(" ^ id ^ unop_str ^ ")"
+  | ECond(op, e1, e2) -> 
+      let cond_str = match op with
+      | Lt -> "<"
+      | Gt -> ">"
+      | Eq -> "=="
+      | Neq -> "!="
+      | Leq -> "<="
+      | Geq -> ">=" in
+      "(" ^ pp_expr e1 ^ " " ^ cond_str ^ " " ^ pp_expr e2 ^ ")"
+  | ELog(op, e1, e2) -> 
+      let op_str = match op with
+      | And -> "&&"
+      | Or -> "||" in
+      "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
+  | ENot e -> "!" ^ pp_expr e
+  | EFcall(id, args) -> 
+      let args_str = String.concat ", " (List.map pp_expr args) in
+      id ^ "( " ^ args_str ^ " )"
+
 
 let rec pp_cond = function
   | ECond(op, e1, e2) ->
@@ -27,34 +65,6 @@ let rec pp_cond = function
     | Or -> "or" in
     "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
   | ENot (e) -> "not" ^ " " ^ pp_expr e
-  
-
-and pp_expr = function
-  | EConst n -> string_of_int n
-  | EFloat fl -> string_of_float fl
-  | EBool b -> string_of_bool b
-  | EIdent x -> x
-  | EBinop (op, e1, e2) -> 
-    let op_str = match op with
-    | Add -> "+"
-    | Sub -> "-"
-    | Mul -> "*"
-    | Div -> "/"
-    | Mod -> "%" in
-    "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
-  | EUnop (id, unop) -> 
-      let unop_str = match unop with
-      | Inc -> "++"
-      | Dec -> "--"
-      in let id_str = id in
-      "(" ^ id_str ^ unop_str ^ ")"
-  | ECond(op, e1, e2) -> pp_cond (ECond(op, e1, e2))
-  | ELog(op, e1, e2) -> pp_cond (ELog(op, e1, e2))
-  | ENot(e) -> pp_cond (ENot(e))
-  | EFcall(id, args) -> 
-    let args_str = String.concat ", " (List.map pp_expr args) in
-    id ^ "( " ^ args_str ^ " )"
-
 
     
 let rec pp_array_body body =
@@ -71,22 +81,24 @@ let pp_a_op = function
   | Div_assign -> "/="
 
 
-let rec pp_stmt = function
+let rec pp_stmt stmt_instance =
+match stmt_instance.stmt_node with
   | Slist exprs -> let stmt_list = List.map pp_stmt exprs in
                   String.concat "\n" stmt_list
   | Ssimple e -> let expr_str = pp_expr e in
                      "( "^ (expr_str) ^ " )"
-  | Sif (c, e1, e2) -> 
-    let else_block = match e2 with
-      | Slist[] -> ""
+  | Sif (c, e1, e2) ->
+    let else_block = match e2.stmt_node with
+      | Slist [] -> ""
       | _ -> "else" ^ " { \n" ^ pp_stmt e2 ^ " \n}\n " in
-      "if " ^ "( "^  pp_cond c ^  " )" ^  " { \n" ^ pp_stmt e1 ^ " \n}\n" ^ else_block
+    "if " ^ "( " ^ pp_expr c ^ " )" ^ " { \n" ^ pp_stmt e1 ^ " \n}\n" ^ else_block
   | Sreturn e -> let expr_str = pp_expr e in
                 "( return " ^ (expr_str) ^ " )"
-  | Sass(id, a_op, e) -> let a_op_str = pp_a_op a_op in
-    "( " ^ id ^ " " ^ a_op_str ^ " " ^ pp_expr e ^ " )" 
-  | Sdecl(t, id, expr_opt) -> 
-    let decl_str = "let " ^ pp_types t ^ " " ^ id in
+ | Sass(ident, a_op, e) -> 
+    let a_op_str = pp_a_op a_op in
+    "( " ^ ident.id ^ " " ^ a_op_str ^ " " ^ pp_expr e ^ " ) "
+  | Sdecl(vdec) -> 
+    let decl_str = "let " ^ pp_types vdec.var_ty ^ " " ^ vdec.var_name in
     begin match expr_opt with
     | Some expr -> decl_str ^ " = " ^ pp_expr expr
     | None -> decl_str

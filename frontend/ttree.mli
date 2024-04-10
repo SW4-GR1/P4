@@ -5,7 +5,7 @@ type ident = string
 type val_type = Tint | Tfloat | Tlongint | Tlongfloat
 
 type ty = 
- | val_type
+ | Tval_type of val_type 
  | Tbool
  | Tmat
  | Tvec

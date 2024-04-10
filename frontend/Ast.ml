@@ -26,8 +26,7 @@ type export =
 
 type expr =
   { expr_node: expr_node;
-    expr_loc : loc;
-    (*expr_type : type_ident*)}
+    expr_loc : loc;}
 
 and expr_node =
   | EBool of bool
