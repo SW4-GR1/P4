@@ -4,6 +4,7 @@ open Ttree
 
 let type_to_string = function 
   | Tint -> "int"
+  | Tfloat -> "float"
 
 (* parse tree types to type tree types*)
 
@@ -51,7 +52,7 @@ let init_fun_table : funTable =
     (* ("int" (Int_ty, [Int_ty, Int_ty], (0,0))); Example *)
     (* ("matMul" (Mat_ty, [Mat_ty, Mat_ty], (0,0))); *)
   ]
-let pp_funtype (args_res : ty list * ty) : string = 
+let pp_funtype (args_res : Ttree.ty list * Ttree.ty) : string = 
   let (args, res) = args_res in
   match args with
   | [] -> "() -> " ^ type_to_string res

@@ -15,7 +15,6 @@ let ofile = ref ""
 
 let set_file f s = f := s
 
-
 let options =
   ["--parse-only", Arg.Set parse_only,
    "  Only perform syntax analysis of the program";
@@ -54,7 +53,7 @@ let () =
     let parsetree = Pretty_printer.pp_prog p in
     if !parse_only then exit 0 else
       let _ = print_endline parsetree in
-      let _p = Typechecker.program p in 
+      let _p = Typechecker.program p in
       if !type_only then exit 0 else 
         print_endline _p
     

@@ -99,20 +99,36 @@ match stmt_instance.stmt_node with
     "( " ^ ident.id ^ " " ^ a_op_str ^ " " ^ pp_expr e ^ " ) "
   | Sdecl(vdec) -> 
     let decl_str = "let " ^ pp_types vdec.var_ty ^ " " ^ vdec.var_name.id in
-    begin match expr_opt with
+    begin match vdec.var_expr with
     | Some expr -> decl_str ^ " = " ^ pp_expr expr
     | None -> decl_str
     end
-  | Sfor(ass, c, reass, s) -> 
-    let ass_str = pp_stmt ass in
-    let cond_str = pp_cond c in
-    let reass_str = pp_stmt reass in
+  | Sfor(ass, c, reass, s) ->
+    let ass_str = match ass with
+      | Ssimple e -> pp_expr e
+      | Sdecl vdec -> 
+        let decl_str = "let " ^ pp_types vdec.var_ty ^ " " ^ vdec.var_name.id in
+        begin match vdec.var_expr with
+          | Some expr -> decl_str ^ " = " ^ pp_expr expr
+          | None -> decl_str
+          end
+      | Sass (ident, a_op, e) -> 
+        "( " ^ ident.id ^ " " ^ pp_a_op a_op ^ " " ^ pp_expr e ^ " )"
+      | _ -> failwith "Unsupported statement node for for-loop initialization in pp_stmt"
+    in
+    let cond_str = pp_expr c in
+    let reass_str = match reass.stmt_node with
+      | Ssimple e -> pp_expr e
+      | Sass (ident, a_op, e) -> 
+        "( " ^ ident.id ^ " " ^ pp_a_op a_op ^ " " ^ pp_expr e ^ " )"
+      | _ -> failwith "Unsupported statement node for for-loop reassignment in pp_stmt"
+    in
     let stmt_str = pp_stmt s in
     "for (" ^ ass_str ^ "; " ^ cond_str ^ "; " ^ reass_str ^ ") {\n" ^ stmt_str ^ "\n}"
-  | Swhile(c, s) -> "while (" ^ pp_cond c ^ ") {\n" ^ pp_stmt s ^ "\n}"
+  | Swhile(c, s) -> "while (" ^ pp_expr c ^ ") {\n" ^ pp_stmt s ^ "\n}"
   | Sfunc(func) -> pp_func func 
-  | Sarr_decl(t, e1, id, body_opt) -> 
-    let decl_str = "let " ^ pp_types t ^ " " ^ id ^ "[" ^ pp_expr e1 ^ "]" in
+  | Sarr_decl(t, e1, ident, body_opt) -> 
+    let decl_str = "let " ^ pp_types t ^ " " ^ ident.id ^ "[" ^ pp_expr e1 ^ "]" in
     begin match body_opt with
     | Some body -> decl_str ^ " = [" ^ pp_array_body body ^ "]"
     | None -> decl_str
@@ -122,7 +138,7 @@ match stmt_instance.stmt_node with
   | _ -> failwith "Unexpected case encountered in pp_stmt"
 
 and pp_func func =
-  let arg_strs = List.map (fun (type_ident, name) -> pp_types type_ident ^ " " ^ name) func.args in
+  let arg_strs = List.map (fun (type_ident, ident) -> pp_types type_ident ^ " " ^ ident.id) func.args in
   let args_str = String.concat ", " arg_strs in
   let body_str = pp_stmt func.body in
   pp_types func.fun_type ^ " " ^ func.name ^ "(" ^ args_str ^ ") {\n" ^
