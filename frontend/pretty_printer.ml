@@ -98,7 +98,7 @@ match stmt_instance.stmt_node with
     let a_op_str = pp_a_op a_op in
     "( " ^ ident.id ^ " " ^ a_op_str ^ " " ^ pp_expr e ^ " ) "
   | Sdecl(vdec) -> 
-    let decl_str = "let " ^ pp_types vdec.var_ty ^ " " ^ vdec.var_name in
+    let decl_str = "let " ^ pp_types vdec.var_ty ^ " " ^ vdec.var_name.id in
     begin match expr_opt with
     | Some expr -> decl_str ^ " = " ^ pp_expr expr
     | None -> decl_str
