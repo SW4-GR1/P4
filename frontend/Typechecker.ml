@@ -124,21 +124,23 @@ let update_var_table (vtab : varTable) (vardec : Ast.stmt) : varTable =
         vtab_next)
   | _ -> error "Not a variable"
 
-(*
+
 let update_fun_table (ftab : funTable) (fundec : Ast.stmt) : funTable =
   let stmtnode = fundec.stmt_node in
   match stmtnode with
-  | Sfun(fdec) -> 
-    let {Ast.fun_ty = pty; Ast.fun_name = ident; Ast.fun_args = args; _} = fdec in
+  | Sfunc(fdec) ->
+    let {Ast.fun_type = pty; Ast.name = ident; Ast.args = args; _} = fdec in
     let arg_types = List.map (fun (ty, _) -> ty_of_pty ty) args in
-    let ident_name = ident.id in
-      match lookup ident_name ftab with
-      | Some(_, _, prev_loc) -> error "Duplicate function" (*write this out*)
-      | None -> let ftab_next : funTable = bind ident_name (ty_of_pty pty, arg_types, loc_of_ploc fundec.stmt_loc) ftab in
-        ftab_next
-  | _ -> error "Not a function"
+    let ident_name = ident in  
+    let location = loc_of_ploc fundec.stmt_loc in
+    (match lookup ident_name ftab with
+    | Some _ ->
+      error ~loc:location ("Duplicate function at " ^ string_of_location location)
+    | None ->
+      let ftab_next : funTable = bind ident_name (ty_of_pty pty, arg_types, location) ftab in
+      ftab_next)
 
-
+(*
   let program (p : Ast.file) : prog = 
     let stmts = snd p in
     let ftab = List.fold_left update_fun_table init_fun_table stmts in
