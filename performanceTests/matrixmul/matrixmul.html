@@ -71,15 +71,15 @@
     }
 
     function generateRandomMatrix(n, m) {
-    const matrix = [];
-    for (let i = 0; i < n; i++) {
-        const row = [];
-        for (let j = 0; j < m; j++) {
-            row.push(Math.floor(Math.random() * 10)); // Generate a random integer between 0 and 9
+        const matrix = [];
+        for (let i = 0; i < n; i++) {
+            const row = [];
+            for (let j = 0; j < m; j++) {
+                row.push(Math.floor(Math.random() * 10)); // Generate a random integer between 0 and 9
+            }
+            matrix.push(row);
         }
-        matrix.push(row);
-    }
-    return matrix;
+        return matrix;
     }   
 
 </script>
