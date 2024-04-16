@@ -139,28 +139,22 @@ let update_fun_table (ftab : funTable) (fundec : Ast.stmt) : funTable =
     | None ->
       let ftab_next : funTable = bind ident_name (ty_of_pty pty, arg_types, location) ftab in
       ftab_next)
-
 (*
-  let program (p : Ast.file) : prog = 
-    let stmts = snd p in
-    let ftab = List.fold_left update_fun_table init_fun_table stmts in
-    let ftab_list = toList ftab in 
-    let stmts = List.map (fun (ident, (ty, args, loc)) ->
-      let fun_dec = { fun_ty = ty; fun_name = ident; fun_args = args} in
-      Sfun fun_dec
-    ) ftab_list in
-    { stmts = stmts }
-*)
-
-(* 
+let program (p : Ast.file) : prog = 
+  let stmts = snd p in
+  let ftab = List.fold_left update_fun_table init_fun_table stmts in
+  let ftab_list = toList ftab in 
+  let stmts = List.map (fun (ident, (ty, args, loc)) ->
+    let fun_dec = { fun_ty = ty; fun_name = ident; fun_args = args} in
+    Sfun fun_dec
+  ) ftab_list in
+  { stmts = stmts }
 
 let program p = 
   let tdecs = [] in
   let ftab = list.fold_left () initFunTable in
-  let typed_decs =  *)
+  let typed_decs = 
 
-
-  (*
   let program ~debug p =
   let fl = List.fold_left decl [] p in
   if not (debug || List.exists is_main fl)

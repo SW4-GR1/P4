@@ -49,13 +49,13 @@ let () =
     let p = Parser.prog Lexer.token buf in
     close_in f;
     
-    
+    (*
     let parsetree = Pretty_printer.pp_prog p in
     if !parse_only then exit 0 else
       let _ = print_endline parsetree in
       let _p = Typechecker.program p in
       if !type_only then exit 0 else 
-        print_endline _p
+        print_endline _p*)
     
 
   with
