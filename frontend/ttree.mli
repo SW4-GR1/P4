@@ -45,9 +45,10 @@ type stmt =
  }
 
 type export = 
-  | Xexport
+  | Xexport of string
+  | Xlist of export list
 
  type prog = {
-    (* exports : export list; *)
-    stmts : stmt list
+    exports : export;
+    stmts : stmt
  }
