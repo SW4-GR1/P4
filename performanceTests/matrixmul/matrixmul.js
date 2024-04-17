@@ -1,3 +1,4 @@
+/* hej */
 function matrixMul(a, b) {
     if (a[0].length !== b.length) {
         throw new Error('Matrix dimensions do not match');
