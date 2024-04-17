@@ -6,7 +6,7 @@ main.exe:
 		dune build main.exe
 
 tests:
-		for f in tests/*.yay; do dune exec ./main.exe $$f; done
+		 powershell -File ./lexParserTests/tests.ps1 ./main.exe
 
 clean:
 		dune clean
