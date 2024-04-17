@@ -8,6 +8,9 @@ main.exe:
 tests:
 		 powershell -File ./lexParserTests/tests.ps1 ./main.exe
 
+testsNS:
+		for f in tests/*.yay; do dune exec ./main.exe $$f; done
+
 clean:
 		dune clean
 

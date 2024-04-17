@@ -25,3 +25,6 @@ _opam/i
 
 *.txt
 !/frontend/lexParserTests/**/*.txt
+
+# Local vscode settings
+/.vscode
