@@ -29,7 +29,7 @@ Get-ChildItem -Path $test_dir -Directory | ForEach-Object {
     Write-Output "Expected output:"
     Get-Content $expected_output_file.FullName | Write-Output
     Write-Output "Actual output:"
-    Get-Content temp_output.txt | Write-Output
+    Get-Content $test_dir/temp_output.txt | Write-Output
     $failed_tests += 1
   } else {
     Write-Output "$($_) passed"
@@ -38,9 +38,9 @@ Get-ChildItem -Path $test_dir -Directory | ForEach-Object {
 }
 
 # Clean up the temporary file
-<# if (Test-Path "$test_dir/temp_output.txt") {
+if (Test-Path "$test_dir/temp_output.txt") {
   Remove-Item "$test_dir/temp_output.txt"
-} #>
+}
 
 # Print the number of tests that passed and failed
 Write-Output "Number of tests passed: $passed_tests"
