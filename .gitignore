@@ -24,3 +24,4 @@
 _opam/i
 
 *.txt
+!/frontend/lexParserTests/**/*.txt
