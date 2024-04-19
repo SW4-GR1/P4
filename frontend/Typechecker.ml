@@ -150,20 +150,23 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       if check_eq_type t1 t2 
         then (t1, { expr_node = Econd(op, e1_bin, e2_bin); expr_ty = t1 } )
         else incompatible_types t1 t2
-(* 
-  | EUnop(op, e1) ->
+
+  | EUnop(e1, op) ->
       let (t1, e1_bin) = checkExp ftab vtab e1 in
       if t1 = Tint || t1 = Tlongint 
-        then (t1, { expr_node = Eunop(op, e1_bin); expr_ty = t1 })
-        else error (op ^ " operator applied to a non-numeric type")
+        then (t1, { expr_node = Eunop(e1_bin, op); expr_ty = t1 })
+      else let str_of_op op = match op with 
+        | Ast.Inc -> "++"
+        | Ast.Dec -> "--" in
+          error (str_of_op op ^ " operator applied to a non-numeric type")
 
-  | ELog(op, e1, e2) ->
+  (* | ELog(op, e1, e2) ->
       let (t1, e1_bin) = checkExp ftab vtab e1 in
       let (t2, e2_bin) = checkExp ftab vtab e2 in
       if t1 = Tbool && t2 = Tbool
         then (Tbool, { expr_node = ELog(op, e1_bin, e2_bin); expr_ty = Tbool })
-        else error (op ^ " operator applied to a non-boolean type")
-   *)
+        else error (op ^ " operator applied to a non-boolean type") *)
+  
 (*| ENot(e1) ->
       let (t1, e1_bin) = checkExp ftab vtab e1 in
       if t1 = Tbool
@@ -237,7 +240,6 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         else incompatible_types var_ty t
       else error ("Variable " ^ id ^ " has not been declared.")
       
-
     | Sarr_decl(ty, ident, size, e) ->
        let ty' = ty_of_pty ty in
        let arr_ty = Tarr(ty') in
