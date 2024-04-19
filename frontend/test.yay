@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-let int[4] x = [1,2,4,5];
-let int[5] y;
-=======
-let int x = 4;
->>>>>>> b1786ff3cbe27a8650f458e9b8e15eced21c1b05
+//let int[4] x = [1,2,4,5];
+//let int[5] y;
+let int z = 4;
