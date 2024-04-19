@@ -10,7 +10,7 @@ let ty_of_pty = function
   | Ast.Float_ty -> Tfloat
   | Ast.Long_float_ty -> Tlongfloat
   | Ast.Bool_ty -> Tbool
-  
+
 (* Function to convert types to string *)
 let type_to_string = function 
   | Tint -> "int"
@@ -29,7 +29,7 @@ let error ?loc msg = raise (Error (loc, msg))
 (* Error functions for specific error types *)
 let unbound_variable x = error ("Unbound variable " ^ x)
 let unbound_function x = error ("Unbound function " ^ x)
-let duplicated_field x = error ("duplicate " ^ x)
+let duplicated_field x = error ("Duplicate declaration of: " ^ x)
 let incompatible_types t1 t2 = 
   error ("Incompatible types " ^ type_to_string t1 ^ " and " ^ type_to_string t2)
 let bad_arity ?loc p a =
@@ -240,23 +240,25 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         else incompatible_types var_ty t
       else error ("Variable " ^ id ^ " has not been declared.")
       
-      
-    (*does not check size of expression or take into account if expr is None*)
-    (* | Sarr_decl(ty, size, ident, e) ->
-       let ty' = array_ty_of_pty ty in
-       let size' = checkExp ftab vtab size in
+
+    | Sarr_decl(ty, ident, size, e) ->
+       let ty' = Tarr(ty_of_pty ty) in
+       let (t_size, size') = checkExp ftab vtab size in
        let name = ident.id in
-       if check_eq_type size' Tint then
+       if check_eq_type t_size Tint then
         if is_none (SymTab.lookup name vtab) then
-          let e' = checkExp ftab vtab e in
+          let vtab' = SymTab.bind name ty' vtab in
+
+          let expr_option = match e with
+          | Some(v) -> let checkElem =  List.map (fun elem -> checkExp ftab vtab elem) Some v
+          | None -> None
           if check_eq_type e'.expr_node ty' then
-            let vtab' = SymTab.bind name ty' vtab in
             ( ftab, vtab', Sarr_decl(ty' size', name, e') )
           else incompatible_types e'.expr_node ty'
         else duplicated_field name
        else incompatible_types size' Tint
     
-    | Sarr_assign(ident, assign, expr_list) ->
+    (* | Sarr_assign(ident, assign, expr_list) ->
       let exists_option = SymTab.lookup ident.id in
       if is_some exists_option then
         let vtab_ty = get exists_option in
