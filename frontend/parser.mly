@@ -73,7 +73,13 @@ assign_opt:
 ;
 
 data_struc_dec:
-    | t = ty LBRACKET e1 = expr RBRACKET id = ident body = array_body_opt END {Sarr_decl(t, e1, id, body)} // array
+    | t = ty LBRACKET e1 = expr RBRACKET id = ident body = array_body_opt END 
+        // { Sarr_decl( {arr_ty = t, 
+        //               arr_name = id, 
+        //               arr_size = e1, 
+        //               arr_expr = body} )
+        //             } // array
+        { Sarr_decl(t, id, e1, body) } 
 ;
 
 array_body_opt:
@@ -87,7 +93,7 @@ assignment:
 ;
 
 assign:
-    | id = ident ass_op = a_op e = expr END { Sass(id, ass_op, e) }//maybe IDENT, mess around and find out
+    | id = IDENT ass_op = a_op e = expr END { Sass(id, ass_op, e) }//maybe IDENT, mess around and find out
 ;
 
 if_stmt:
@@ -123,7 +129,7 @@ block:
 ;
 
 function_call:
-    | id = IDENT LPAREN arg_list = separated_list(COMMA, expr) RPAREN { EFcall(id,arg_list ) }
+    | id = ident LPAREN arg_list = separated_list(COMMA, expr) RPAREN { EFcall(id,arg_list ) }
 ;
 
 return_stmt:
@@ -147,12 +153,13 @@ func_body:
 ;
 
 array_assign:
-    | id = IDENT ass_op = a_op LBRACKET body = array_body RBRACKET END {Sarr_assign(id, ass_op, body)}
+    | id = IDENT ass_op = ASSIGN LBRACKET body = array_body RBRACKET END {Sarr_assign(id, Assign, body)}
     | id = IDENT LBRACKET e1 = expr RBRACKET ass_op = a_op e2 = expr END {Sarr_assign_elem(id, e1, ass_op, e2)}
 
 array_body: 
-    | e = expr { [e] }
-    | e = expr COMMA body = array_body { e :: body }
+    | body = separated_list(COMMA, expr) { body }
+    // | e = expr { [e] }
+    // | e = expr COMMA body = array_body { (*e :: body*) e @ body }
 
 expr:
   e = expr_node
@@ -161,7 +168,7 @@ expr:
 
 expr_node:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
-    | id = IDENT u = unop            { EUnop(id, u) }
+    | e1 = expr; u = unop            { EUnop(e1, u) }
     | i = INT                        { EConst(i) }
     | fl = FLOAT                     { EFloat(fl)}
     | bl = BOOL                      { EBool(bl)}
@@ -171,7 +178,7 @@ expr_node:
     | SUB e = expr %prec uminus      { EBinop(Sub, {
                                         expr_node = EConst(0); expr_loc = $loc}, e) }
     | f_call = function_call         { f_call }
-    | LBRACKET body = array_body RBRACKET { Earray(body) }
+    | LBRACKET body = array_body RBRACKET { EArray(body) }
 ;
 
 cond:
