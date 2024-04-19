@@ -1,4 +1,0 @@
-not (b and a);
-1 and 2;
-not f(a) and b; //negation af funktionskald pog 
-banana < apple;
