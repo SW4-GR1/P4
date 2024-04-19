@@ -239,21 +239,25 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       
 
     | Sarr_decl(ty, ident, size, e) ->
-       let ty' = Tarr(ty_of_pty ty) in
+       let ty' = ty_of_pty ty in
+       let arr_ty = Tarr(ty') in
        let (t_size, size') = checkExp ftab vtab size in
        let name = ident.id in
        if check_eq_type t_size Tint then
         if is_none (SymTab.lookup name vtab) then
-          let vtab' = SymTab.bind name ty' vtab in
-
+          let vtab' = SymTab.bind name arr_ty vtab in
           let expr_option = match e with
-          | Some(v) -> let checkElem =  List.map (fun elem -> checkExp ftab vtab elem) Some v
-          | None -> None
-          if check_eq_type e'.expr_node ty' then
-            ( ftab, vtab', Sarr_decl(ty' size', name, e') )
-          else incompatible_types e'.expr_node ty'
+          | Some(v) -> let checked_args =  List.map (fun elem -> checkExp ftab vtab elem) v in 
+            let arg_types_correct = List.fold_left(fun b (elem_ty, expr) -> b && (check_eq_type elem_ty ty')) true checked_args in
+            if arg_types_correct then
+              let expr_list = List.map (fun (elem_ty, expr) -> expr) checked_args in
+              Some(expr_list)
+            else error("An element in the array is not of the correct type")
+          | None -> None in
+          let adec' = {arr_ty = ty'; arr_name = name; arr_size = size'; arr_expr = expr_option } in
+          ( ftab, vtab', Sarr_decl(adec') )
         else duplicated_field name
-       else incompatible_types size' Tint
+       else incompatible_types t_size Tint
     
     (* | Sarr_assign(ident, assign, expr_list) ->
       let exists_option = SymTab.lookup ident.id in
