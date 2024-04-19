@@ -1,5 +1,6 @@
 open Printf
 open Ttree
+open Option
 
 let pp_expr_type ty = 
   match ty with 
@@ -18,6 +19,13 @@ let rec pp_expr e =
     let ppty = pp_expr_type e.expr_ty in
        "( " ^ ppty ^ "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"^ " )"
   | Econst n -> string_of_int n
+  | Eident id -> id
+  | Eunop(e, op) -> 
+    let op_str = match op with
+    | Inc -> "++"
+    | Dec -> "--" in
+    let ppty = pp_expr_type e.expr_ty in
+    "( " ^ ppty ^ "(" ^ pp_expr e ^ op_str ^")"^ " )"
   | _ -> "BBBBBBBBBBBBBB"
 
 
@@ -26,7 +34,9 @@ let rec pp_stmt s =
   |Ssimple(e) -> pp_expr e
   |Slist(s) -> let stmt_list = List.map pp_stmt s in
     String.concat "\n" stmt_list
-
+  |Sdecl(x) -> if is_some x.var_expr then let init = get x.var_expr in
+    "let" ^ " " ^ pp_expr_type x.var_ty ^ " "  ^ x.var_name ^ " = " ^ pp_expr init
+    else "let" ^ " " ^ pp_expr_type x.var_ty ^ " " ^ x.var_name
 let pp_prog prog =
   (* let exports_str = pp_export_list prog.exports in *)
   let main_str = pp_stmt prog.stmts in

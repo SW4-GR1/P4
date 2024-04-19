@@ -241,7 +241,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       else error ("Variable " ^ id ^ " has not been declared.")
       
 
-    | Sarr_decl(ty, ident, size, e) ->
+    (* | Sarr_decl(ty, ident, size, e) ->
        let ty' = Tarr(ty_of_pty ty) in
        let (t_size, size') = checkExp ftab vtab size in
        let name = ident.id in
@@ -256,7 +256,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
             ( ftab, vtab', Sarr_decl(ty' size', name, e') )
           else incompatible_types e'.expr_node ty'
         else duplicated_field name
-       else incompatible_types size' Tint
+       else incompatible_types size' Tint *)
     
     (* | Sarr_assign(ident, assign, expr_list) ->
       let exists_option = SymTab.lookup ident.id in

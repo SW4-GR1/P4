@@ -1,2 +1,1 @@
-let int x;
-let int x = 5;
+let int x = 4;
