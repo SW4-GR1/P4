@@ -1,4 +1,7 @@
 //let int[4] x = [1,2,4,5];
 //let int[5] y;
+let int x = 5;
+let int y = 5;
+x > y;
 true and false;
 not true;

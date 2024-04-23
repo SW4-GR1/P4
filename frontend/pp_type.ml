@@ -22,6 +22,16 @@ let rec pp_expr e =
   | Econst n -> string_of_int n
   | Ebool b -> string_of_bool b
   | Eident id -> id
+  | Econd(op, e1, e2) -> 
+    let op_str = match op with
+    | Eq -> "=="
+    | Neq -> "!="
+    | Lt -> "<"
+    | Leq -> "<="
+    | Gt -> ">"
+    | Geq -> ">=" in
+    let ppty = pp_expr_type e.expr_ty in
+    "( " ^ ppty ^ "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"^ " )"
   | Eunop(e, op) -> 
     let op_str = match op with
     | Inc -> "++"

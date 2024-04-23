@@ -11,6 +11,10 @@ let ty_of_pty = function
   | Ast.Long_float_ty -> Tlongfloat
   | Ast.Bool_ty -> Tbool
 
+let is_number = function
+  | Tint | Tlongint | Tfloat | Tlongfloat -> true
+  | _ -> false
+
 (* Function to convert types to string *)
 let type_to_string = function 
   | Tint -> "int"
@@ -144,12 +148,11 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
           then (t1, { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t1 } )
           else incompatible_types t1 t2
 
-  | ECond(op, e1, e2) -> 
-      let (t1, e1_bin) = checkExp ftab vtab e1 in
+  | ECond(op, e1, e2) -> let (t1, e1_bin) = checkExp ftab vtab e1 in
       let (t2, e2_bin) = checkExp ftab vtab e2 in
-      if check_eq_type t1 t2 
-        then (t1, { expr_node = Econd(op, e1_bin, e2_bin); expr_ty = t1 } )
-        else incompatible_types t1 t2
+      if check_eq_type t1 t2 && is_number t1 then 
+      (Tbool, { expr_node = Econd(op, e1_bin, e2_bin); expr_ty = Tbool } )
+      else incompatible_types t1 t2
 
   | EUnop(e1, op) ->
       let (t1, e1_bin) = checkExp ftab vtab e1 in
