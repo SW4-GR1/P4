@@ -194,7 +194,8 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       if is_some fun_option then
         let (ty, arg_tys, _) = get fun_option in
         let e1_list' = List.map (fun e -> checkExp ftab vtab e) e1_list in
-        let arg_types = List.map (fun e -> e.expr_ty) e1_list' in
+        let expr_list = List.map (fun (_, e) -> e) e1_list' in
+        let arg_types = List.map (fun (ty, _) -> ty) e1_list' in
         if arg_types = arg_tys then
           (ty, { expr_node = EFcall(id, e1_list'); expr_ty = ty })
         else bad_arity id (List.length arg_tys)
@@ -222,8 +223,17 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
     | Ssimple(e) -> 
       let (_t, e') = checkExp ftab vtab e in
        ( ftab, vtab, Ssimple(e') )
+    
+    | Sfunc(fdec) ->
+      let ty' = ty_of_pty fdec.fun_type in 
+      let id' = fdec.name.id in 
+      if is_none (SymTab.lookup id' ftab) then
+        let ftab' = SymTab.bind id' (ty', [], fdec.name.loc) ftab in
+        let ftab'' = update_fun_table ftab' stmt in
+        ( ftab'', vtab, Sfunc(fdec) )
+      else duplicated_field id'
 
-       
+
     | Sdecl(vdec) -> 
       let ty' = ty_of_pty vdec.var_ty in 
       let id' = vdec.var_name.id in

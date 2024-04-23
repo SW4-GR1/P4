@@ -1,3 +1,6 @@
-let int k = 1;
-k++;
+int x (int j, int k ){
+    let int l = 1;
+    return l;
+    }
 
+x(3, 2);
