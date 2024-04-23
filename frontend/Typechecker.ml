@@ -89,9 +89,9 @@ let update_fun_table (ftab : funTable) (fundec : Ast.stmt) : funTable =
   let stmtnode = fundec.stmt_node in
   match stmtnode with
   | Sfunc(fdec) ->
-    let {Ast.fun_type = pty; Ast.name = ident; Ast.args = args; _} = fdec in
+    let {Ast.fun_type = pty; Ast.fun_name = ident; Ast.args = args; _} = fdec in
     let arg_types = List.map (fun (ty, _) -> ty_of_pty ty) args in
-    let ident_name = ident in  
+    let ident_name = ident.id in  
     let location = loc_of_ploc fundec.stmt_loc in
     (match lookup ident_name ftab with
     | Some _ ->
@@ -224,14 +224,14 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       let (_t, e') = checkExp ftab vtab e in
        ( ftab, vtab, Ssimple(e') )
     
-    | Sfunc(fdec) ->
+   (*  | Sfunc(fdec) ->
       let ty' = ty_of_pty fdec.fun_type in 
       let id' = fdec.name.id in 
       if is_none (SymTab.lookup id' ftab) then
         let ftab' = SymTab.bind id' (ty', [], fdec.name.loc) ftab in
         let ftab'' = update_fun_table ftab' stmt in
         ( ftab'', vtab, Sfunc(fdec) )
-      else duplicated_field id'
+      else duplicated_field id' *)
 
 
     | Sdecl(vdec) -> 

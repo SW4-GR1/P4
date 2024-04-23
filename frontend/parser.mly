@@ -137,7 +137,7 @@ return_stmt:
 ;
 
 function_def:
-    t = ty id = IDENT 
+    t = ty id = ident 
         LPAREN arg_list = separated_list(COMMA, param) RPAREN
         LBRACE body = func_body RBRACE 
             { Sfunc{fun_type = t; fun_name = id; args = arg_list; body = body} }

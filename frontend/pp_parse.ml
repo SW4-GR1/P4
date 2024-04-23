@@ -144,7 +144,7 @@ and pp_func func =
   let arg_strs = List.map (fun (type_ident, ident) -> pp_types type_ident ^ " " ^ ident.id) func.args in
   let args_str = String.concat ", " arg_strs in
   let body_str = pp_stmt func.body in
-  pp_types func.fun_type ^ " " ^ func.name ^ "(" ^ args_str ^ ") {\n" ^
+  pp_types func.fun_type ^ " " ^ func.fun_name.id ^ "(" ^ args_str ^ ") {\n" ^
   body_str ^ "\n}\n"
             
 let rec pp_export = function
