@@ -34,7 +34,13 @@ let rec pp_expr e =
     | Or -> "or" in
     let ppty = pp_expr_type e.expr_ty in
     "( " ^ ppty ^ "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"^ " )"
-  | Enot(e) -> "( " ^ pp_expr_type e.expr_ty ^ "(" ^ "!" ^ pp_expr e ^ ")"^ " )"
+  | Enot e -> "( " ^ pp_expr_type e.expr_ty ^ "(" ^ "!" ^ pp_expr e ^ ")"^ " )"
+  | Efcall(id, args) -> 
+    let pp_fcall id expr_list =
+      let expr_strs = List.map (fun e -> pp_expr_type e.expr_ty ^ " " ^ pp_expr e) expr_list in
+      id ^ "(" ^ String.concat ", " expr_strs ^ ")"
+    in
+    pp_fcall id args
   | _ -> "BBBBBBBBBBBBBB"
 
 

@@ -59,7 +59,7 @@ type adec = {
 type stmt = 
  | Ssimple of expr
  | Slist of stmt list
- | Sfun of fun_dec
+ | Sfunc of fun_dec
  | Sif of expr * stmt * stmt
  | Sreturn of expr
  | Sdecl of vdec

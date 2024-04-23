@@ -47,6 +47,8 @@ type vdec = {
   var_name : ident;
   var_expr : expr option;  (* This field is optional *)
 }
+
+
 (* 
 type adec = {
   arr_ty : type_ident;
@@ -63,7 +65,7 @@ type stmt =
 and stmt_node =
   | Ssimple of expr
   | Slist of stmt list
-  | Sfunc of func
+  | Sfunc of fdec
   | Sif of expr * stmt * stmt
   | Sreturn of expr
   | Sdecl of vdec
@@ -77,14 +79,12 @@ and stmt_node =
 
 and arg_dec = type_ident * ident
 
-and func = {
+and fdec = {
   fun_type : type_ident;
-  name : string;
+  fun_name : ident;
   args : arg_dec list;
   body : stmt; 
 }
-
-
 
 (* program of list of function declarations, followed by a statement *)
 type prog = {

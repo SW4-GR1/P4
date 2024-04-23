@@ -140,7 +140,7 @@ function_def:
     t = ty id = IDENT 
         LPAREN arg_list = separated_list(COMMA, param) RPAREN
         LBRACE body = func_body RBRACE 
-            { Sfunc{fun_type = t; name = id; args = arg_list; body = body} }
+            { Sfunc{fun_type = t; fun_name = id; args = arg_list; body = body} }
 ;
 
 param:
