@@ -5,6 +5,7 @@ open Option
 let pp_expr_type ty = 
   match ty with 
   | Tint -> "INT"
+  | Tbool -> "BOOl"
   |_ -> "AAAAAAAAAA"
 
 let rec pp_expr e = 
@@ -26,6 +27,7 @@ let rec pp_expr e =
     | Dec -> "--" in
     let ppty = pp_expr_type e.expr_ty in
     "( " ^ ppty ^ "(" ^ pp_expr e ^ op_str ^")"^ " )"
+  | Enot(e) -> "( " ^ pp_expr_type e.expr_ty ^ "(" ^ "!" ^ pp_expr e ^ ")"^ " )"
   | _ -> "BBBBBBBBBBBBBB"
 
 
