@@ -34,6 +34,7 @@ let rec pp_expr e =
     | Or -> "or" in
     let ppty = pp_expr_type e.expr_ty in
     "( " ^ ppty ^ "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"^ " )"
+  | Enot(e) -> "( " ^ pp_expr_type e.expr_ty ^ "(" ^ "!" ^ pp_expr e ^ ")"^ " )"
   | _ -> "BBBBBBBBBBBBBB"
 
 
@@ -49,4 +50,3 @@ let pp_prog prog =
   (* let exports_str = pp_export_list prog.exports in *)
   let main_str = pp_stmt prog.stmts in
   main_str
-  (* exports_str ^ "\n" ^ main_str *)
