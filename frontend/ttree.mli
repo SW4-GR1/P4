@@ -53,7 +53,7 @@ type adec = {
    arr_ty : ty;
    arr_name : ident;
    arr_size : expr;
-   arr_expr : expr option;  (* This field is optional *)
+   arr_expr : expr list option;  (* This field is optional *)
 }
 
 type stmt = 
