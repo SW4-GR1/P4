@@ -5,6 +5,7 @@ open Option
 let pp_expr_type ty = 
   match ty with 
   | Tint -> "INT"
+  | Tbool -> "BOOL"
   |_ -> "AAAAAAAAAA"
 
 let rec pp_expr e = 
@@ -19,6 +20,7 @@ let rec pp_expr e =
     let ppty = pp_expr_type e.expr_ty in
        "( " ^ ppty ^ "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"^ " )"
   | Econst n -> string_of_int n
+  | Ebool b -> string_of_bool b
   | Eident id -> id
   | Eunop(e, op) -> 
     let op_str = match op with
@@ -26,6 +28,12 @@ let rec pp_expr e =
     | Dec -> "--" in
     let ppty = pp_expr_type e.expr_ty in
     "( " ^ ppty ^ "(" ^ pp_expr e ^ op_str ^")"^ " )"
+  | Elog(o, e1, e2) ->
+    let op_str = match o with
+    | And -> "and"
+    | Or -> "or" in
+    let ppty = pp_expr_type e.expr_ty in
+    "( " ^ ppty ^ "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"^ " )"
   | _ -> "BBBBBBBBBBBBBB"
 
 

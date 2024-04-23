@@ -160,12 +160,15 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         | Ast.Dec -> "--" in
           error (str_of_op op ^ " operator applied to a non-numeric type")
 
-  (* | ELog(op, e1, e2) ->
+  | ELog(op, e1, e2) ->
       let (t1, e1_bin) = checkExp ftab vtab e1 in
       let (t2, e2_bin) = checkExp ftab vtab e2 in
       if t1 = Tbool && t2 = Tbool
-        then (Tbool, { expr_node = ELog(op, e1_bin, e2_bin); expr_ty = Tbool })
-        else error (op ^ " operator applied to a non-boolean type") *)
+        then (Tbool, { expr_node = Elog(op, e1_bin, e2_bin); expr_ty = Tbool })
+        else let str_of_lop op = match op with
+        | Ast.And -> "and" 
+        | Ast.Or -> "or" in
+         error (str_of_lop op ^ " operator applied to a non-boolean type")
   
 (*| ENot(e1) ->
       let (t1, e1_bin) = checkExp ftab vtab e1 in
