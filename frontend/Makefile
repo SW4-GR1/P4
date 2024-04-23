@@ -10,5 +10,5 @@ tests:
 
 clean:
 		dune clean
-
+		
 .PHONY: all main.exe tests clean

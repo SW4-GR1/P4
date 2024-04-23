@@ -2,10 +2,11 @@ open Printf
 open Ttree
 open Option
 
-let pp_expr_type ty = 
+let rec pp_expr_type ty = 
   match ty with 
   | Tint -> "INT"
   | Tbool -> "BOOL"
+  | Tarr t -> "ARR(" ^ pp_expr_type t ^ ")"
   |_ -> "AAAAAAAAAA"
 
 let rec pp_expr e = 
@@ -45,6 +46,8 @@ let rec pp_expr e =
     let ppty = pp_expr_type e.expr_ty in
     "( " ^ ppty ^ "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"^ " )"
   | Enot(e) -> "( " ^ pp_expr_type e.expr_ty ^ "(" ^ "!" ^ pp_expr e ^ ")"^ " )"
+  | Earray(e_list) -> let expr_list = List.map pp_expr e_list in
+     "(" ^ pp_expr_type e.expr_ty ^ "[" ^ String.concat ", " expr_list ^ "]" ^ ")"
   | _ -> "BBBBBBBBBBBBBB"
 
 

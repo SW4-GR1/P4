@@ -46,6 +46,9 @@ let rec pp_expr expr_instance =
   | EFcall(id, args) -> 
       let args_str = String.concat ", " (List.map pp_expr args) in
       id.id ^ "( " ^ args_str ^ " )"
+  | EArray(e_list) -> 
+      let e_list_str = String.concat ", " (List.map pp_expr e_list) in
+      "[" ^ e_list_str ^ "]"
 
 
 let rec pp_cond = function

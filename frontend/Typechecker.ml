@@ -179,6 +179,14 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       if t1 = Tbool
         then (Tbool, { expr_node = Enot(e1_bin); expr_ty = Tbool })
         else error ("Not operator applied to a non-boolean type") 
+| EArray(e_list) -> 
+      let e_list' = List.map (fun e -> checkExp ftab vtab e) e_list in
+      let e_types = List.map fst e_list' in
+      let all_same = List.fold_left (fun b t -> b && check_eq_type t (List.hd e_types)) true e_types in
+      if all_same then
+        let ty = List.hd e_types in
+        (Tarr(ty), { expr_node = Earray(List.map snd e_list'); expr_ty = Tarr(ty) })
+      else error ("Array elements are not of the same type")
   
 (*| EFcall(ident, e1_list) ->
       let id = ident.id in
@@ -190,9 +198,9 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         if arg_types = arg_tys then
           (ty, { expr_node = EFcall(id, e1_list'); expr_ty = ty })
         else bad_arity id (List.length arg_tys)
-      else unbound_function id 
+      else unbound_function id *)
       
-  | EArray(ident, e1) ->
+  (* | EArray(ident, e1) -> f() --- det her er til access af elemnt i array eg, a[1]
       let id = ident.id in
       let e1' = checkExp ftab vtab e1 in
       let var_option = SymTab.lookup id vtab in
@@ -204,9 +212,9 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
             (ty, { expr_node = Earray(id, e1'); expr_ty = ty })
           else incompatible_types e1'.expr_ty Tint
         | _ -> error ("Variable " ^ id ^ " is not an array."))
-      else error ("Variable " ^ id ^ " has not been declared.") 
-     *)
-    |_ -> assert false
+      else error ("Variable " ^ id ^ " has not been declared.")  *)
+    
+  |_ -> assert false
     
   let rec checkStmt (ftab : funTable) (vtab : varTable) (stmt : Ast.stmt) : funTable * varTable * stmt =
     let stmt_node = stmt.stmt_node in 
