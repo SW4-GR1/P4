@@ -41,6 +41,7 @@ and expr_node =
   | Enot of expr
   | Efcall of ident * expr list
   | Earray of expr list
+  | Earr_lookup of ident * expr 
 
 
 type vdec = {
@@ -75,10 +76,9 @@ and fun_arg = ty * ident
 and fun_dec = {
    fun_ty : ty;
    fun_name : ident;
-   fun_args :fun_arg list;
+   fun_args : fun_arg list;
    fun_body : stmt 
  }
-
 
 
 type export = 

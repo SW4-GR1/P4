@@ -1,3 +1,6 @@
-//let int[4] x = [1,2,4,5];
-// let int[5] y;
-[3,2,1];
+let int a = 2;
+
+bool f(int c, bool b) {
+    return true + false 
+}
+f(a, true);

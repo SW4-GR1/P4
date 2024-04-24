@@ -110,12 +110,11 @@ loop_stmt:
     | f = for_loop { f } 
     | w = while_loop { w }
 ;
-
 for_loop:
     | FOR LPAREN
         decl = declarations c = cond END
         ass = assign RPAREN 
-        s = block { Sfor(decl, c, { stmt_node = ass; stmt_loc = $startpos, $endpos } , 
+        s = block { Sfor({stmt_node = decl; stmt_loc = $startpos, $endpos}, c, { stmt_node = ass; stmt_loc = $startpos, $endpos } , 
         { stmt_node = s; stmt_loc = $startpos, $endpos }) }
 ;
 
@@ -161,6 +160,10 @@ array_body:
     // | e = expr { [e] }
     // | e = expr COMMA body = array_body { (*e :: body*) e @ body }
 
+array_lookup:
+    | id = IDENT LBRACKET e = expr RBRACKET {EArr_lookup(id, e)}
+
+
 expr:
   e = expr_node
   { { expr_node = e; expr_loc = $startpos, $endpos } }
@@ -179,6 +182,8 @@ expr_node:
                                         expr_node = EConst(0); expr_loc = $loc}, e) }
     | f_call = function_call         { f_call }
     | LBRACKET body = array_body RBRACKET { EArray(body) }
+    | arr_l = array_lookup           { arr_l }
+
 ;
 
 cond:

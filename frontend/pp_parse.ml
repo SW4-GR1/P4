@@ -49,6 +49,7 @@ let rec pp_expr expr_instance =
   | EArray(e_list) -> 
       let e_list_str = String.concat ", " (List.map pp_expr e_list) in
       "[" ^ e_list_str ^ "]"
+  | EArr_lookup(id, e) -> "(" ^ id ^ "[" ^ pp_expr e ^ "]" ^ ")"
 
 
 let rec pp_cond = function
@@ -107,8 +108,8 @@ match stmt_instance.stmt_node with
     | None -> decl_str
     end
   | Sfor(ass, c, reass, s) ->
-    let ass_str = match ass with
-      | Ssimple e -> pp_expr e
+    let ass_str = match ass.stmt_node with
+      (* | Ssimple e -> pp_expr e *)
       | Sdecl vdec -> 
         let decl_str = "let " ^ pp_types vdec.var_ty ^ " " ^ vdec.var_name.id in
         begin match vdec.var_expr with

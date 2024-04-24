@@ -41,6 +41,7 @@ and expr_node =
   | ENot of expr
   | EFcall of ident * expr list
   | EArray of expr list
+  | EArr_lookup of string * expr
 
 type vdec = {
   var_ty : type_ident;
@@ -74,7 +75,7 @@ and stmt_node =
   (* | Sarr_decl of adec type * [array size] * ident * [exp*]? *)
   | Sarr_assign of string * assign_type * expr list 
   | Sarr_assign_elem of string * expr * assign_type * expr
-  | Sfor of stmt_node * expr * stmt * stmt (*dec * cond * increment * body*)
+  | Sfor of stmt * expr * stmt * stmt (*dec * cond * increment * body*)
   | Swhile of expr * stmt
 
 and arg_dec = type_ident * ident
