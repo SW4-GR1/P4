@@ -1,17 +1,17 @@
-let int a = 2;
-
-bool f(int c, bool b) {
-    return true
+int f(int a, int b) {
+    a + b;
+    return 8
 }
-f(a, true);
 
-if (true and true) {1+1;}
-
-int h(int b) {
-  if(true and true) {
-    a = 5;
-  } else {
-    a = 6;
-  }
-  return 5;
+int j(int a, int c) {
+  a + c; 
+  return 10
 }
+
+let int a = 1;
+
+
+f(a, 2);
+
+f(2, a);
+

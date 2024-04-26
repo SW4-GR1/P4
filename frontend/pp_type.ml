@@ -64,6 +64,8 @@ let rec pp_expr e =
   | Earr_lookup(id, e) -> "(" ^ pp_expr_type e.expr_ty ^ " (" ^ id ^ "[" ^ pp_expr e ^ "]" ^ ")" ^ ")"
   | Efcall(id, e_list) -> let expr_list = List.map pp_expr e_list in
     id ^ "(" ^ String.concat ", " expr_list ^ ")"
+  | Evector(e_list) -> let expr_list = List.map pp_expr e_list in
+    "(" ^ pp_expr_type e.expr_ty ^ "<" ^ String.concat ", " expr_list ^ ">" ^ ")"
   | _ -> "BBBBBBBBBBBBBB"
 
 

@@ -187,6 +187,15 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         else error("Type of arguments in function call do not match")
       else error("Expected " ^ string_of_int(List.length arg_tys) ^ " argument(s), but got " ^ string_of_int(List.length args'))
     else error("Function " ^ id ^" has not been declared")
+
+  |EVector(e_list) -> 
+    let e_list' = List.map (fun e -> checkExp ftab vtab e) e_list in
+    let e_types = List.map fst e_list' in
+    let all_same = List.fold_left (fun b t -> b && check_eq_type t (List.hd e_types)) true e_types in
+    if all_same then
+      let ty = List.hd e_types in
+      (Tarr(ty), { expr_node = Evector(List.map snd e_list'); expr_ty = Tarr(ty) })
+    else error ("Vector elements are not of the same type") 
       
   |_ -> assert false
     
@@ -356,7 +365,6 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
       | Ast.Sreturn(e) -> 
         let (ty', e') = checkExp ftab vtab e in
         if check_eq_type ty' ftype then
-          (* [Sreturn(e')] @ checkFunBody_aux slist *)
           [Sreturn(e')]
         else error("Return type does not match function declaration")
       | _ ->

@@ -42,6 +42,7 @@ and expr_node =
   | Efcall of ident * expr list
   | Earray of expr list
   | Earr_lookup of ident * expr 
+  | Evector of expr list
 
 
 type vdec = {
