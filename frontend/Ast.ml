@@ -40,9 +40,10 @@ and expr_node =
   | ELog of log_op * expr * expr
   | ENot of expr
   | EFcall of ident * expr list
-  | Earray of expr list
-  | Evector of expr list
-  | Ematrix of expr list list
+  | EArray of expr list
+  | EVector of expr list
+  | EMatrix of expr list list
+  | EArr_lookup of string * expr
 
   type vdec = {
     var_ty : type_ident;
@@ -76,8 +77,15 @@ and stmt_node =
   (* | Sarr_decl of adec type * [array size] * ident * [exp*]? *)
   | Sarr_assign of string * assign_type * expr list 
   | Sarr_assign_elem of string * expr * assign_type * expr
+  | Svec_decl of type_ident * ident * expr * expr list option
+  | Svec_assign of string * assign_type * expr list 
+  | Svec_assign_elem of string * expr * assign_type * expr
+  | Smat_decl of type_ident * ident * expr * expr * expr list list option
+  | Smat_assign of string * assign_type * expr list list
+  | Smat_assign_elem of string * expr * expr * assign_type * expr
   | Sfor of stmt * expr * stmt * stmt
   | Swhile of expr * stmt
+  
 
 and arg_dec = type_ident * ident
 
