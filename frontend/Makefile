@@ -1,5 +1,5 @@
-all: main.exe
-	dune exec ./main.exe test.yay
+all: 
+	main.exe; dune exec ./main.exe test.yay
 
 nick: main.exe;
 	dune exec ./main.exe test.yay
