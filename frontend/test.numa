@@ -7,7 +7,7 @@ f(a, true);
 
 if (true and true) {1+1;}
 
-int h(int a) {
+int h(int b) {
   if(true and true) {
     a = 5;
   } else {

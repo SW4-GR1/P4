@@ -68,44 +68,10 @@ let string_of_location ((start_pos, end_pos) : loc) : string =
   let init_fun_table : funTable =
     SymTab.fromList [
     (* ("int" (Int_ty, [Int_ty, Int_ty], (0,0))); Example *)
-    (* ("matMul" (Mat_ty, [Mat_ty, Mat_ty], (0,0))); *)
+    ("sqrt", (Tint, [Tint]));
     ]
     let init_var_table : varTable = 
       SymTab.fromList []
-(* 
-      (* Function to update variable table with a new variable *)        
-  let update_var_table (vtab : varTable) (vardec : Ast.stmt) : varTable =
-    let stmtnode = vardec.stmt_node in
-    match stmtnode with 
-    | Ast.Sdecl(vdec) ->
-  let { Ast.var_ty = pty; Ast.var_name = ident; Ast.var_expr = expr_opt } = vdec in
-    let ident_name = ident.id in
-    (match lookup ident_name vtab with
-    | Some _ -> 
-        let location = loc_of_ploc vardec.stmt_loc in
-        error ~loc:location ("Duplicate variable at " ^ string_of_location location) 
-    | None -> 
-        let vtab_next : varTable = SymTab.bind ident_name (ty_of_pty pty) vtab in
-        vtab_next)
-  | _ -> error "Not a variable"
-
-
-(* Function to update function table with new function *)  
-let update_fun_table (ftab : funTable) (fundec : Ast.stmt) : funTable =
-  let stmtnode = fundec.stmt_node in
-  match stmtnode with
-  | Sfunc(fdec) ->
-    let {Ast.fun_type = pty; Ast.fun_name = ident; Ast.args = args; _} = fdec in
-    let arg_types = List.map (fun (ty, _) -> ty_of_pty ty) args in
-    let ident_name = ident.id in  
-    let location = loc_of_ploc fundec.stmt_loc in
-    (match lookup ident_name ftab with
-    | Some _ ->
-      error ~loc:location ("Duplicate function at " ^ string_of_location location)
-    | None ->
-      let ftab_next : funTable = SymTab.bind ident_name (ty_of_pty pty, arg_types, location) ftab in
-      ftab_next) *)
-
 
   (* Function to pretty print function types *)
 let pp_funtype (args_res : Ttree.ty list * Ttree.ty) : string = 
@@ -207,19 +173,6 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
           else error("Index lookup must evaluate to an integer value")
         | _ -> error ("Variable " ^ id ^ " is not an array."))
       else error ("Variable " ^ id ^ " has not been declared.")
-  
-(*| EFcall(ident, e1_list) ->
-      let id = ident.id in
-      let fun_option = SymTab.lookup id ftab in
-      if is_some fun_option then
-        let (ty, arg_tys, _) = get fun_option in
-        let e1_list' = List.map (fun e -> checkExp ftab vtab e) e1_list in
-        let expr_list = List.map (fun (_, e) -> e) e1_list' in
-        let arg_types = List.map (fun (ty, _) -> ty) e1_list' in
-        if arg_types = arg_tys then
-          (ty, { expr_node = EFcall(id, e1_list'); expr_ty = ty })
-        else bad_arity id (List.length arg_tys)
-      else unbound_function id *)
 
   |EFcall(ident, args) -> 
     let id = ident.id in
@@ -234,11 +187,6 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         else error("Type of arguments in function call do not match")
       else error("Expected " ^ string_of_int(List.length arg_tys) ^ " argument(s), but got " ^ string_of_int(List.length args'))
     else error("Function " ^ id ^" has not been declared")
-
-
-
-    (*for each arg check that it evaluates to the correct type 
-       according to ftab lookup in the correct order*)
       
   |_ -> assert false
     
