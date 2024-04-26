@@ -40,27 +40,28 @@ and expr_node =
   | ELog of log_op * expr * expr
   | ENot of expr
   | EFcall of ident * expr list
-  | EArray of expr list
-  | EArr_lookup of string * expr
+  | Earray of expr list
+  | Evector of expr list
+  | Ematrix of expr list list
 
-type vdec = {
-  var_ty : type_ident;
-  var_name : ident;
-  var_expr : expr option;  (* This field is optional *)
-}
-
-
-(* 
-type adec = {
-  arr_ty : type_ident;
-  arr_name : ident;
-  arr_size : expr;
-  arr_expr : expr list option  (* This field is optional *)
-} *)
-
-type stmt = 
-  { stmt_node: stmt_node;
-    stmt_loc : loc }
+  type vdec = {
+    var_ty : type_ident;
+    var_name : ident;
+    var_expr : expr option;  (* This field is optional *)
+  }
+  
+  
+  (* 
+  type adec = {
+    arr_ty : type_ident;
+    arr_name : ident;
+    arr_size : expr;
+    arr_expr : expr list option  (* This field is optional *)
+  } *)
+  
+  type stmt = 
+    { stmt_node: stmt_node;
+      stmt_loc : loc }
 
 (* type of statement *)
 and stmt_node =
@@ -75,7 +76,7 @@ and stmt_node =
   (* | Sarr_decl of adec type * [array size] * ident * [exp*]? *)
   | Sarr_assign of string * assign_type * expr list 
   | Sarr_assign_elem of string * expr * assign_type * expr
-  | Sfor of stmt * expr * stmt * stmt (*dec * cond * increment * body*)
+  | Sfor of stmt * expr * stmt * stmt
   | Swhile of expr * stmt
 
 and arg_dec = type_ident * ident

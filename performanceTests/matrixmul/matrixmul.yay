@@ -1,0 +1,21 @@
+{ export matrixMul }
+
+int<><> matrixMul(int<><> a, int<><> b) {
+    if (cols(a) != rows(b)) {
+        return 0;
+    }
+
+    let int<rows(a)><cols(b)> result; 
+
+    for (int i = 0; i < rows(a); i++) {
+        result<i> = <>;
+        for (int j = 0; j < cols(b); j++) {
+            let int sum = 0;
+            for (int k = 0; k < a[0].length; k++) {
+                sum += a<i><k> * b<k><j>;
+            }
+            result<i><j> = sum;
+        }
+    }
+    return result; 
+} //

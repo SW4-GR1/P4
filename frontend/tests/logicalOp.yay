@@ -1,2 +1,0 @@
-let bool x = true; 
-not x; 

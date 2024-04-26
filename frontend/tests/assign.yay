@@ -1,4 +1,0 @@
-let long_int a = 5;
-let int a = x + 1;
-a += 6;
-a = 1;
