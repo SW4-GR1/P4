@@ -1,16 +1,16 @@
 all: 
-	main.exe; dune exec ./main.exe test.yay
+	numatix.exe; dune exec ./numatix.exe test.numa
 
 nick: main.exe;
-	dune exec ./main.exe test.yay
+	dune exec ./numatix.exe test.numa
 
 main.exe:
-	dune build main.exe
+	dune build numatix.exe
 
 tests:
-	powershell -File ./lexParserTests/tests.ps1 ./main.exe
+	powershell -File ./lexParserTests/tests.ps1 ./numatix.exe
 
 clean:
 		dune clean
 
-.PHONY: all main.exe tests clean
+.PHONY: all numatix.exe tests clean
