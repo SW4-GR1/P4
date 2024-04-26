@@ -24,7 +24,13 @@
 _opam/i
 
 *.txt
+
+
+# remove vscode settings
+*.vscode/
+
 !/frontend/lexParserTests/**/*.txt
 
 # Local vscode settings
 /.vscode
+

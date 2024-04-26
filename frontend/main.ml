@@ -1,21 +1,25 @@
 open Format
 open Lexing
+open Ast
 
 let parse_only = ref false
+let type_only = ref false
 
+(*example of using references*)
 (* let () := parse_only true 
    let _ = ! parse_only*)
 
-(* Input and ourput files *)
+(* Input and output files *)
 let ifile = ref ""
 let ofile = ref ""
 
 let set_file f s = f := s
 
-
 let options =
   ["--parse-only", Arg.Set parse_only,
-   "  Only perform syntax analysis of the program"]
+   "  Only perform syntax analysis of the program";
+   "--type-only", Arg.Set type_only,
+   " Performs type checking and ends the execution";]
 
 let usage = "usage: main.exe [option] file.yay"
 
@@ -46,11 +50,15 @@ let () =
     close_in f;
     
     
-    if !parse_only then exit 0;
+    let parsetree = Pp_parse.pp_prog p in
+    if !parse_only then exit 0 else
+      let _ = print_endline parsetree in
+      let _p = Typechecker.program p in
+      if !type_only then exit 0 else 
+        let typed_tree = Pp_type.pp_prog _p in
+        print_endline typed_tree
     
-    let parsetree = Pretty_printer.pp_prog p in
-    print_endline parsetree
-    
+
   with
     | Lexer.Lexing_error c ->
 

@@ -25,14 +25,15 @@
 
 %start prog
 %%
-//loops
-//assignments
+
 prog:
     exports = exports
     s = stmt* 
     EOF
-      { { exports = exports; main = Slist s } }
-    | s = stmt* EOF { { exports = []; main = Slist s } }
+       { { exports = exports; main = { 
+        stmt_node = Slist s; stmt_loc = $startpos, $endpos } } }
+    | s = stmt* EOF { { exports = []; main = { 
+        stmt_node = Slist s; stmt_loc = $startpos, $endpos } } }
 ;
 
 exports:
@@ -42,6 +43,11 @@ export:
     |  EXPORT id = IDENT END  { Xexport(id) }
 
 stmt:
+  s = stmt_node
+   { { stmt_node = s; stmt_loc = $startpos, $endpos } }
+;
+
+stmt_node:
     | e = expr END { Ssimple(e) }  
     | c_stmt = control_stmt { c_stmt }
     | decl = declarations { decl }
@@ -58,18 +64,18 @@ declarations:
     | LET d_type = dec_type {d_type}
 
 dec_type:
-    | t = ty id = IDENT e = assign_opt END {Sdecl(t, id, e)} // variables
-    | d_struc = data_struc_dec {d_struc} // datastructures
+  | t = ty id = ident e = assign_opt END { Sdecl({var_ty = t; var_name = id; var_expr = e}) } // variables
+  | d_struc = data_struc_dec { d_struc } // data structures
 
 assign_opt:
     | ASSIGN e = expr { Some e }
     | { None }
-
+;
 
 data_struc_dec:
-    | t = ty LBRACKET e1 = expr RBRACKET id = IDENT body = array_body_opt END {Sarr_decl(t, e1, id, body)} // array 
-    | t = ty LT e1 = expr GT id = IDENT body = vector_body_opt END {Svec_decl(t, e1, id, body)} // vector
-    | t = ty LT e1 = expr COMMA e2 =expr GT id = IDENT body = matrix_body_opt END {Smat_decl(t, e1, e2, id, body)} // matrix
+    | t = ty LBRACKET e1 = expr RBRACKET id = ident body = array_body_opt END {Sarr_decl(t, id, e1, body)} // array 
+    | t = ty LT e1 = expr GT id = ident body = vector_body_opt END {Svec_decl(t, id, e1, body)} // vector
+    | t = ty LT e1 = expr COMMA e2 =expr GT id = ident body = matrix_body_opt END {Smat_decl(t, id, e1, e2, body)} // matrix
 
 
 matrix_body_opt:
@@ -82,7 +88,7 @@ vector_body_opt:
 array_body_opt:
     | ASSIGN LBRACKET body = expr_body RBRACKET { Some body}
     | { None }
-
+;
 
 assignment:
     | ass = assign { ass }
@@ -90,53 +96,62 @@ assignment:
     
 
 assign:
-    | id = IDENT ass_op = a_op e = expr END { Sass(id, ass_op, e) }
-
+    | id = IDENT ass_op = a_op e = expr END { Sass(id, ass_op, e) }//maybe IDENT, mess around and find out
+;
 
 if_stmt:
-    | IF LPAREN c = cond RPAREN LBRACE s = stmt+ RBRACE { Sif(c, Slist s, Slist []) }
-    | IF LPAREN c = cond RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { Sif(c, Slist s1, Slist s2) }
+    | IF LPAREN c = cond RPAREN LBRACE s = stmt+ RBRACE { Sif(c, 
+        {stmt_node = Slist s; stmt_loc = $startpos, $endpos},
+        {stmt_node = Slist []; stmt_loc = $startpos, $endpos}) }
+    | IF LPAREN c = cond RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { 
+        Sif(c, 
+        {stmt_node = Slist s1; stmt_loc = $startpos, $endpos},
+        {stmt_node = Slist s2; stmt_loc = $startpos, $endpos}) }
 ;
 
 loop_stmt:
     | f = for_loop { f } 
     | w = while_loop { w }
-
+;
 for_loop:
     | FOR LPAREN
         decl = declarations c = cond END
         ass = assign RPAREN 
-        s = block { Sfor(decl, c, ass, Slist s) }
+        s = block { Sfor({stmt_node = decl; stmt_loc = $startpos, $endpos}, c, { stmt_node = ass; stmt_loc = $startpos, $endpos } , 
+        { stmt_node = s; stmt_loc = $startpos, $endpos }) }
+;
 
 while_loop:
     | WHILE LPAREN c = cond RPAREN 
-        s = block { Swhile(c, Slist s) }
-
+        s = block { Swhile(c, { stmt_node = s; stmt_loc = $startpos, $endpos }) }
+;
 
 block:
-    | LBRACE s = stmt+ RBRACE {s}
+    | LBRACE s = stmt+ RBRACE {Slist s}
+;
 
 function_call:
-    | id = IDENT LPAREN arg_list = separated_list(COMMA, expr) RPAREN { EFcall(id,arg_list ) }
+    | id = ident LPAREN arg_list = separated_list(COMMA, expr) RPAREN { EFcall(id,arg_list ) }
+;
 
 return_stmt:
-    | RETURN e = expr END?{ Sreturn(e) }
+    | RETURN e = expr END?{ {stmt_node = Sreturn(e); stmt_loc = $startpos, $endpos } }
 ;
 
 function_def:
-    t = ty id = IDENT 
+    t = ty id = ident 
         LPAREN arg_list = separated_list(COMMA, param) RPAREN
         LBRACE body = func_body RBRACE 
-            { Sfunc{fun_type = t; name = id; args = arg_list; body = body} }
+            { Sfunc{fun_type = t; fun_name = id; args = arg_list; body = body} }
 ;
 
 param:
-    | t = ty id = IDENT { (t, id) }
+    | t = ty id = ident { (t, id) }
 ;
 
 func_body:
     | stmts = separated_list(END, stmt) r = return_stmt
-        { Slist (stmts @ [r]) }
+        { {stmt_node = Slist (stmts @ [r]); stmt_loc = $startpos, $endpos } }
 ;
 
 data_struc_assign:
@@ -154,19 +169,25 @@ expr_body:
     | e = expr COMMA body = expr_body { e :: body }
 
 expr:
+  e = expr_node
+  { { expr_node = e; expr_loc = $startpos, $endpos } }
+;
+
+expr_node:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
-    | id = IDENT u = unop            { EUnop(id, u) }
+    | e1 = expr; u = unop            { EUnop(e1, u) }
     | i = INT                        { EConst(i) }
     | fl = FLOAT                     { EFloat(fl)}
     | bl = BOOL                      { EBool(bl)}
-    | id = IDENT                     { EIdent(id) }
-    | condition = cond               { condition }
-    | LPAREN e = expr RPAREN         { e }
-    | SUB e = expr %prec uminus      { EBinop(Sub, EConst 0, e) }
+    | id = ident                     { EIdent(id) }
+    | condition = cond               { condition.expr_node }
+    | LPAREN e = expr RPAREN         { e.expr_node }
+    | SUB e = expr %prec uminus      { EBinop(Sub, {
+                                        expr_node = EConst(0); expr_loc = $loc}, e) }
     | f_call = function_call         { f_call }
-    | LBRACKET body = expr_body RBRACKET { Earray(body) }
-    | body = vector { Evector(body)}
-    | body = matrix {Ematrix(body)}
+    | LBRACKET body = expr_body RBRACKET { EArray(body) }
+    | body = vector { EVector(body)}
+    | body = matrix {EMatrix(body)}
 ;
 
 matrix:
@@ -183,12 +204,14 @@ vector:
     | LT body = expr_body GT {body}
 
 cond:
-    | b = BOOL { EBool(b) }
-    | e1 = expr o= l_op e2 = expr  { ELog(o, e1, e2) }
-    | e1 = expr o = c_op e2 = expr { ECond(o, e1, e2) }
-    | NOT e = expr { ENot(e) }
-    
+    | b = BOOL { {expr_node = EBool(b); expr_loc = $loc } }
+    | e1 = expr o= l_op e2 = expr  { {expr_node = ELog(o, e1, e2); expr_loc = $loc } }
+    | e1 = expr o = c_op e2 = expr { {expr_node = ECond(o, e1, e2); expr_loc = $loc } }
+    | NOT e = expr { {expr_node = ENot(e); expr_loc = $loc } }   
 ;
+
+ident:
+    | id = IDENT { {id = id; id_loc = $startpos, $endpos } }
 
 %inline op:
 | ADD { Add }

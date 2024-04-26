@@ -1,1 +1,17 @@
-f(a);
+let int a = 2;
+
+bool f(int c, bool b) {
+    return true + false 
+}
+f(a, true);
+
+if (true and true) {1+1;}
+
+int h(int a) {
+  if(true and true) {
+    a = 5;
+  } else {
+    a = 6;
+  }
+  return 5;
+}
