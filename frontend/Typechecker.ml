@@ -71,13 +71,14 @@ let string_of_location ((start_pos, end_pos) : loc) : string =
     (* ("matMul" (Mat_ty, [Mat_ty, Mat_ty], (0,0))); *)
     ]
     let init_var_table : varTable = 
-      SymTab.fromList []
-(* 
+      SymTab.fromList [] 
+
+
       (* Function to update variable table with a new variable *)        
-  let update_var_table (vtab : varTable) (vardec : Ast.stmt) : varTable =
-    let stmtnode = vardec.stmt_node in
-    match stmtnode with 
-    | Ast.Sdecl(vdec) ->
+let update_var_table (vtab : varTable) (vardec : Ast.stmt) : varTable =
+  let stmtnode = vardec.stmt_node in
+  match stmtnode with 
+  | Ast.Sdecl(vdec) ->
   let { Ast.var_ty = pty; Ast.var_name = ident; Ast.var_expr = expr_opt } = vdec in
     let ident_name = ident.id in
     (match lookup ident_name vtab with
@@ -103,8 +104,8 @@ let update_fun_table (ftab : funTable) (fundec : Ast.stmt) : funTable =
     | Some _ ->
       error ~loc:location ("Duplicate function at " ^ string_of_location location)
     | None ->
-      let ftab_next : funTable = SymTab.bind ident_name (ty_of_pty pty, arg_types, location) ftab in
-      ftab_next) *)
+      let ftab_next : funTable = SymTab.bind ident_name (ty_of_pty pty, arg_types) ftab in
+      ftab_next) 
 
 
   (* Function to pretty print function types *)
