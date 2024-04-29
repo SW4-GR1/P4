@@ -390,7 +390,15 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
           [s'] @ checkFunBody_aux ftab' vtab' slist in
 
   let body_list = match body.stmt_node with 
-  | Slist(s) -> checkFunBody_aux ftab vtab s
+  | Slist(s) -> 
+    let has_return = List.exists (fun (stmt : Ast.stmt) -> 
+      match stmt.stmt_node with
+      | Sreturn _ -> true
+      | _ -> false
+    ) s in
+    if not has_return then
+      error("Function is missing a return statement");
+    checkFunBody_aux ftab vtab s
   | _ -> error("Function body must be a list of statements") in
   body_list
   

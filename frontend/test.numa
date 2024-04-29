@@ -1,6 +1,6 @@
 int f(int a, int b) {
     a + b;
-    return 8
+    
 }
 
 if(not false){
@@ -14,7 +14,7 @@ int j(int a, int c) {
   let bool b = true;
   4+3;
   if(true){
-    2+2;
+    return 8;
   }
   1+2;
 }
@@ -26,7 +26,7 @@ f(2, 2);
 f(2, 2);
 
 let bool b = false;
-if(1 == true){
+if(true == true){
   f(2, 2);
 }else{
   f(2, 2);
