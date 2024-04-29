@@ -395,6 +395,34 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
             error ~loc ("Expected Slist in branches of Sif")
       in
       [Sif(e', Slist(tbranch'), Slist(fbranch'))] @ checkFunBody_aux ftab vtab slist (* Vi ville miste alle asignments af variables her right?*)
+      | Ast.Swhile (e, body) ->
+        let (cond_ty, e') = checkExp ftab vtab e in
+        if not (check_eq_type cond_ty Tbool) then
+          error ~loc ("Condition in while loop must be of type bool");
+        let body' = 
+          match body.stmt_node with
+          | Slist b -> checkFunBody_aux ftab vtab b
+          | _ -> error ~loc ("Expected Slist in body of Swhile")
+        in
+        [Swhile(e', Slist(body'))] @ checkFunBody_aux ftab vtab slist
+      | Ast.Sfor(dec, cond, inc, body) ->
+        let (ftab', vtab', dec') = checkStmt ftab vtab dec in
+        let dec_ident = match dec' with
+          | Sdecl(vdec) -> vdec.var_name in
+        let (cond_ty, cond') = checkExp ftab' vtab' cond in
+        let (_ftab, _vtab, inc') = checkStmt ftab' vtab' inc in
+        let body' = 
+          match body.stmt_node with
+          | Slist b -> checkFunBody_aux ftab' vtab' b
+          | _ -> error ~loc ("Expected Slist in body of Sfor")
+        in
+        let inc_ident = match inc' with
+        | Sass(id,_ , _) -> id in
+        if is_bool cond_ty then
+          if dec_ident = inc_ident then
+            [Sfor(dec', cond', inc', Slist(body'))] @ checkFunBody_aux ftab' vtab' slist
+          else error ~loc ("Increment must be performed on variable " ^ dec_ident)
+        else error ~loc ("Condition must evaluate to a boolean value")
       | _ ->
         let (ftab', vtab', s') = checkStmt ftab vtab s in
           [s'] @ checkFunBody_aux ftab' vtab' slist in
