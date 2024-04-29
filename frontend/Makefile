@@ -1,7 +1,7 @@
 all: 
 	numatix.exe; dune exec ./numatix.exe test.numa
 
-nick: main.exe;
+nick: numatix.exe;
 	dune exec ./numatix.exe test.numa
 
 main.exe:
