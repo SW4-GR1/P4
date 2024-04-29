@@ -121,10 +121,14 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
             then (t1, { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t1 } )
           else incompatible_types t1 t2
         else error("Binary operator should only be used on numbers")
-
+  
   | ECond(op, e1, e2) -> let (t1, e1_bin) = checkExp ftab vtab e1 in
       let (t2, e2_bin) = checkExp ftab vtab e2 in
-      if check_eq_type t1 t2 && is_number t1 then 
+      let bool_allowed = match op with 
+        | Ast.Eq -> true
+        | Ast.Neq -> true
+        | _ -> false in
+      if check_eq_type t1 t2 && (is_number t1 || bool_allowed) then 
       (Tbool, { expr_node = Econd(op, e1_bin, e2_bin); expr_ty = Tbool } )
       else incompatible_types t1 t2
 
@@ -202,6 +206,8 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
   let rec checkStmt (ftab : funTable) (vtab : varTable) (stmt : Ast.stmt) : funTable * varTable * stmt =
     let stmt_node = stmt.stmt_node in 
     match stmt_node with
+    | Sreturn(e) ->
+        error("Return statement outside of function")
     | Ssimple(e) -> 
       let (_t, e') = checkExp ftab vtab e in
        ( ftab, vtab, Ssimple(e') )
@@ -367,6 +373,18 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
         if check_eq_type ty' ftype then
           [Sreturn(e')]
         else error("Return type does not match function declaration")
+      | Ast.Sif(e, tbranch, fbranch) ->
+        let (ty', e') = checkExp ftab vtab e in
+        if not (check_eq_type ty' Tbool) then
+          error("Condition in if statement must be of type bool");
+        let tbranch', fbranch' = 
+          match tbranch.stmt_node, fbranch.stmt_node with
+          | Slist t, Slist f -> 
+            checkFunBody_aux ftab vtab t, checkFunBody_aux ftab vtab f
+          | _ -> 
+            error("Expected Slist in branches of Sif")
+      in
+      [Sif(e', Slist(tbranch'), Slist(fbranch'))] @ checkFunBody_aux ftab vtab slist (* Vi ville miste alle asignments af variables her right?*)
       | _ ->
         let (ftab', vtab', s') = checkStmt ftab vtab s in
           [s'] @ checkFunBody_aux ftab' vtab' slist in
@@ -382,6 +400,9 @@ let update_parse_tree (ftab : funTable) (vtab : varTable) (p : Ast.prog) : prog 
   let exports = p.exports in 
   let main = p.main in
     let (_ftab, _vtab, typed_prog) = checkStmt ftab vtab main in
+    List.iter (fun export -> match export with
+      | Ast.Xexport(fname) -> if is_none (SymTab.lookup fname ftab) then
+        unbound_function fname) exports;
     { stmts = typed_prog } 
    
 

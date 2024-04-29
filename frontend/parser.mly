@@ -53,6 +53,7 @@ stmt_node:
     | decl = declarations { decl }
     | ass = assignment { ass }
     | func = function_def {func}
+    | RETURN e = expr END? {Sreturn(e)}
 ;
 
 control_stmt:
@@ -100,11 +101,11 @@ assign:
 ;
 
 if_stmt:
-    | IF LPAREN c = cond RPAREN LBRACE s = stmt+ RBRACE { Sif(c, 
+    | IF LPAREN e = expr RPAREN LBRACE s = stmt+ RBRACE { Sif(e, 
         {stmt_node = Slist s; stmt_loc = $startpos, $endpos},
         {stmt_node = Slist []; stmt_loc = $startpos, $endpos}) }
-    | IF LPAREN c = cond RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { 
-        Sif(c, 
+    | IF LPAREN e = expr RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { 
+        Sif(e, 
         {stmt_node = Slist s1; stmt_loc = $startpos, $endpos},
         {stmt_node = Slist s2; stmt_loc = $startpos, $endpos}) }
 ;
@@ -141,18 +142,18 @@ return_stmt:
 function_def:
     t = ty id = ident 
         LPAREN arg_list = separated_list(COMMA, param) RPAREN
-        LBRACE body = func_body RBRACE 
-            { Sfunc{fun_type = t; fun_name = id; args = arg_list; body = body} }
+        body = block  
+            { Sfunc{fun_type = t; fun_name = id; args = arg_list; body = { stmt_node = body; stmt_loc = $startpos, $endpos }} }
 ;
 
 param:
     | t = ty id = ident { (t, id) }
 ;
 
-func_body:
-    | stmts = separated_list(END, stmt) r = return_stmt
+/* func_body:
+    | LBRACE stmts = stmt+ r = return_stmt RBRACE
         { {stmt_node = Slist (stmts @ [r]); stmt_loc = $startpos, $endpos } }
-;
+; */
 
 data_struc_assign:
     | id = IDENT ass_op = a_op LBRACKET body = expr_body RBRACKET END {Sarr_assign(id, ass_op, body)}

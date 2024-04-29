@@ -1,5 +1,4 @@
 { 
     export func; 
-    export x; 
  }
-1 + 2;
+int func(int x) {}
