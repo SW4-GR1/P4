@@ -4,14 +4,24 @@ int f(int a, int b) {
 }
 
 int j(int a, int c) {
-  a + c; 
-  return 10
+  if(1 > 2){
+    return a;
+  }else{
+    return c;
+  }
 }
 
 let int a = 1;
 
-
 f(a, 2);
 
 f(2, a);
+
+let bool b = false;
+
+if(b == true){
+  f(2, a);
+}else{
+  f(a, 2);
+}
 

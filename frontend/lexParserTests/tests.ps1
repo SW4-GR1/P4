@@ -16,7 +16,7 @@ $failed_tests = 0
 # Iterate over each subdirectory
 Get-ChildItem -Path $test_dir -Directory | ForEach-Object {
   # Identify the source file and the text file
-  $source_file = Get-ChildItem -Path $_.FullName -Filter "*.yay"
+  $source_file = Get-ChildItem -Path $_.FullName -Filter "*.numa"
   $expected_output_file = Get-ChildItem -Path $_.FullName -Filter "*.txt"
 
   # Run the OCaml program on the source file
