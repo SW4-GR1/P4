@@ -66,6 +66,11 @@ let rec pp_expr e =
     id ^ "(" ^ String.concat ", " expr_list ^ ")"
   | Evector(e_list) -> let expr_list = List.map pp_expr e_list in
     "(" ^ pp_expr_type e.expr_ty ^ "<" ^ String.concat ", " expr_list ^ ">" ^ ")"
+ | Ematrix(e_list_list) ->
+    let pp_row e_list = List.map pp_expr e_list in
+    let expr_rows = List.map pp_row e_list_list in
+    "Matrix(" ^ (String.concat ", " (List.map (fun row -> "[" ^ (String.concat ", " row) ^ "]") expr_rows)) ^ ")"
+
   | _ -> "BBBBBBBBBBBBBB"
 
 
@@ -88,6 +93,27 @@ let rec pp_stmt s =
         arr_decl_base ^ " " ^ "=" ^ " " ^ "[" ^ String.concat ", " decl_expr_list ^ "]"
       else
         arr_decl_base  
+  |Svec_decl(vecdec) ->
+    let ty = pp_expr_type vecdec.vec_ty in
+      let vec_decl_base = "let" ^ " " ^ ty ^ "<"  ^ pp_expr vecdec.vec_size ^ ">" ^ " " ^ vecdec.vec_name in
+      if is_some vecdec.vec_expr then let decl_expr_list = List.map pp_expr (get vecdec.vec_expr) in
+        vec_decl_base ^ " " ^ "=" ^ " " ^ "<" ^ String.concat ", " decl_expr_list ^ ">"
+      else
+        vec_decl_base 
+
+| Smat_decl(mdec) ->
+    let ty = pp_expr_type mdec.mat_ty in
+    let rows_str = pp_expr mdec.mat_rows in
+    let cols_str = pp_expr mdec.mat_cols in
+    let mat_decl_base = "let" ^ " " ^ ty ^ "<" ^ rows_str ^ "x" ^ cols_str ^ ">" ^ " " ^ mdec.mat_name in
+    (match mdec.mat_expr with
+    | Some(rows) ->  (* 'rows' is a list of list of expressions *)
+        let decl_row_list = List.map (fun row -> "[" ^ String.concat ", " (List.map pp_expr row) ^ "]") rows in
+        let matrix_str = "<" ^ String.concat ", " decl_row_list ^ ">" in
+        mat_decl_base ^ " " ^ "=" ^ " " ^ matrix_str
+    | None ->
+        mat_decl_base)
+
   |Sarr_assign(id, ass_type, e_list) ->
     let aop = match ass_type with 
       | Assign -> "="

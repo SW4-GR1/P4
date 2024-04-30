@@ -1,17 +1,5 @@
+let int[2] x;
 
+let int<2> j;
 
-
-int j(int a) {
-  1+1;
-  for(let int i = 0; i < 10; i = i + 1;) {
-    1+1;
-    if(true){
-      return 2
-    }
-    return i
-
-  
-  }
-  return 2;
-}
-
+let int<2, 3> k; 

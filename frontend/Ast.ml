@@ -21,6 +21,7 @@ type log_op = And | Or
 
 type export = 
   | Xexport of string
+  | Xlist of export list
 
 
 type expr =
@@ -42,26 +43,26 @@ and expr_node =
   | EArray of expr list
   | EVector of expr list
   | EMatrix of expr list list
-  | EArr_lookup of string * expr
+  | EArr_lookup of ident * expr
 
-  type vdec = {
-    var_ty : type_ident;
-    var_name : ident;
-    var_expr : expr option;  (* This field is optional *)
-  }
-  
-  
-  (* 
-  type adec = {
-    arr_ty : type_ident;
-    arr_name : ident;
-    arr_size : expr;
-    arr_expr : expr list option  (* This field is optional *)
-  } *)
-  
-  type stmt = 
-    { stmt_node: stmt_node;
-      stmt_loc : loc }
+type vdec = {
+  var_ty : type_ident;
+  var_name : ident;
+  var_expr : expr option;  (* This field is optional *)
+}
+
+
+(* 
+type adec = {
+  arr_ty : type_ident;
+  arr_name : ident;
+  arr_size : expr;
+  arr_expr : expr list option  (* This field is optional *)
+} *)
+
+type stmt = 
+  { stmt_node: stmt_node;
+    stmt_loc : loc }
 
 (* type of statement *)
 and stmt_node =
@@ -72,19 +73,17 @@ and stmt_node =
   | Sreturn of expr
   | Sdecl of vdec
   | Sass of string * assign_type * expr 
-  | Sarr_decl of type_ident * ident * expr * expr list option (*type * [array size] * ident * [exp*]? *)
-  (* | Sarr_decl of adec type * [array size] * ident * [exp*]? *)
-  | Sarr_assign of string * assign_type * expr list 
-  | Sarr_assign_elem of string * expr * assign_type * expr
+  | Sarr_decl of type_ident * ident * expr * expr list option
   | Svec_decl of type_ident * ident * expr * expr list option
-  | Svec_assign of string * assign_type * expr list 
-  | Svec_assign_elem of string * expr * assign_type * expr
   | Smat_decl of type_ident * ident * expr * expr * expr list list option
+  | Sarr_assign of string * assign_type * expr list 
+  | Svec_assign of string * assign_type * expr list
   | Smat_assign of string * assign_type * expr list list
+  | Sarr_assign_elem of string * expr * assign_type * expr
+  | Svec_assign_elem of string * expr * assign_type * expr
   | Smat_assign_elem of string * expr * expr * assign_type * expr
-  | Sfor of stmt * expr * stmt * stmt
+  | Sfor of stmt_node * expr * stmt * stmt (*dec * cond * increment * body*)
   | Swhile of expr * stmt
-  
 
 and arg_dec = type_ident * ident
 

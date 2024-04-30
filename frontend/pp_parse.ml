@@ -49,7 +49,10 @@ let rec pp_expr expr_instance =
   | EArray(e_list) -> 
       let e_list_str = String.concat ", " (List.map pp_expr e_list) in
       "[" ^ e_list_str ^ "]"
-  | EArr_lookup(id, e) -> "(" ^ id ^ "[" ^ pp_expr e ^ "]" ^ ")"
+  | EArr_lookup(id, e) -> "(" ^ id.id ^ "[" ^ pp_expr e ^ "]" ^ ")"
+  | EVector(e_list) -> 
+    let e_list_str = String.concat ", " (List.map pp_expr e_list) in
+    "<" ^ e_list_str ^ ">"
 
 
 let rec pp_cond = function
@@ -76,6 +79,12 @@ let rec pp_array_body body =
   | [] -> ""
   | [e] -> pp_expr e
   | e::es -> pp_expr e ^ ", " ^ pp_array_body es
+
+let rec pp_matrix_body body =
+  match body with
+  | [] -> ""
+  | [e] -> pp_array_body e
+  | e::es -> pp_array_body e ^ ", " ^ pp_matrix_body es
 
 let pp_a_op = function
   | Assign -> "="
@@ -107,7 +116,7 @@ match stmt_instance.stmt_node with
     | Some expr -> decl_str ^ " = " ^ pp_expr expr
     | None -> decl_str
     end
-  | Sfor(ass, c, reass, s) ->
+  (*| Sfor(ass, c, reass, s) ->
     let ass_str = match ass.stmt_node with
       (* | Ssimple e -> pp_expr e *)
       | Sdecl vdec -> 
@@ -128,7 +137,7 @@ match stmt_instance.stmt_node with
       | _ -> failwith "Unsupported statement node for for-loop reassignment in pp_stmt"
     in
     let stmt_str = pp_stmt s in
-    "for (" ^ ass_str ^ "; " ^ cond_str ^ "; " ^ reass_str ^ ") {\n" ^ stmt_str ^ "\n}"
+    "for (" ^ ass_str ^ "; " ^ cond_str ^ "; " ^ reass_str ^ ") {\n" ^ stmt_str ^ "\n}"*)
   | Swhile(c, s) -> "while (" ^ pp_expr c ^ ") {\n" ^ pp_stmt s ^ "\n}"
   | Sfunc(func) -> pp_func func 
   | Sarr_decl(t, ident, e1, body_opt) -> 
@@ -139,6 +148,19 @@ match stmt_instance.stmt_node with
     end
   | Sarr_assign(id, a_op, body) -> let a_op_str = pp_a_op a_op in id ^ " " ^ a_op_str ^ " " ^ "[" ^ pp_array_body body ^ "]" 
   | Sarr_assign_elem(id, e1, a_op, e2) -> let a_op_str = pp_a_op a_op in id ^ "[" ^ pp_expr e1 ^ "]" ^ " " ^ a_op_str ^ " " ^ pp_expr e2 
+  | Svec_decl(t, ident, e1, body_opt) -> 
+    let decl_str = "let " ^ pp_types t ^ " " ^ ident.id ^ "<" ^ pp_expr e1 ^ ">" in
+    begin match body_opt with
+    | Some body -> decl_str ^ " = <" ^ pp_array_body body ^ ">"
+    | None -> decl_str
+    end
+  | Svec_assign(id, a_op, body) -> let a_op_str = pp_a_op a_op in id ^ " " ^ a_op_str ^ " " ^ "<" ^ pp_array_body body ^ ">" 
+  | Smat_decl(t, ident, e1, e2, body_opt) ->
+    let decl_str = "let " ^ pp_types t ^ " " ^ ident.id ^ "<" ^ pp_expr e1 ^ "x" ^ pp_expr e2 ^ ">" in
+    begin match body_opt with
+    | Some body -> decl_str ^ " = <" ^ pp_matrix_body body ^ ">"
+    | None -> decl_str
+    end
   | _ -> failwith "Unexpected case encountered in pp_stmt"
 
 and pp_func func =

@@ -8,8 +8,8 @@ type ty =
  | Tlongint 
  | Tlongfloat
  | Tbool
- | Tmat
- | Tvec
+ | Tmat of ty
+ | Tvec of ty
  | Tarr of ty
 
 type binop = Ast.binop
@@ -43,6 +43,7 @@ and expr_node =
   | Earray of expr list
   | Earr_lookup of ident * expr 
   | Evector of expr list
+  | Ematrix of expr list list
 
 
 type vdec = {
@@ -57,7 +58,19 @@ type adec = {
    arr_size : expr;
    arr_expr : expr list option;  (* This field is optional *)
 }
-
+type vecdec = {
+   vec_ty : ty;
+   vec_name : ident;
+   vec_size : expr;
+   vec_expr : expr list option;  (* This field is optional *)
+}
+type mdec = {
+  mat_ty : ty;
+  mat_name : ident;
+  mat_rows : expr;  
+  mat_cols : expr;   
+  mat_expr : expr list list option;  (* This field is optional *)
+}
 type stmt = 
  | Ssimple of expr
  | Slist of stmt list
@@ -67,6 +80,8 @@ type stmt =
  | Sdecl of vdec
  | Sass of ident * assign_type * expr
  | Sarr_decl of adec
+ | Svec_decl of vecdec
+ | Smat_decl of mdec
  | Sarr_assign of ident * assign_type * expr list
  | Sarr_assign_elem of ident * expr * assign_type * expr
  | Sfor of stmt * expr * stmt * stmt 

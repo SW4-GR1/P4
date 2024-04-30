@@ -53,7 +53,6 @@ stmt_node:
     | decl = declarations { decl }
     | ass = assignment { ass }
     | func = function_def {func}
-    | RETURN e = expr END? {Sreturn(e)}
 ;
 
 control_stmt:
@@ -101,19 +100,21 @@ assign:
 ;
 
 if_stmt:
-    | IF LPAREN e = expr RPAREN LBRACE s = stmt+ RBRACE { Sif(e, 
+    | IF LPAREN c = cond RPAREN LBRACE s = stmt+ RBRACE { Sif(c, 
         {stmt_node = Slist s; stmt_loc = $startpos, $endpos},
         {stmt_node = Slist []; stmt_loc = $startpos, $endpos}) }
-    | IF LPAREN e = expr RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { 
-        Sif(e, 
+    | IF LPAREN c = cond RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { 
+        Sif(c, 
         {stmt_node = Slist s1; stmt_loc = $startpos, $endpos},
         {stmt_node = Slist s2; stmt_loc = $startpos, $endpos}) }
 ;
 
 loop_stmt:
-    | f = for_loop { f } 
+   // | f = for_loop { f } 
     | w = while_loop { w }
 ;
+
+(*)
 for_loop:
     | FOR LPAREN
         decl = declarations c = cond END
@@ -121,10 +122,10 @@ for_loop:
         s = block { Sfor({stmt_node = decl; stmt_loc = $startpos, $endpos}, c, { stmt_node = ass; stmt_loc = $startpos, $endpos } , 
         { stmt_node = s; stmt_loc = $startpos, $endpos }) }
 ;
-
+*)
 while_loop:
-    | WHILE LPAREN e = expr RPAREN 
-        s = block { Swhile(e, { stmt_node = s; stmt_loc = $startpos, $endpos }) }
+    | WHILE LPAREN c = cond RPAREN 
+        s = block { Swhile(c, { stmt_node = s; stmt_loc = $startpos, $endpos }) }
 ;
 
 block:
@@ -142,18 +143,18 @@ return_stmt:
 function_def:
     t = ty id = ident 
         LPAREN arg_list = separated_list(COMMA, param) RPAREN
-        body = block  
-            { Sfunc{fun_type = t; fun_name = id; args = arg_list; body = { stmt_node = body; stmt_loc = $startpos, $endpos }} }
+        LBRACE body = func_body RBRACE 
+            { Sfunc{fun_type = t; fun_name = id; args = arg_list; body = body} }
 ;
 
 param:
     | t = ty id = ident { (t, id) }
 ;
 
-/* func_body:
-    | LBRACE stmts = stmt+ r = return_stmt RBRACE
+func_body:
+    | stmts = separated_list(END, stmt) r = return_stmt
         { {stmt_node = Slist (stmts @ [r]); stmt_loc = $startpos, $endpos } }
-; */
+;
 
 data_struc_assign:
     | id = IDENT ass_op = a_op LBRACKET body = expr_body RBRACKET END {Sarr_assign(id, ass_op, body)}
