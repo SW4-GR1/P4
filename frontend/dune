@@ -1,12 +1,14 @@
 (ocamllex
  (modules lexer))
+
 (menhir
  (modules parser)
  (flags --explain --dump)
  (infer true))
-(executable
- (name numatix)
+
+(library
+ (name frontend)
  (libraries str)
- (promote (until-clean))
- (flags ())
- (modules_without_implementation ttree))
+ (modules_without_implementation ttree)
+ (flags
+  (:standard -warn-error -A)))

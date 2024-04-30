@@ -1,5 +1,0 @@
-let int[2] x;
-
-let int<2> j;
-
-let int<2, 3> k; 

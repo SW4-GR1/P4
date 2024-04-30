@@ -1,0 +1,5 @@
+(library
+ (name backend)
+ (libraries str)
+ (flags
+  (:standard -warn-error -A)))
