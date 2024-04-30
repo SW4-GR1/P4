@@ -140,14 +140,18 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       (Tbool, { expr_node = Econd(op, e1_bin, e2_bin); expr_ty = Tbool } )
       else incompatible_types ~loc t1 t2
 
-  | EUnop(e1, op) ->
-      let (t1, e1_bin) = checkExp ftab vtab e1 in
-      if t1 = Tint || t1 = Tlongint 
-        then (t1, { expr_node = Eunop(e1_bin, op); expr_ty = t1 })
-      else let str_of_op op = match op with 
-        | Ast.Inc -> "++"
-        | Ast.Dec -> "--" in
+  | EUnop(id, op) ->
+      let ident_type_opt = SymTab.lookup id vtab in
+      (match ident_type_opt with 
+      | Some ident_type ->
+        if ident_type = Tint || ident_type = Tlongint then
+          (ident_type, { expr_node = Eunop(id, op); expr_ty = ident_type })
+        else 
+          let str_of_op op = match op with 
+            | Ast.Inc -> "++"
+            | Ast.Dec -> "--" in
           error ~loc (str_of_op op ^ " operator applied to a non-numeric type")
+      | None -> error ~loc ("Variable " ^ id ^ " has not been declared"))
 
   | ELog(op, e1, e2) ->
       let (t1, e1_bin) = checkExp ftab vtab e1 in
@@ -256,7 +260,11 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         let (_ftab, _vtab, inc') = checkStmt ftab' vtab' inc in
         let (_ftab', _vtab', body') = checkStmt ftab' vtab' body in
         let inc_ident = match inc' with
-        | Sass(id,_ , _) -> id in
+        | Ssimple e -> (match e.expr_node with
+          | Eunop(id, _) -> id
+          | _ -> error ~loc ("Increment must be performed on variable " ^ dec_ident))
+        | Sass(id, _, _) -> id
+       in
         if is_bool cond_ty then
           if dec_ident = inc_ident then
             (ftab, vtab, Sfor(dec', cond', inc', body'))

@@ -35,7 +35,7 @@ and expr_node =
   | Efloat of float
   | Eident of ident
   | Ebinop of binop * expr * expr
-  | Eunop of expr * unop 
+  | Eunop of ident * unop 
   | Econd of cond * expr * expr
   | Elog of log_op * expr * expr
   | Enot of expr

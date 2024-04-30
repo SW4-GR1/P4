@@ -26,8 +26,8 @@ type export =
 
 type expr =
   { expr_node: expr_node;
-    expr_loc : loc;
-}
+    expr_loc : loc; }
+(* type of expression *)
 
 and expr_node =
   | EBool of bool
@@ -35,7 +35,7 @@ and expr_node =
   | EFloat of float
   | EIdent of ident
   | EBinop of binop * expr * expr
-  | EUnop of expr * unop
+  | EUnop of string * unop
   | ECond of cond_binop * expr * expr
   | ELog of log_op * expr * expr
   | ENot of expr
@@ -84,6 +84,9 @@ and stmt_node =
   | Smat_assign_elem of string * expr * expr * assign_type * expr
   | Sfor of stmt * expr * stmt * stmt (*dec * cond * increment * body*)
   | Swhile of expr * stmt
+
+
+(* type of function declaration *)
 
 and arg_dec = type_ident * ident
 

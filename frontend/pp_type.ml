@@ -46,12 +46,12 @@ let rec pp_expr e =
     | Geq -> ">=" in
     let ppty = pp_expr_type e.expr_ty in
     "( " ^ ppty ^ "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"^ " )"
-  | Eunop(e, op) -> 
+  | Eunop(ident, op) -> 
     let op_str = match op with
     | Inc -> "++"
     | Dec -> "--" in
     let ppty = pp_expr_type e.expr_ty in
-    "( " ^ ppty ^ "(" ^ pp_expr e ^ op_str ^")"^ " )"
+    "( " ^ ppty ^ "(" ^ ident ^ op_str ^")"^ " )"
   | Elog(o, e1, e2) ->
     let op_str = match o with
     | And -> "and"
@@ -140,6 +140,7 @@ let rec pp_stmt s =
       (* | Ssimple e -> pp_expr e *)
       | Sass (ident, a_op, e) -> 
         "( " ^ ident ^ " " ^ pp_a_op a_op ^ " " ^ pp_expr e ^ " )"
+      | Ssimple e -> pp_expr e
       | _ -> failwith "Unsupported statement node for for-loop reassignment in pp_stmt"
     in
     let stmt_str = pp_stmt s in

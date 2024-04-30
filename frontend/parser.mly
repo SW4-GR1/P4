@@ -92,12 +92,12 @@ array_body_opt:
 ;
 
 assignment:
-    | ass = assign { ass }
+    | ass = assign END { ass }
     | data_struc_ass = data_struc_assign {data_struc_ass}
     
 
 assign:
-    | id = IDENT ass_op = a_op e = expr END { Sass(id, ass_op, e) }//maybe IDENT, mess around and find out
+    | id = IDENT ass_op = a_op e = expr { Sass(id, ass_op, e) }//maybe IDENT, mess around and find out
 ;
 
 if_stmt:
@@ -115,11 +115,19 @@ loop_stmt:
     | w = while_loop { w }
 ;
 
+for_dec: 
+    | LET t = ty id = ident e = assign_opt { Sdecl({var_ty = t; var_name = id; var_expr = e}) }
+
+for_assign:
+    | id = IDENT ass_op = a_op e = expr { Sass(id, ass_op, e) }
+    | id = IDENT ; u = unop            { Ssimple({expr_node = EUnop(id, u); expr_loc = $startpos, $endpos}) }
+
+
 for_loop:
     | FOR LPAREN
-        decl = declarations e = expr END
-        ass = assign RPAREN 
-        s = block { Sfor({stmt_node = decl; stmt_loc = $startpos, $endpos}, e, { stmt_node = ass; stmt_loc = $startpos, $endpos } , 
+        decl = for_dec END e = expr END
+        ass = for_assign RPAREN 
+        s = block { Sfor({stmt_node = decl; stmt_loc = $startpos, $endpos}, e, {stmt_node = ass; stmt_loc = $startpos, $endpos}, 
         { stmt_node = s; stmt_loc = $startpos, $endpos }) }
 ;
 
@@ -177,7 +185,7 @@ expr:
 
 expr_node:
     | e1 = expr; o = op; e2 = expr   { EBinop(o, e1, e2) }
-    | e1 = expr; u = unop            { EUnop(e1, u) }
+    | i = IDENT; u = unop            { EUnop(i, u) }
     | i = INT                        { EConst(i) }
     | fl = FLOAT                     { EFloat(fl)}
     | bl = BOOL                      { EBool(bl)}

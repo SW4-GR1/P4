@@ -23,11 +23,11 @@ let rec pp_expr expr_instance =
       | Div -> "/"
       | Mod -> "%" in
       "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
-  | EUnop (e1, unop) -> 
+  | EUnop (id, unop) -> 
       let unop_str = match unop with
       | Inc -> "++"
       | Dec -> "--" in
-      "(" ^ pp_expr e1 ^ unop_str ^ ")"
+      "(" ^ id ^ unop_str ^ ")"
   | ECond(op, e1, e2) -> 
       let cond_str = match op with
       | Lt -> "<"
@@ -131,10 +131,12 @@ match stmt_instance.stmt_node with
     in
     let cond_str = pp_expr c in
     let reass_str = match reass.stmt_node with
-      | Ssimple e -> pp_expr e
-      | Sass (ident, a_op, e) -> 
-        "( " ^ ident ^ " " ^ pp_a_op a_op ^ " " ^ pp_expr e ^ " )"
-      | _ -> failwith "Unsupported statement node for for-loop reassignment in pp_stmt"
+        | Ssimple e -> pp_expr e
+        | Sass (ident, a_op, e) -> 
+          "( " ^ ident ^ " " ^ pp_a_op a_op ^ " " ^ pp_expr e ^ " )"
+        | _ -> failwith "Unsupported statement node for for-loop reassignment in pp_stmt"
+      
+      
     in
     let stmt_str = pp_stmt s in
     "for (" ^ ass_str ^ "; " ^ cond_str ^ "; " ^ reass_str ^ ") {\n" ^ stmt_str ^ "\n}"
