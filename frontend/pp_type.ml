@@ -105,7 +105,7 @@ let rec pp_stmt s =
     let ty = pp_expr_type mdec.mat_ty in
     let rows_str = pp_expr mdec.mat_rows in
     let cols_str = pp_expr mdec.mat_cols in
-    let mat_decl_base = "let" ^ " " ^ ty ^ "<" ^ rows_str ^ "x" ^ cols_str ^ ">" ^ " " ^ mdec.mat_name in
+    let mat_decl_base = "let" ^ " " ^ ty ^ "<" ^ rows_str ^ ">" ^ "<"  ^ cols_str ^ ">" ^ " " ^ mdec.mat_name in
     (match mdec.mat_expr with
     | Some(rows) ->  (* 'rows' is a list of list of expressions *)
         let decl_row_list = List.map (fun row -> "[" ^ String.concat ", " (List.map pp_expr row) ^ "]") rows in

@@ -247,28 +247,21 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       if is_bool cond_ty then
         (ftab, vtab, Sif(e', true_branch, false_branch))
       else error ~loc ("Condition must evaluate to a boolean value")
- (*   
-    | Sfor(dec, cond, inc, body) -> 
-      let (ftab', vtab', dec') = checkStmt ftab vtab dec in
-      let dec_ident = match dec' with
-        | Sdecl(vdec) -> vdec.var_name in
-      let (cond_ty, cond') = checkExp ftab' vtab' cond in
-      let (_ftab, _vtab, inc') = checkStmt ftab' vtab' inc in
-      let (_ftab', _vtab', body') = checkStmt ftab' vtab' body in
-      let inc_ident = match inc' with
-      | Sass(id,_ , _) -> id in
-      if is_bool cond_ty then
-        if dec_ident = inc_ident then
-          (ftab, vtab, Sfor(dec', cond', inc', body'))
-        else error ~loc ("Increment must be performed on variable " ^ dec_ident)
-      else error ~loc ("Condition must evaluate to a boolean value")
-*)
-    | Swhile (e, body) ->
-      let (cond_ty, e') = checkExp ftab vtab e in
-      let (ftab', vtab', body') = checkStmt ftab vtab body in
-      if is_bool cond_ty then
-        (ftab, vtab, Swhile(e', body'))
-      else error ~loc ("Condition must evaluate to boolean value")
+   
+      | Sfor(dec, cond, inc, body) -> 
+        let (ftab', vtab', dec') = checkStmt ftab vtab dec in
+        let dec_ident = match dec' with
+          | Sdecl(vdec) -> vdec.var_name in
+        let (cond_ty, cond') = checkExp ftab' vtab' cond in
+        let (_ftab, _vtab, inc') = checkStmt ftab' vtab' inc in
+        let (_ftab', _vtab', body') = checkStmt ftab' vtab' body in
+        let inc_ident = match inc' with
+        | Sass(id,_ , _) -> id in
+        if is_bool cond_ty then
+          if dec_ident = inc_ident then
+            (ftab, vtab, Sfor(dec', cond', inc', body'))
+          else error ~loc ("Increment must be performed on variable " ^ dec_ident)
+        else error ~loc ("Condition must evaluate to a boolean value")
 
     
     | Sfunc(fdec) -> 
@@ -470,7 +463,7 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
           | _ -> error ~loc ("Expected Slist in body of Swhile")
         in
         [Swhile(e', Slist(body'))] @ checkFunBody_aux ftab vtab slist
-      (*| Ast.Sfor(dec, cond, inc, body) ->
+      | Ast.Sfor(dec, cond, inc, body) ->
         let (ftab', vtab', dec') = checkStmt ftab vtab dec in
         let dec_ident = match dec' with
           | Sdecl(vdec) -> vdec.var_name in
@@ -487,7 +480,7 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
           if dec_ident = inc_ident then
             [Sfor(dec', cond', inc', Slist(body'))] @ checkFunBody_aux ftab' vtab' slist
           else error ~loc ("Increment must be performed on variable " ^ dec_ident)
-        else error ~loc ("Condition must evaluate to a boolean value")*)
+        else error ~loc ("Condition must evaluate to a boolean value")
       | _ ->
         let (ftab', vtab', s') = checkStmt ftab vtab s in
           [s'] @ checkFunBody_aux ftab' vtab' slist in

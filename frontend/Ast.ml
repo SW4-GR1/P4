@@ -82,7 +82,7 @@ and stmt_node =
   | Sarr_assign_elem of string * expr * assign_type * expr
   | Svec_assign_elem of string * expr * assign_type * expr
   | Smat_assign_elem of string * expr * expr * assign_type * expr
-  | Sfor of stmt_node * expr * stmt * stmt (*dec * cond * increment * body*)
+  | Sfor of stmt * expr * stmt * stmt (*dec * cond * increment * body*)
   | Swhile of expr * stmt
 
 and arg_dec = type_ident * ident

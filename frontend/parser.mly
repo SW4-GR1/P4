@@ -74,15 +74,16 @@ assign_opt:
 
 data_struc_dec:
     | t = ty LBRACKET e1 = expr RBRACKET id = ident body = array_body_opt END {Sarr_decl(t, id, e1, body)} // array 
-    | t = ty LT e1 = expr GT id = ident body = vector_body_opt END {Svec_decl(t, id, e1, body)} // vector
-    | t = ty LT e1 = expr COMMA e2 =expr GT id = ident body = matrix_body_opt END {Smat_decl(t, id, e1, e2, body)} // matrix
+    | t = ty LT e = expr GT id = ident body = vector_body_opt END {Svec_decl(t, id, e, body)} // vector
+    | t = ty LT e1 = expr GT LT e2 = expr GT id = ident body = matrix_body_opt END {Smat_decl(t, id, e1, e2, body)} // matrix
 
 
 matrix_body_opt:
     | ASSIGN body = matrix { Some body}
     | { None }
+
 vector_body_opt:
-    | ASSIGN body = vector { Some body}
+    | ASSIGN LT body = expr_body END GT { Some body}
     | { None }
 
 array_body_opt:
@@ -110,19 +111,18 @@ if_stmt:
 ;
 
 loop_stmt:
-   // | f = for_loop { f } 
+    | f = for_loop { f } 
     | w = while_loop { w }
 ;
 
-(*)
 for_loop:
     | FOR LPAREN
-        decl = declarations c = cond END
+        decl = declarations e = expr END
         ass = assign RPAREN 
-        s = block { Sfor({stmt_node = decl; stmt_loc = $startpos, $endpos}, c, { stmt_node = ass; stmt_loc = $startpos, $endpos } , 
+        s = block { Sfor({stmt_node = decl; stmt_loc = $startpos, $endpos}, e, { stmt_node = ass; stmt_loc = $startpos, $endpos } , 
         { stmt_node = s; stmt_loc = $startpos, $endpos }) }
 ;
-*)
+
 while_loop:
     | WHILE LPAREN c = cond RPAREN 
         s = block { Swhile(c, { stmt_node = s; stmt_loc = $startpos, $endpos }) }
