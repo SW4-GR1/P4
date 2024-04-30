@@ -1,6 +1,7 @@
+open Frontend
 open Format
 open Lexing
-open Frontend.Ast
+open Ast
 
 let parse_only = ref false
 let type_only = ref false
@@ -48,26 +49,26 @@ let () =
 
   try
     
-    let p = Frontend.Parser.prog Frontend.Lexer.token buf in
+    let p = Parser.prog Lexer.token buf in
     close_in f;
     
     
-    let parsetree = Frontend.Pp_parse.pp_prog p in
+    let parsetree = Pp_parse.pp_prog p in
     if !parse_only then exit 0 else
       let _ = print_endline parsetree in
-      let _p = Frontend.Typechecker.program p in
+      let _p = Typechecker.program p in
       if !type_only then exit 0 else 
-        let typed_tree = Frontend.Pp_type.pp_prog _p in
+        let typed_tree = Pp_type.pp_prog _p in
         print_endline typed_tree
     
 
   with
-    | Frontend.Lexer.Lexing_error c ->
+    | Lexer.Lexing_error c ->
 
 	localisation (Lexing.lexeme_start_p buf);
 	eprintf "Lexical error: %s@." c;
 	exit 1
-    | Frontend.Parser.Error ->
+    | Parser.Error ->
 
 	localisation (Lexing.lexeme_start_p buf);
 	eprintf "Syntax error@.";
