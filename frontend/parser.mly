@@ -83,7 +83,7 @@ matrix_body_opt:
     | { None }
 
 vector_body_opt:
-    | ASSIGN LT body = expr_body END GT { Some body}
+    | ASSIGN LT body = expr_body GT { Some body}
     | { None }
 
 array_body_opt:
