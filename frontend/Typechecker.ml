@@ -425,6 +425,26 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         else duplicated_field ~loc name
     else incompatible_types ~loc t_dim1 Tint
 
+    | Smat_assign(ident, assign_op, expr_list_list) ->
+      let mat_exists = SymTab.lookup ident vtab in
+      if is_some mat_exists then
+        let mat_ty = get mat_exists in
+        match mat_ty with
+        | Tmat(t) ->
+          let checked_rows = List.map (fun row ->
+            let checked_elements = List.map (fun elem -> checkExp ftab vtab elem) row in
+            let elements_type_correct = List.fold_left (fun b (elem_ty, expr) -> b && (check_eq_type elem_ty t)) true checked_elements in
+            if elements_type_correct then
+              List.map snd checked_elements
+            else error ~loc ("An element in the matrix row is not of the correct type ")
+          ) expr_list_list in
+          if List.for_all (fun row -> row <> []) checked_rows then
+            let expr_list_list' = checked_rows in
+            (ftab, vtab, Smat_assign(ident, assign_op, expr_list_list'))
+          else error ~loc ("One of the rows in the matrix assignment is empty")
+        | _ -> error ~loc (ident ^ " is not a matrix")
+      else error ~loc ("Matrix "^ ident ^ " has not been declared")
+
 
     | Slist(stmts) -> 
         let stmt_list = checkStmtList ftab vtab stmts in

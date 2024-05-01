@@ -1,10 +1,2 @@
-let int[2] x = [2,3,4];
-let int{2}{3} b;
 
-for(let int i = 1; i < 10; i--) {
-    1 + 1;
-}
-
-
-
-let int{3} y = {1,2,3};
+let int{2}{1} b = {{2,1}};

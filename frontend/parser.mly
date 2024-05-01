@@ -167,7 +167,7 @@ func_body:
 data_struc_assign:
     | id = IDENT ass_op = a_op LBRACKET body = expr_body RBRACKET END {Sarr_assign(id, ass_op, body)}
     | id = IDENT LBRACKET e1 = expr RBRACKET ass_op = a_op e2 = expr END {Sarr_assign_elem(id, e1, ass_op, e2)}
-    | id = IDENT ass_op = a_op GT body = expr_body LT END {Svec_assign(id, ass_op, body)}
+    | id = IDENT ass_op = a_op LBRACE body = expr_body RBRACE END {Svec_assign(id, ass_op, body)}
     | id = IDENT LBRACE e1 = expr RBRACE ass_op = a_op e2 = expr END {Svec_assign_elem(id, e1, ass_op, e2)}
     | id = IDENT ass_op = a_op body = matrix END {Smat_assign(id, ass_op, body)}
     | id = IDENT LBRACE e1 = expr COMMA e2 = expr RBRACE ass_op = a_op e3 = expr END {Smat_assign_elem(id, e1, e2, ass_op, e3)}
@@ -212,7 +212,7 @@ vector_opt:
     | { [] }
 
 vector:
-    | LT body = expr_body GT %prec template_markers {body}
+    | LBRACE body = expr_body RBRACE %prec template_markers {body}
 
 cond:
     | b = BOOL { {expr_node = EBool(b); expr_loc = $loc } }
