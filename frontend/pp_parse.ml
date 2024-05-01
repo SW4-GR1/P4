@@ -30,11 +30,11 @@ let rec pp_expr expr_instance =
       "(" ^ id ^ unop_str ^ ")"
   | ECond(op, e1, e2) -> 
       let cond_str = match op with
-      | Lt -> "<"
+      | Lt -> "{"
       | Gt -> ">"
       | Eq -> "=="
       | Neq -> "!="
-      | Leq -> "<="
+      | Leq -> "{="
       | Geq -> ">=" in
       "(" ^ pp_expr e1 ^ " " ^ cond_str ^ " " ^ pp_expr e2 ^ ")"
   | ELog(op, e1, e2) -> 
@@ -52,17 +52,17 @@ let rec pp_expr expr_instance =
   | EArr_lookup(id, e) -> "(" ^ id.id ^ "[" ^ pp_expr e ^ "]" ^ ")"
   | EVector(e_list) -> 
     let e_list_str = String.concat ", " (List.map pp_expr e_list) in
-    "<" ^ e_list_str ^ ">"
+    "{" ^ e_list_str ^ ">"
 
 
 let rec pp_cond = function
   | ECond(op, e1, e2) ->
     let op_str = match op with
-    | Lt -> "<"
+    | Lt -> "{"
     | Gt -> ">"
     | Eq -> "=="
     | Neq -> "!="
-    | Leq -> "<="
+    | Leq -> "{="
     | Geq -> ">="
    in
     "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
@@ -79,6 +79,12 @@ let rec pp_array_body body =
   | [] -> ""
   | [e] -> pp_expr e
   | e::es -> pp_expr e ^ ", " ^ pp_array_body es
+
+let rec pp_vector_body body =
+  match body with
+  | [] -> ""
+  | [e] -> pp_expr e
+  | e::es -> pp_expr e ^ ", " ^ pp_vector_body es
 
 let rec pp_matrix_body body =
   match body with
@@ -151,16 +157,16 @@ match stmt_instance.stmt_node with
   | Sarr_assign(id, a_op, body) -> let a_op_str = pp_a_op a_op in id ^ " " ^ a_op_str ^ " " ^ "[" ^ pp_array_body body ^ "]" 
   | Sarr_assign_elem(id, e1, a_op, e2) -> let a_op_str = pp_a_op a_op in id ^ "[" ^ pp_expr e1 ^ "]" ^ " " ^ a_op_str ^ " " ^ pp_expr e2 
   | Svec_decl(t, ident, e1, body_opt) -> 
-    let decl_str = "let " ^ pp_types t ^"<" ^ pp_expr e1 ^ ">" ^ " " ^ ident.id  in
+    let decl_str = "let " ^ pp_types t ^"{" ^ pp_expr e1 ^ "}" ^ " " ^ ident.id  in
     begin match body_opt with
-    | Some body -> decl_str ^ " = <" ^ pp_array_body body ^ ">"
+    | Some body -> decl_str ^ " = {" ^ pp_array_body body ^ "}"
     | None -> decl_str
     end
-  | Svec_assign(id, a_op, body) -> let a_op_str = pp_a_op a_op in id ^ " " ^ a_op_str ^ " " ^ "<" ^ pp_array_body body ^ ">" 
+  | Svec_assign(id, a_op, body) -> let a_op_str = pp_a_op a_op in id ^ " " ^ a_op_str ^ " " ^ "{" ^ pp_vector_body body ^ "}" 
   | Smat_decl(t, ident, e1, e2, body_opt) ->
-    let decl_str = "let " ^ pp_types t ^  "<" ^ pp_expr e1 ^ ">" ^ "<" ^ pp_expr e2 ^ ">" ^ " " ^ ident.id in
+    let decl_str = "let " ^ pp_types t ^  "{" ^ pp_expr e1 ^ "}" ^ "{" ^ pp_expr e2 ^ "}" ^ " " ^ ident.id in
     begin match body_opt with
-    | Some body -> decl_str ^ " = <" ^ pp_matrix_body body ^ ">"
+    | Some body -> decl_str ^ " = {" ^ pp_matrix_body body ^ "}"
     | None -> decl_str
     end
   | _ -> failwith "Unexpected case encountered in pp_stmt"

@@ -271,7 +271,6 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
           else error ~loc ("Increment must be performed on variable " ^ dec_ident)
         else error ~loc ("Condition must evaluate to a boolean value")
 
-    
     | Sfunc(fdec) -> 
       let f_type = ty_of_pty fdec.fun_type in 
       let (vtab',f_args) = checkArgList ftab vtab fdec.args in
@@ -384,6 +383,21 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         ( ftab, vtab', Svec_decl(vecdec') )
       else duplicated_field ~loc name
       else incompatible_types ~loc t_size Tint
+      
+    | Svec_assign(ident, assign_op, expr_list) -> 
+      let vec_exists = SymTab.lookup ident vtab in
+      if is_some vec_exists then
+        let vec_ty = get vec_exists in
+        let ty' = match vec_ty with
+          | Tvec(t) -> t 
+          | _ -> error ~loc (ident ^ " is not a vector") in
+        let checked_args =  List.map (fun elem -> checkExp ftab vtab elem) expr_list in 
+        let arg_types_correct = List.fold_left(fun b (elem_ty, expr) -> b && (check_eq_type elem_ty ty')) true checked_args in
+          if arg_types_correct then
+            let expr_list' = List.map (fun (elem_ty, expr) -> expr) checked_args in
+            (ftab, vtab, Svec_assign(ident, assign_op, expr_list'))
+          else error ~loc ("An element in the vector is not of the correct type")
+      else error ~loc ("Vector "^ ident ^ " has not been declared")
 
     | Smat_decl(ty, ident, dim1, dim2, e) ->
     let ty' = ty_of_pty ty in
