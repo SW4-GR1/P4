@@ -75,7 +75,7 @@ assign_opt:
 data_struc_dec:
     | t = ty LBRACKET e1 = expr RBRACKET id = ident body = array_body_opt END {Sarr_decl(t, id, e1, body)} // array 
     | t = ty LBRACE e = expr RBRACE id = ident body = vector_body_opt END {Svec_decl(t, id, e, body)} // vector
-    | t = ty LT e1 = expr GT LT e2 = expr GT id = ident body = matrix_body_opt END {Smat_decl(t, id, e1, e2, body)} // matrix
+    | t = ty LBRACE e1 = expr RBRACE LBRACE e2 = expr RBRACE id = ident body = matrix_body_opt END {Smat_decl(t, id, e1, e2, body)} // matrix
 
 
 matrix_body_opt:
@@ -168,9 +168,9 @@ data_struc_assign:
     | id = IDENT ass_op = a_op LBRACKET body = expr_body RBRACKET END {Sarr_assign(id, ass_op, body)}
     | id = IDENT LBRACKET e1 = expr RBRACKET ass_op = a_op e2 = expr END {Sarr_assign_elem(id, e1, ass_op, e2)}
     | id = IDENT ass_op = a_op GT body = expr_body LT END {Svec_assign(id, ass_op, body)}
-    | id = IDENT LT e1 = expr GT ass_op = a_op e2 = expr END {Svec_assign_elem(id, e1, ass_op, e2)}
+    | id = IDENT LBRACE e1 = expr RBRACE ass_op = a_op e2 = expr END {Svec_assign_elem(id, e1, ass_op, e2)}
     | id = IDENT ass_op = a_op body = matrix END {Smat_assign(id, ass_op, body)}
-    | id = IDENT LT e1 = expr COMMA e2 = expr GT ass_op = a_op e3 = expr END {Smat_assign_elem(id, e1, e2, ass_op, e3)}
+    | id = IDENT LBRACE e1 = expr COMMA e2 = expr RBRACE ass_op = a_op e3 = expr END {Smat_assign_elem(id, e1, e2, ass_op, e3)}
 
 
 
@@ -202,7 +202,7 @@ expr_node:
 ;
 
 matrix:
-    | LT body = matrix_body GT {body}
+    | LBRACE body = matrix_body RBRACE {body}
 
 matrix_body:
     | v = vector vs = vector_opt {v :: vs}
