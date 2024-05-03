@@ -83,6 +83,8 @@ type stmt =
  | Svec_decl of vecdec
  | Smat_decl of mdec
  | Sarr_assign of ident * assign_type * expr list
+ | Svec_assign of ident * assign_type * expr list
+ | Smat_assign of ident * assign_type * expr list list
  | Sarr_assign_elem of ident * expr * assign_type * expr
  | Sfor of stmt * expr * stmt * stmt 
  | Swhile of expr * stmt

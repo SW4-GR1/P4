@@ -80,4 +80,3 @@ let () =
 
 	localisation (Lexing.lexeme_start_p buf);
 	eprintf "Syntax error@.";
-	exit 1
