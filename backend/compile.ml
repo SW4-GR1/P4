@@ -7,6 +7,11 @@ match t with
   | Tlongint -> S (Printf.sprintf "i64.const %d" c)
   | _ -> failwith "Unsupported type"
 
+  let compile_float t f =
+  match t with
+    | Tfloat -> S (Printf.sprintf "f32.const %f" f)
+    | Tlongfloat -> S (Printf.sprintf "f64.const %f" f)
+    | _ -> failwith "Unsupported type"
 
 let rec compile stmt = 
   match stmt with 
@@ -22,6 +27,7 @@ and compile_expr e =
   let ty = e.expr_ty in
   match e.expr_node with
     | Econst c -> compile_const ty c 
+    | Efloat f -> S (Printf.sprintf "f32.const %f" f)
     | Ebinop (op, e1, e2) -> compile_binop ty op e1 e2 
     | _ -> failwith "Unsupported expression"
 
