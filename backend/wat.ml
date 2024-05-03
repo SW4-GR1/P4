@@ -1,3 +1,4 @@
+open Frontend.Ttree
 type opcode = string
 
 (* Opcodes defineret som Ocaml string constanter til generation af wat kode*)
@@ -17,6 +18,12 @@ let ge : opcode = "ge"
 
 (* De forskellige typer i wasm*)
 type wasm_type = I32 | I64 | F32 | F64
+
+let ttype_wtype ttype = match ttype with
+  | Tint -> I32
+  | Tlongint -> I64
+  | Tfloat -> F32
+  | Tlongfloat -> F64
 
 (* De forskellige konstruktioner i webassembly, skal muligvis udvides med loops og funktions definitioner   *)
 type wasm =
@@ -48,27 +55,9 @@ type wasm =
     Printf.sprintf "(%s.%s %s)" type_str opcode operands_str
 
 (* Funktioner til at generere de forskellige opcodes (kan bruges i compile.ml) *)
-let add_i32 a b = Opcode (add, I32, [a; b])
-let sub_i32 a b = Opcode (sub, I32, [a; b])
-let mul_i32 a b = Opcode (mul, I32, [a; b])
-let div_i32 a b = Opcode (div, I32, [a; b])
-let rem_s_i32 a b = Opcode (rem_s, I32, [a; b])
+let binop op t a b =
+  let wtype = ttype_wtype t in Opcode (op, wtype, [a; b])
 
-let add_i64 a b = Opcode (add, I64, [a; b])
-let sub_i64 a b = Opcode (sub, I64, [a; b])
-let mul_i64 a b = Opcode (mul, I64, [a; b])
-let div_i64 a b = Opcode (div, I64, [a; b])
-let rem_s_i64 a b = Opcode (rem_s, I64, [a; b])
-
-let add_f32 a b = Opcode (add, F32, [a; b])
-let sub_f32 a b = Opcode (sub, F32, [a; b])
-let mul_f32 a b = Opcode (mul, F32, [a; b])
-let div_f32 a b = Opcode (div, F32, [a; b])
-
-let add_f64 a b = Opcode (add, F64, [a; b])
-let sub_f64 a b = Opcode (sub, F64, [a; b])
-let mul_f64 a b = Opcode (mul, F64, [a; b])
-let div_f64 a b = Opcode (div, F64, [a; b])
 
 
 (* Tilføjer en main_func som der generes inde i indtil vi har vores egne funktioner på plads*)

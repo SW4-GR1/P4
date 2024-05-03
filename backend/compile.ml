@@ -29,20 +29,22 @@ and compile_stmt_list stmts =
 and compile_expr e =
   let ty = e.expr_ty in
   match e.expr_node with
+    | Eident(id) -> S (Printf.sprintf "(get_local $%s)" id)
     | Econst c -> compile_const ty c 
-    | Efloat f -> S (Printf.sprintf "f32.const %f" f)
-    | Ebinop (op, e1, e2) -> compile_binop ty op e1 e2 
+    | Efloat f -> compile_float ty f
+    | Ebinop (op, e1, e2) -> compile_binop op ty e1 e2 
+    (* | Eunop (id, op) ->  *)
     | _ -> failwith "Unsupported expression"
 
-and compile_binop ty op e1 e2 =
+and compile_binop op ty e1 e2 =
   let e1' = compile_expr e1 in
   let e2' = compile_expr e2 in
   match op with
-  | Add -> add_i32 e1' e2'
-  | Sub -> sub_i32 e1' e2'
-  | Div -> div_i32 e1' e2'
-  | Mul -> mul_i32 e1' e2'
-  | Mod -> rem_s_i32 e1' e2'
+  | Add -> binop add ty e1' e2'
+  | Sub -> binop sub ty e1' e2'
+  | Div -> binop div ty e1' e2'
+  | Mul -> binop mul ty e1' e2'
+  | Mod -> binop rem_s ty e1' e2'
   | _ -> failwith "Unsupported binary operator"
 
 
