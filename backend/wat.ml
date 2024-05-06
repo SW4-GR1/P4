@@ -19,7 +19,9 @@ let ge : opcode = "ge"
 (* De forskellige typer i wasm*)
 type wasm_type = I32 | I64 | F32 | F64
 
+
 let ttype_wtype ttype = match ttype with
+  | Tbool -> I32
   | Tint -> I32
   | Tlongint -> I64
   | Tfloat -> F32
@@ -78,6 +80,10 @@ let bool_const b = if b then int_const Tint 1 else int_const Tint 0
 
 let binop op t a b =
   let wtype = ttype_wtype t in Opcode (op, wtype, [a; b])
+
+let cond op t a b = 
+  let wtype = ttype_wtype t in Opcode (op, wtype, [a; b])
+  
 
 let get_local id = Command (S(Printf.sprintf "get_local $%s" id))
 let set_local id v = Command (S(Printf.sprintf "set_local $%s %s" id (to_string v)))

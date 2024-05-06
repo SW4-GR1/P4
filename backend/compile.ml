@@ -1,7 +1,12 @@
 open Wat
 open Frontend.Ttree
 
-    
+
+let is_int_type t = match t with
+  | Tint -> true
+  | Tlongint -> true
+  | _ -> false
+
 let compile_unop ty id op =
   match (op : unop) with
   | Inc -> let new_value = binop add ty (get_local id) (int_const ty 1)  in 
@@ -32,6 +37,7 @@ and compile_expr e =
     | Efloat f -> float_const ty f
     | Ebinop (op, e1, e2) -> compile_binop op ty e1 e2 
     | Eunop (id, op) -> compile_unop ty id op
+    | Econd (op, e1, e2) -> compile_cond op e1 e2
     | _ -> failwith "Unsupported expression"
 
 and compile_binop op ty e1 e2 =
@@ -44,6 +50,23 @@ and compile_binop op ty e1 e2 =
   | Mul -> binop mul ty e1' e2'
   | Mod -> binop rem_s ty e1' e2'
   | _ -> failwith "Unsupported binary operator"
+
+and compile_cond op e1 e2 =
+  let ty = e1.expr_ty in
+  let e1' = compile_expr e1 in
+  let e2' = compile_expr e2 in
+  match op with
+  | Eq -> cond eq ty e1' e2'
+  | Neq -> cond ne ty e1' e2'
+  | Lt -> let op_str = if is_int_type ty then (lt ^ "_s") else lt in
+    cond op_str ty e1' e2'
+  | Leq -> let op_str = if is_int_type ty then (le ^ "_s") else le in
+    cond op_str ty e1' e2'
+  | Gt ->  let op_str = if is_int_type ty then (gt ^ "_s") else gt in
+    cond op_str ty e1' e2'
+  | Geq -> let op_str = if is_int_type ty then (ge ^ "_s") else ge in
+    cond op_str ty e1' e2'
+  | _ -> failwith "Unsupported conditional operator"
 
 and compile_logical_operators op e1 e2 comepile_expr = 
   let e1' = compile_expr e1 in

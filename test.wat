@@ -14,5 +14,6 @@ nop
 (f32.sub (f32.const 6.500000) (f32.const 4.500000))
 (f32.mul (f32.const 5.500000) (f32.const 5.500000))
 (f32.div (f32.const 8.500000) (f32.const 2.500000))
-(i32.const 1)
+(i32.gt_s (i32.const 4) (i32.const 2))
+(f32.gt (f32.const 4.200000) (f32.const 3.100000))
 ))
