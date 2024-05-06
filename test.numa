@@ -1,8 +1,8 @@
 
-not true;
+let int x = 4;
+let int y;
+let float z = 4.2;
+
 if (true) {
-    2 + 2;
-}
-else { 
-    3 + 4;
+    y = 2;
 }

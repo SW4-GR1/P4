@@ -50,7 +50,7 @@ type wasm =
 (* Funktion til at konvertere vores "wasm" til en string, så vi kan skrive det til en fil *)
   let rec to_string w =
     match w with
-      | Nop -> "nop"
+      | Nop -> ""
       | Command wasm -> let str_w = to_string wasm in Printf.sprintf "(%s)" str_w 
       | S s -> Printf.sprintf "%s" s
       | Cat (w1, w2) -> Printf.sprintf "%s\n%s" (to_string w1) (to_string w2)
@@ -83,11 +83,15 @@ let binop op t a b =
 
 let cond op t a b = 
   let wtype = ttype_wtype t in Opcode (op, wtype, [a; b])
+let wasm_and e1 e2 = Command(S(Printf.sprintf "i32.and %s %s" (to_string e1) (to_string e2)))
+let wasm_or e1 e2 = Command(S(Printf.sprintf "i32.or %s %s" (to_string e1) (to_string e2)))
 
 let not ty e = let wtype = ttype_wtype ty in
   Command(S(Printf.sprintf "%s.eqz %s" (type_to_string wtype) (to_string e)))
   
-
+let decl_local id ty = 
+  let wtype = ttype_wtype ty in
+  Command (S(Printf.sprintf "local $%s %s" id (type_to_string wtype))) 
 let get_local id = Command (S(Printf.sprintf "get_local $%s" id))
 let set_local id v = Command (S(Printf.sprintf "set_local $%s %s" id (to_string v)))
 
@@ -95,7 +99,7 @@ let set_local id v = Command (S(Printf.sprintf "set_local $%s %s" id (to_string 
 
 (* Tilføjer en main_func som der generes inde i indtil vi har vores egne funktioner på plads*)
 let main_func w = 
-  Command (Cat (S "func $main (export \"main\")",Cat(w, S (""))))
+  Command (Cat (S "func $main (export \"main\") (result i32)",Cat(w, S (""))))
 
 (* Bare kode til selve modulet som alt andet skal nestes inde i*)
 let module_ w = 
