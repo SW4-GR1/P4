@@ -83,6 +83,9 @@ let binop op t a b =
 
 let cond op t a b = 
   let wtype = ttype_wtype t in Opcode (op, wtype, [a; b])
+
+let not ty e = let wtype = ttype_wtype ty in
+  Command(S(Printf.sprintf "%s.eqz %s" (type_to_string wtype) (to_string e)))
   
 
 let get_local id = Command (S(Printf.sprintf "get_local $%s" id))

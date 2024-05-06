@@ -101,11 +101,11 @@ assign:
 ;
 
 if_stmt:
-    | IF LPAREN c = cond RPAREN LBRACE s = stmt+ RBRACE { Sif(c, 
+    | IF LPAREN e = expr RPAREN LBRACE s = stmt+ RBRACE { Sif(e, 
         {stmt_node = Slist s; stmt_loc = $startpos, $endpos},
         {stmt_node = Slist []; stmt_loc = $startpos, $endpos}) }
-    | IF LPAREN c = cond RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { 
-        Sif(c, 
+    | IF LPAREN e = expr RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { 
+        Sif(e, 
         {stmt_node = Slist s1; stmt_loc = $startpos, $endpos},
         {stmt_node = Slist s2; stmt_loc = $startpos, $endpos}) }
 ;

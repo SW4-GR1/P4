@@ -1,5 +1,6 @@
 open Wat
 open Frontend.Ttree
+open Option
 
 
 let is_int_type t = match t with
@@ -19,8 +20,27 @@ let rec compile_stmt stmt =
   match stmt with 
   | Ssimple e -> compile_expr e
   | Slist stmts -> compile_stmt_list stmts
-  | Sdecl vdec -> Nop
+  | Sdecl vdec -> Nop (* Vi skal starte med at identificere alle variable deklarationer i en block i toppen*)
+  | Sass (id, ty, e) -> set_local id (compile_expr e)
+  | Sif (e, s1, s2) -> compile_if e s1 s2
   | _ -> failwith "Unsupported statement"
+
+and compile_if e s1 s2 = 
+  let e' = compile_expr e in
+  let then_block = compile_stmt s1 in
+  let then_construct = Command (Cat (S("then"), then_block)) in
+ let else_construct = 
+  if 
+    match s2 with 
+    | Slist [] -> false
+    | _ -> true
+  then
+    let else_block = compile_stmt s2 in
+    Command (Cat (S("else"), else_block))
+  else 
+    Nop
+  in
+  Command (Cat (S("if"), Cat (e', Cat (then_construct, else_construct))))
 
 and compile_stmt_list stmts = 
   match stmts with
@@ -38,6 +58,7 @@ and compile_expr e =
     | Ebinop (op, e1, e2) -> compile_binop op ty e1 e2 
     | Eunop (id, op) -> compile_unop ty id op
     | Econd (op, e1, e2) -> compile_cond op e1 e2
+    | Enot e -> let e' = compile_expr e in not ty e'
     | _ -> failwith "Unsupported expression"
 
 and compile_binop op ty e1 e2 =
@@ -46,7 +67,8 @@ and compile_binop op ty e1 e2 =
   match op with
   | Add -> binop add ty e1' e2'
   | Sub -> binop sub ty e1' e2'
-  | Div -> binop div ty e1' e2'
+  | Div -> let op_str = if is_int_type ty then (div ^ "_s") else div in
+    binop op_str ty e1' e2'
   | Mul -> binop mul ty e1' e2'
   | Mod -> binop rem_s ty e1' e2'
   | _ -> failwith "Unsupported binary operator"
