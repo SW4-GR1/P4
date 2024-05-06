@@ -14,5 +14,5 @@ nop
 (f32.sub (f32.const 6.500000) (f32.const 4.500000))
 (f32.mul (f32.const 5.500000) (f32.const 5.500000))
 (f32.div (f32.const 8.500000) (f32.const 2.500000))
-(f32.rem_s (f32.const 8.500000) (f32.const 2.500000))
+(i32.const 1)
 ))

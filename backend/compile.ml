@@ -27,7 +27,8 @@ and compile_expr e =
   let ty = e.expr_ty in
   match e.expr_node with
     | Eident(id) -> get_local id
-    | Econst c -> int_const ty c 
+    | Econst c -> int_const ty c
+    | Ebool b -> bool_const b
     | Efloat f -> float_const ty f
     | Ebinop (op, e1, e2) -> compile_binop op ty e1 e2 
     | Eunop (id, op) -> compile_unop ty id op

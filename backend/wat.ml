@@ -68,11 +68,13 @@ type wasm =
 
 (* Funktioner til at generere de forskellige opcodes (kan bruges i compile.ml) *)
 
-
 let int_const ty i = let str_ty = type_to_string (ttype_wtype ty) in 
 Command (S(Printf.sprintf "%s.const %d" str_ty i))
 let float_const ty f = let str_ty = type_to_string (ttype_wtype ty) in 
 Command (S(Printf.sprintf "%s.const %f" str_ty f))
+
+
+let bool_const b = if b then int_const Tint 1 else int_const Tint 0
 
 let binop op t a b =
   let wtype = ttype_wtype t in Opcode (op, wtype, [a; b])
