@@ -107,7 +107,8 @@ let main_func w =
 
 (* Bare kode til selve modulet som alt andet skal nestes inde i*)
 let module_ w = 
-  Command (Cat(S("module"), w))
+  let indented_w = String.split_on_char '\n' (to_string w) |> List.map ((^) "\t") |> String.concat "\n" in
+  Command (Cat(S("module"), (S(indented_w))))
 
 
 (* Funktion der skriver vores "wasm" til en fil, ved at kalde to_string med vores compiled program*)

@@ -30,6 +30,7 @@ let rec compile_stmt stmt =
     | _ -> Command(Cat(S("drop"), compile_expr e)))
   | Slist stmts -> compile_stmt_list stmts
   | Sfunc fdec -> compile_func fdec
+  | Sreturn e -> compile_expr e
   | Sdecl vdec -> let v_e = vdec.var_expr in if is_some v_e 
     then let e' = compile_expr (get v_e) in set_local vdec.var_name e'
     else Nop  (* Vi skal starte med at identificere alle variable deklarationer i en block i toppen*)
@@ -83,7 +84,8 @@ and compile_func fdec =
             let compiled_code = List.fold_left (fun acc stmt -> Cat (acc, stmt)) Nop compiled_stmts in
             Cat (compiled_declarations, compiled_code)
         | _ -> failwith "Expected a list of statements")
-      in Command (Cat(f_sig, body))
+      in let indented_body = String.split_on_char '\n' (to_string body) |> List.map ((^) "\t") |> String.concat "\n" in
+      Command (Cat(f_sig, S(indented_body)))
        
     
 
