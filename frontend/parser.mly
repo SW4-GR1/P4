@@ -160,7 +160,7 @@ param:
 ;
 
 func_body:
-    | stmts = separated_list(END, stmt) r = return_stmt
+    | stmts = stmt* r = return_stmt
         { {stmt_node = Slist (stmts @ [r]); stmt_loc = $startpos, $endpos } }
 ;
 

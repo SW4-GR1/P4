@@ -1,9 +1,14 @@
 
-let int x = 4;
-let int y;
-let float z = 4.2;
-2 + 7;
-for(let int i = 0;4 < 2; i++){
-    1 + 1;
+int f(int a, int b) {
+    let int c;
+    a + b;
+    4 + 4;
+    return b;
 }
 
+int h(int b, int a) {
+    let int c;
+    a + b;
+    4 + 5;
+    return a
+}

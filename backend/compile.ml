@@ -29,6 +29,7 @@ let rec compile_stmt stmt =
     | Eunop (_, _) -> compile_expr e
     | _ -> Command(Cat(S("drop"), compile_expr e)))
   | Slist stmts -> compile_stmt_list stmts
+  | Sfunc fdec -> compile_func fdec
   | Sdecl vdec -> let v_e = vdec.var_expr in if is_some v_e 
     then let e' = compile_expr (get v_e) in set_local vdec.var_name e'
     else Nop  (* Vi skal starte med at identificere alle variable deklarationer i en block i toppen*)
@@ -36,7 +37,7 @@ let rec compile_stmt stmt =
   | Sif (e, s1, s2) -> compile_if e s1 s2
   | Sfor (init, cond, update, s) -> compile_for init cond update s
   | Swhile (e, s) -> compile_while e s
-  | _ -> failwith "Unsupported statement"
+  | _ -> Nop
 
 and compile_if e s1 s2 = 
   let e' = compile_expr e in
@@ -72,6 +73,19 @@ and compile_for init cond update s =
           Cat(Command(Cat(S("br_if 1"),cond')), 
             Cat(compile_stmt s, 
               Cat(update', Command(S("br 0"))))))))))
+and compile_func fdec = 
+    let { fun_ty; fun_name; fun_args; fun_body } = fdec in
+      let f_sig = func_sig fun_ty fun_name fun_args in
+      let body = (match fun_body with 
+        | Slist stmts ->
+            let compiled_declarations = compile_declarations stmts in
+            let compiled_stmts = List.map compile_stmt stmts in
+            let compiled_code = List.fold_left (fun acc stmt -> Cat (acc, stmt)) Nop compiled_stmts in
+            Cat (compiled_declarations, compiled_code)
+        | _ -> failwith "Expected a list of statements")
+      in Command (Cat(f_sig, body))
+       
+    
 
 and compile_while e s =
   let loop_label = "loop_start" in
@@ -184,5 +198,5 @@ let compile ttree =
     let compiled_declarations = compile_declarations stmts in
     let compiled_stmts = List.map compile_stmt stmts in
     let compiled_code = List.fold_left (fun acc stmt -> Cat (acc, stmt)) Nop compiled_stmts in
-    Wat.module_ (Wat.main_func (Cat(compiled_declarations, Cat(compiled_code, int_const Tint 0))))
+    Wat.module_ (Cat(compiled_declarations, compiled_code))
 | _ -> failwith "Expected a list of statements"

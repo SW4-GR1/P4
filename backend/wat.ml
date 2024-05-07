@@ -44,7 +44,8 @@ type wasm =
   | Nop
   | Command of wasm (* Stuff der skal have enclosing parentheser *)
   | S of string (* keywords og stuff der ikke indgår som operander *)
-  | Cat of wasm * wasm
+  | Cat of wasm * wasm (* tilføjer linjeskift*)
+  | Combine of wasm * wasm 
   | Opcode of opcode * wasm_type * wasm list (* opcode, type, operands *)
 
 (* Funktion til at konvertere vores "wasm" til en string, så vi kan skrive det til en fil *)
@@ -95,7 +96,10 @@ let decl_local id ty =
 let get_local id = Command (S(Printf.sprintf "get_local $%s" id))
 let set_local id v = Command (S(Printf.sprintf "set_local $%s %s" id (to_string v)))
 
-
+let func_sig ret_ty name args = 
+  let wtype = ttype_wtype ret_ty in
+  let args_str = String.concat " " (List.map (fun (arg_ty, arg_name) -> Printf.sprintf "(param $%s %s)" arg_name (type_to_string (ttype_wtype arg_ty))) args) in
+  S(Printf.sprintf "func $%s %s (result %s)" name args_str (type_to_string wtype))
 
 (* Tilføjer en main_func som der generes inde i indtil vi har vores egne funktioner på plads*)
 let main_func w = 
