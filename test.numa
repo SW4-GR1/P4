@@ -3,8 +3,7 @@ let int x = 4;
 let int y;
 let float z = 4.2;
 2 + 7;
-if (true) {
-    let int f = 2;
-} else {
-    let float k;
+for(let int i = 0;4 < 2; i++){
+    1 + 1;
 }
+

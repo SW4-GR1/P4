@@ -257,24 +257,24 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         (ftab, vtab, Sif(e', true_branch, false_branch))
       else error ~loc ("Condition must evaluate to a boolean value")
    
-      | Sfor(dec, cond, inc, body) -> 
-        let (ftab', vtab', dec') = checkStmt ftab vtab dec in
-        let dec_ident = match dec' with
-          | Sdecl(vdec) -> vdec.var_name in
-        let (cond_ty, cond') = checkExp ftab' vtab' cond in
-        let (_ftab, _vtab, inc') = checkStmt ftab' vtab' inc in
-        let (_ftab', _vtab', body') = checkStmt ftab' vtab' body in
-        let inc_ident = match inc' with
-        | Ssimple e -> (match e.expr_node with
-          | Eunop(id, _) -> id
-          | _ -> error ~loc ("Increment must be performed on variable " ^ dec_ident))
-        | Sass(id, _, _) -> id
-       in
-        if is_bool cond_ty then
-          if dec_ident = inc_ident then
-            (ftab, vtab, Sfor(dec', cond', inc', body'))
-          else error ~loc ("Increment must be performed on variable " ^ dec_ident)
-        else error ~loc ("Condition must evaluate to a boolean value")
+    | Sfor(dec, cond, inc, body) -> 
+      let (ftab', vtab', dec') = checkStmt ftab vtab dec in
+      let dec_ident = match dec' with
+        | Sdecl(vdec) -> vdec.var_name in
+      let (cond_ty, cond') = checkExp ftab' vtab' cond in
+      let (_ftab, _vtab, inc') = checkStmt ftab' vtab' inc in
+      let (_ftab', _vtab', body') = checkStmt ftab' vtab' body in
+      let inc_ident = match inc' with
+      | Ssimple e -> (match e.expr_node with
+        | Eunop(id, _) -> id
+        | _ -> error ~loc ("Increment must be performed on variable " ^ dec_ident))
+      | Sass(id, _, _) -> id
+      in
+      if is_bool cond_ty then
+        if dec_ident = inc_ident then
+          (ftab, vtab, Sfor(dec', cond', inc', body'))
+        else error ~loc ("Increment must be performed on variable " ^ dec_ident)
+      else error ~loc ("Condition must evaluate to a boolean value")
 
     
     | Sfunc(fdec) -> 

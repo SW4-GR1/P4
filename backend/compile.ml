@@ -2,7 +2,13 @@ open Wat
 open Frontend.Ttree
 open Option
 
-
+let reversed_condition (op : cond) : cond = match op with
+| Eq -> Neq
+| Neq -> Eq
+| Lt -> Geq
+| Leq -> Gt
+| Gt -> Leq
+| Geq -> Lt
 let is_int_type t = match t with
 | Tint -> true
 | Tlongint -> true
@@ -18,13 +24,17 @@ let compile_unop ty id op =
   
 let rec compile_stmt stmt = 
   match stmt with 
-  | Ssimple e -> Command(Cat(S("drop"),compile_expr e))
+  | Ssimple e -> 
+    (match e.expr_node with
+    | Eunop (_, _) -> compile_expr e
+    | _ -> Command(Cat(S("drop"), compile_expr e)))
   | Slist stmts -> compile_stmt_list stmts
   | Sdecl vdec -> let v_e = vdec.var_expr in if is_some v_e 
     then let e' = compile_expr (get v_e) in set_local vdec.var_name e'
     else Nop  (* Vi skal starte med at identificere alle variable deklarationer i en block i toppen*)
   | Sass (id, ty, e) -> set_local id (compile_expr e)
   | Sif (e, s1, s2) -> compile_if e s1 s2
+  | Sfor (init, cond, update, s) -> compile_for init cond update s
   | Swhile (e, s) -> compile_while e s
   | _ -> failwith "Unsupported statement"
 
@@ -44,6 +54,24 @@ and compile_if e s1 s2 =
     Nop
   in
   Command (Cat (S("if"), Cat (e', Cat (then_construct, else_construct))))
+
+and compile_for init cond update s = 
+  let init' = compile_stmt init in 
+    let cond' = match cond.expr_node with 
+    | Ebool b -> bool_const b
+    | Econd (op, e1, e2) -> let br_op = reversed_condition op in 
+      compile_cond br_op e1 e2
+    | _ -> failwith "Unsupported condition"
+    in 
+    let update' = compile_stmt update in
+    let block = S("block") in
+    let loop = S("loop") in
+    Command (Cat(block, 
+      Cat(init', 
+        Command(Cat(loop,
+          Cat(Command(Cat(S("br_if 1"),cond')), 
+            Cat(compile_stmt s, 
+              Cat(update', Command(S("br 0"))))))))))
 
 and compile_while e s =
   let loop_label = "loop_start" in
@@ -135,7 +163,10 @@ and compile_declarations stmt_list =
         find_declarations tbranch;
         find_declarations fbranch
       | Swhile(_, Slist body) -> find_declarations body
-      | Sfor(_, _, _, Slist body) -> find_declarations body
+      | Sfor(local, _, _, Slist body) -> (match local with
+        | Sdecl { var_name; var_ty } -> Hashtbl.add table var_name var_ty
+        | _ -> ());  
+        find_declarations body
       | _ -> ()
     ) stmt_list
   in

@@ -132,8 +132,8 @@ for_loop:
 ;
 
 while_loop:
-    | WHILE LPAREN c = cond RPAREN 
-        s = block { Swhile(c, { stmt_node = s; stmt_loc = $startpos, $endpos }) }
+    | WHILE LPAREN e = expr RPAREN 
+        s = block { Swhile(e, { stmt_node = s; stmt_loc = $startpos, $endpos }) }
 ;
 
 block:
