@@ -18,7 +18,7 @@ let compile_unop ty id op =
   
 let rec compile_stmt stmt = 
   match stmt with 
-  | Ssimple e -> compile_expr e
+  | Ssimple e -> Command(Cat(S("drop"),compile_expr e))
   | Slist stmts -> compile_stmt_list stmts
   | Sdecl vdec -> let v_e = vdec.var_expr in if is_some v_e 
     then let e' = compile_expr (get v_e) in set_local vdec.var_name e'
@@ -128,10 +128,18 @@ and compile_Fcall id e_list =
 
 and compile_declarations stmt_list =
   let table = Hashtbl.create 10 in
-  List.iter (function
-    | Sdecl { var_name; var_ty } -> Hashtbl.add table var_name var_ty
-    | _ -> ()
-  ) stmt_list;
+  let rec find_declarations stmt_list =
+    List.iter (function
+      | Sdecl { var_name; var_ty } -> Hashtbl.add table var_name var_ty
+      | Sif(_, Slist tbranch, Slist fbranch) -> 
+        find_declarations tbranch;
+        find_declarations fbranch
+      | Swhile(_, Slist body) -> find_declarations body
+      | Sfor(_, _, _, Slist body) -> find_declarations body
+      | _ -> ()
+    ) stmt_list
+  in
+  find_declarations stmt_list;
   let declarations = Hashtbl.fold (fun name ty acc ->
     let wat_code = decl_local name ty in
     Cat (acc, wat_code)
