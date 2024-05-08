@@ -103,21 +103,20 @@ and compile_func fdec =
     
 
 and compile_while e s =
-  let loop_label = "loop_start" in
-  let condition_code = compile_expr e in
-  let body_code = compile_stmt s in
-  let compiled_while_code =
-    let then_block = Command (Cat (S("then"), body_code)) in
-    let else_block = Nop in
-    let else_construct =
-      if s = Slist [] then
-        Nop
-      else
-        Command (Cat (S("else"), else_block))
-    in
-    Command (Cat (S("block $" ^ loop_label), Cat (condition_code, Cat (S("(if (result i32)"), Cat (S("(then"), Cat (then_block, Cat (S("(br $" ^ loop_label ^ ")"), Cat (S(")"), Cat (else_construct, S(")"))))))))))
-  in
-  compiled_while_code
+  let cond' = match e.expr_node with 
+    | Ebool b -> bool_const b
+    | Econd (op, e1, e2) -> let br_op = reversed_condition op in 
+      compile_cond br_op e1 e2
+    | _ -> failwith "Unsupported condition"
+    in 
+  let block = S("block") in
+  let loop = S("loop") in
+  Command (Cat(block, 
+    Command(Cat(loop,
+      Cat(Command(Cat(S("br_if 1"),cond')), 
+        Cat(compile_stmt s, Command(S("br 0"))))))))
+
+
 
 and compile_stmt_list stmts = 
   match stmts with

@@ -8,13 +8,18 @@ int f(int a, int b) {
 
 int h(int b, int a) {
     let int c;
+    let int x = 0;
     a + b;
     4 + 5;
+    for(let int k = 0; k < 10; k++){
+        a += 4;
+    }
+    while ((x + 1) < 5){
+    x++;
+    }
     return a
 }
 
-let int x = 1;
 
-while ((x + 1) < 5){
-    x++;
-}
+
+
