@@ -3,6 +3,10 @@ open Frontend.Ttree
 
 open Option
 
+let globals_map = Hashtbl.create 20
+
+let check_global id = Hashtbl.mem globals_map id
+
 let reversed_condition (op : cond) : cond = match op with
 | Eq -> Neq
 | Neq -> Eq
@@ -16,11 +20,12 @@ let is_int_type t = match t with
 | _ -> false
 
 let compile_unop ty id op =
+  let is_global = check_global id in
   match (op : unop) with
-  | Inc -> let new_value = binop add ty (get_local id) (int_const ty 1)  in 
-    Cat ((set_local id new_value), get_local id)
-  | Dec -> let new_value = binop sub ty (get_local id) (int_const ty 1) in
-    Cat ((set_local id new_value), get_local id)
+  | Inc -> let new_value = binop add ty (get_var id is_global) (int_const ty 1)  in 
+    Cat ((set_var id new_value is_global), get_var id is_global)
+  | Dec -> let new_value = binop sub ty (get_var id is_global) (int_const ty 1) in
+    Cat ((set_var id new_value is_global), get_var id is_global)
   
   
 let rec compile_stmt stmt = 
@@ -35,8 +40,10 @@ let rec compile_stmt stmt =
   | Sdecl vdec -> let v_e = vdec.var_expr in if is_some v_e 
     then let e' = compile_expr (get v_e) in set_local vdec.var_name e'
     else Nop  (* Vi skal starte med at identificere alle variable deklarationer i en block i toppen*)
-  | Sass (id, ass_ty, e) -> (match ass_ty with 
-    | Assign -> set_local id (compile_expr e)
+  | Sass (id, ass_ty, e) -> 
+    let is_global = check_global id in 
+    (match ass_ty with 
+    | Assign -> set_var id (compile_expr e) is_global
     | _ -> let ty = e.expr_ty in 
            let e_id = {expr_node = Eident(id); expr_ty = ty} in
             let (op : binop) = match ass_ty with 
@@ -45,7 +52,7 @@ let rec compile_stmt stmt =
               | Mul_assign -> Mul
               | Div_assign -> Div 
           in let e' = {expr_node = Ebinop(op, e_id, e); expr_ty = ty} in 
-          set_local id (compile_expr e') )
+          set_var id (compile_expr e') is_global)
       
 
     
@@ -128,7 +135,8 @@ and compile_stmt_list stmts =
 and compile_expr e =
   let ty = e.expr_ty in
   match e.expr_node with
-    | Eident(id) -> get_local id
+    | Eident(id) -> let is_global = check_global id in
+      get_var id is_global
     | Econst c -> int_const ty c
     | Ebool b -> bool_const b
     | Efloat f -> float_const ty f
@@ -216,6 +224,7 @@ let compile ttree =
   let globals = (match ttree.globals with
   | Sglobal_list stmts -> stmts
   | _ -> failwith "Somethings wrong with da globals") in
+  let globals_map_aux = List.iter ( function Sglobal_var(dec) -> Hashtbl.add globals_map dec.gvar_name dec.gvar_ty) globals in  
   let compiled_globals = List.map((function Sglobal_var {gvar_ty = t; gvar_name = n; gvar_expr = e } -> global_var n t (compile_expr e) ) : stmt -> _) globals in
   let globals_code = List.fold_left  (fun acc global  -> Cat (acc, global)) Nop compiled_globals in
   let compiled_exports = List.map ((function Xexport f_name -> export_func f_name) : export -> _) exports in
