@@ -102,7 +102,8 @@ let func_sig ret_ty name args =
   S(Printf.sprintf "func $%s %s (result %s)" name args_str (type_to_string wtype))
 
 let export_func f_name = Command (S(Printf.sprintf "export \"%s\" (func $%s)" f_name f_name))
-
+let global_var name ty init_value = let w_ty = ttype_wtype ty in 
+  Command(S(Printf.sprintf "global $%s %s %s" name (type_to_string w_ty) (to_string init_value)))
 
 (* Tilføjer en main_func som der generes inde i indtil vi har vores egne funktioner på plads*)
 let main_func w = 

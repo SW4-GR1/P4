@@ -212,11 +212,15 @@ let compile ttree =
     
   let stmts = (match ttree.stmts with
   | Sfundec_list stmts -> stmts 
-  | _ -> failwith "Expected a lists of statements ahhh")
-  in  
+  | _ -> failwith "Expected a lists of statements ahhh") in
+  let globals = (match ttree.globals with
+  | Sglobal_list stmts -> stmts
+  | _ -> failwith "Somethings wrong with da globals") in
+  let compiled_globals = List.map((function Sglobal_var {gvar_ty = t; gvar_name = n; gvar_expr = e } -> global_var n t (compile_expr e) ) : stmt -> _) globals in
+  let globals_code = List.fold_left  (fun acc global  -> Cat (acc, global)) Nop compiled_globals in
   let compiled_exports = List.map ((function Xexport f_name -> export_func f_name) : export -> _) exports in
   let exports_code = List.fold_left  (fun acc export  -> Cat (acc, export)) Nop compiled_exports in
   let compiled_declarations = compile_declarations stmts in
   let compiled_stmts = List.map compile_stmt stmts in
   let stmts_code = List.fold_left (fun acc stmt -> Cat (acc, stmt)) Nop compiled_stmts in
-  Wat.module_ (Cat(exports_code, stmts_code))
+  Wat.module_ (Cat(Cat(exports_code, globals_code), stmts_code))
