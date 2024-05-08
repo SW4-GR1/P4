@@ -1,14 +1,9 @@
 
-int f(int a, int b) {
-    let int c;
-    a + b;
-    4 + 4;
-    return b;
-}
+int a(int b, float c){
 
-int h(int b, int a) {
-    let int c;
-    a + b;
-    4 + 5;
+    let int a = 4;
+    for(let int i = 0; i < 7; i++) {
+        a = a + b;
+    }
     return a
 }

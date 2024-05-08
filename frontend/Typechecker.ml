@@ -488,7 +488,11 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
           | _ -> error ~loc ("Expected Slist in body of Sfor")
         in
         let inc_ident = match inc' with
-        | Sass(id,_ , _) -> id in
+        | Ssimple e -> (match e.expr_node with
+          | Eunop(id, _) -> id
+          | _ -> error ~loc ("Increment must be performed on variable " ^ dec_ident))
+        | Sass(id, _, _) -> id 
+        in 
         if is_bool cond_ty then
           if dec_ident = inc_ident then
             [Sfor(dec', cond', inc', Slist(body'))] @ checkFunBody_aux ftab' vtab' slist
