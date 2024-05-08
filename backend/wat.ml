@@ -94,7 +94,12 @@ let decl_local id ty =
   let wtype = ttype_wtype ty in
   Command (S(Printf.sprintf "local $%s %s" id (type_to_string wtype))) 
 let get_local id = Command (S(Printf.sprintf "get_local $%s" id))
+let get_global id = Command (S(Printf.sprintf "get_global $%s" id))
 let set_local id v = Command (S(Printf.sprintf "set_local $%s %s" id (to_string v)))
+let set_global id v = Command (S(Printf.sprintf "set_global $%s %s" id (to_string v)))
+
+let get_var id global = if global then get_global id else get_local id
+let set_var id v global = if global then set_global id v else set_local id v
 
 let func_sig ret_ty name args = 
   let wtype = ttype_wtype ret_ty in
