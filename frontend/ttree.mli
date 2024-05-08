@@ -52,6 +52,12 @@ type vdec = {
    var_expr : expr option;  (* This field is optional *)
 }
 
+type global_vdec = {
+   gvar_ty   : ty;
+   gvar_name : ident;
+   gvar_expr : expr;
+}
+
 type adec = {
    arr_ty : ty;
    arr_name : ident;
@@ -64,6 +70,7 @@ type vecdec = {
    vec_size : expr;
    vec_expr : expr list option;  (* This field is optional *)
 }
+
 type mdec = {
   mat_ty : ty;
   mat_name : ident;
@@ -88,6 +95,9 @@ type stmt =
  | Sarr_assign_elem of ident * expr * assign_type * expr
  | Sfor of stmt * expr * stmt * stmt 
  | Swhile of expr * stmt
+ | Sglobal_var of global_vdec
+ | Sglobal_list of stmt list
+ | Sfundec_list of stmt list
 
 and fun_arg = ty * ident
 
@@ -105,5 +115,6 @@ type export =
 
  type prog = {
     (* exports : export list; *)
+    globals : stmt;
     stmts : stmt
  }

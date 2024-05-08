@@ -169,6 +169,8 @@ match stmt_instance.stmt_node with
     | Some body -> decl_str ^ " = {" ^ pp_matrix_body body ^ "}"
     | None -> decl_str
     end
+  | Sglobal_list(globals) -> "implement globals pretty printer"
+  | Sfundec_list(funcs) -> "implement fundecs list pretty printer"
   | _ -> failwith "Unexpected case encountered in pp_stmt"
 
 and pp_func func =

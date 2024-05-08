@@ -1,4 +1,3 @@
-
 int funcb(int x) {
     return x + 1
 }
@@ -12,5 +11,9 @@ int funca(int b){
     }
     
     return funcb(a)
+}
+
+long_int fx(int a) {
+    return a;
 }
 

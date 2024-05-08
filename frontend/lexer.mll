@@ -24,6 +24,7 @@ let kwd_table = [
   "let", LET;
   "for", FOR;
   "while", WHILE;
+  "global", GLOBAL
   ]
 
 let id_or_kwd = 

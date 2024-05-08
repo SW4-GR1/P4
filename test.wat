@@ -1,11 +1,11 @@
 (module
-	(export "funca" (func $funca))
+	
 	
 	(func $funcb (param $x i32) (result i32)
 		
 		
 		(i32.add (get_local $x) (i32.const 1)))
-	(func $funca (param $b i32) (param $c f32) (result i32)
+	(func $funca (param $b i32) (result i32)
 		
 		(local $a i32)
 		(local $i i32)
@@ -22,4 +22,8 @@
 		(br 0)))
 		(call $funcb 
 		
-		(get_local $a))))
+		(get_local $a)))
+	(func $fx (param $a i32) (result i64)
+		
+		
+		(get_local $a)))

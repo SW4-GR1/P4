@@ -305,7 +305,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
     | Sfunc(fdec) -> 
       let f_type = ty_of_pty fdec.fun_type in 
       let (vtab',f_args) = checkArgList ftab vtab fdec.args in
-      let arg_type_list = List.map(fun (ty,ident) -> ty) f_args in
+      let arg_type_list = List.map(fun (ty,_ident) -> ty) f_args in
       let f_name = fdec.fun_name.id in
       let ftab' = SymTab.bind f_name (f_type, arg_type_list) ftab in
       let body' = checkFunBody ftab' vtab' f_type fdec.body in
@@ -355,9 +355,9 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
           let vtab' = SymTab.bind name arr_ty vtab in
           let expr_option = match e with
           | Some(v) -> let checked_args =  List.map (fun elem -> checkExp ftab vtab elem) v in 
-            let arg_types_correct = List.fold_left(fun b (elem_ty, expr) -> b && (check_eq_type_strict ty' elem_ty)) true checked_args in
+            let arg_types_correct = List.fold_left(fun b (elem_ty, _) -> b && (check_eq_type_strict ty' elem_ty)) true checked_args in
             if arg_types_correct then
-              let expr_list = List.map (fun (elem_ty, expr) -> expr) checked_args in
+              let expr_list = List.map (fun (_, expr) -> expr) checked_args in
               Some(expr_list)
             else error ~loc ("An element in the array is not of the correct type")
           | None -> None in
@@ -374,9 +374,9 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
           | Tarr(t) -> t 
           | _ -> error ~loc (ident ^ " is not an array") in
         let checked_args =  List.map (fun elem -> checkExp ftab vtab elem) expr_list in 
-        let arg_types_correct = List.fold_left(fun b (elem_ty, expr) -> b && (check_eq_type_strict ty' elem_ty)) true checked_args in
+        let arg_types_correct = List.fold_left(fun b (elem_ty, _) -> b && (check_eq_type_strict ty' elem_ty)) true checked_args in
           if arg_types_correct then
-            let expr_list' = List.map (fun (elem_ty, expr) -> expr) checked_args in
+            let expr_list' = List.map (fun (_, expr) -> expr) checked_args in
             (ftab, vtab, Sarr_assign(ident, assign_op, expr_list'))
           else error ~loc ("An element in the array is not of the correct type")
       else error ~loc ("Array "^ ident ^ " has not been declared")
@@ -406,9 +406,9 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         let vtab' = SymTab.bind name vec_ty vtab in
         let expr_option = match e with
         | Some(v) -> let checked_args =  List.map (fun elem -> checkExp ftab vtab elem) v in 
-          let arg_types_correct = List.fold_left(fun b (elem_ty, expr) -> b && (check_eq_type_strict ty' elem_ty)) true checked_args in
+          let arg_types_correct = List.fold_left(fun b (elem_ty, _) -> b && (check_eq_type_strict ty' elem_ty)) true checked_args in
           if arg_types_correct then
-            let expr_list = List.map (fun (elem_ty, expr) -> expr) checked_args in
+            let expr_list = List.map (fun (_, expr) -> expr) checked_args in
             Some(expr_list)
           else error ~loc ("An element in the vector is not of the correct type")
         | None -> None in
@@ -431,7 +431,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
                 let checked_rows = List.map (fun row -> 
                     List.map (fun elem -> checkExp ftab vtab elem) row) vv in
                 let row_types_correct = List.map (fun row ->
-                    List.fold_left (fun b (elem_ty, expr) -> b && (check_eq_type_strict ty' elem_ty)) true row) checked_rows in
+                    List.fold_left (fun b (elem_ty, _) -> b && (check_eq_type_strict ty' elem_ty)) true row) checked_rows in
                 if List.for_all (fun x -> x) row_types_correct then
                     let expr_rows = List.map (fun row -> List.map snd row) checked_rows in
                     Some(expr_rows)
@@ -443,18 +443,45 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         else duplicated_field ~loc name
     else incompatible_types ~loc t_dim1 Tint
 
+    | Sglobal_var(dec) ->
+      let ty' = ty_of_pty dec.gvar_ty in 
+      let id' = dec.gvar_name.id in
+      if is_none (SymTab.lookup id' vtab) then
+        let vtab' =  SymTab.bind id' ty' vtab in
+
+        let e = dec.gvar_expr in
+          let (t, e') = checkExp ftab vtab e in
+          if check_eq_type_strict ty' t then
+            let gdec' = { gvar_ty = ty'; gvar_name = id'; gvar_expr = e' } in
+            ( ftab, vtab', Sglobal_var(gdec') )
+          else
+            incompatible_types ~loc ty' t
+      else duplicated_field ~loc id'
 
     | Slist(stmts) -> 
-        let stmt_list = checkStmtList ftab vtab stmts in
+        let (_ftab, _vtab, stmt_list) = checkStmtList ftab vtab stmts in
           ( ftab, vtab, Slist(stmt_list) )
+
+    | Sglobal_list(stmts) -> 
+      let (_ftab, vtab', stmt_list) = checkStmtList ftab vtab stmts in
+        (ftab, vtab', Sglobal_list(stmt_list))
+
+    | Sfundec_list(stmts) ->
+      let (ftab', _vtab, stmt_list) = checkStmtList ftab vtab stmts in
+        (ftab', vtab, Sglobal_list(stmt_list))
+
     | _ -> assert false
 
-and checkStmtList (ftab : funTable) (vtab : varTable) (stmts : Ast.stmt list) : stmt list = 
+and checkStmtList (ftab : funTable) (vtab : varTable) (stmts : Ast.stmt list) : funTable *  varTable * stmt list = 
   match stmts with
-  | [] -> []
+  | [] -> (ftab, vtab, [])
   | s::slist -> 
       let (ftab', vtab', s') = checkStmt ftab vtab s in
-       [s'] @ checkStmtList ftab' vtab' slist
+      let (ftab'', vtab'', slist') = checkStmtList ftab' vtab' slist in
+      (ftab'', vtab'', [s'] @ slist')
+
+
+       (* [s'] @ checkStmtList ftab' vtab' slist *)
 
 and checkArgList (ftab : funTable) (vtab : varTable) (args : Ast.arg_dec list) : (varTable * fun_arg list) =
   match args with 
@@ -546,12 +573,14 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
 (*prog -> exports -> stmt*)
 let update_parse_tree (ftab : funTable) (vtab : varTable) (p : Ast.prog) : prog =
   let exports = p.exports in 
-  let main = p.main in
-    let (_ftab, _vtab, typed_prog) = checkStmt ftab vtab main in
-    List.iter (fun export -> match export with
-      | Ast.Xexport(fname) -> if is_none (SymTab.lookup fname ftab) then
-        unbound_function fname) exports;
-    { stmts = typed_prog } 
+  let globals = p.globals in
+    let (ftab', vtab', typed_globals) = checkStmt ftab vtab globals in
+    let main = p.main in
+      let (_ftab, _vtab, typed_prog) = checkStmt ftab' vtab' main in
+      List.iter (fun export -> match export with
+        | Ast.Xexport(fname) -> if is_none (SymTab.lookup fname ftab) then
+          unbound_function fname) exports;
+    { globals = typed_globals; stmts = typed_prog } 
    
 
 let program p : prog = 

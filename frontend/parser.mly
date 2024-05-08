@@ -4,7 +4,7 @@
 
 %token ADD MUL SUB DIV MOD EOF INC DEC
 %token LT GT EQ NEQ LEQ GEQ AND OR NOT
-%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END LET EXPORT
+%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END LET EXPORT GLOBAL
 %token ASSIGN ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
 %token<int> INT
 %token<float> FLOAT
@@ -28,12 +28,18 @@
 %%
 prog:
     exports = exports
-    s = stmt* 
+    globals = global*
+    s = funcs*
     EOF
-       { { exports = exports; main = { 
-        stmt_node = Slist s; stmt_loc = $startpos, $endpos } } }
-    | s = stmt* EOF { { exports = []; main = { 
-        stmt_node = Slist s; stmt_loc = $startpos, $endpos } } }
+       { { exports = exports; globals = {stmt_node = Sglobal_list globals; stmt_loc = $startpos, $endpos};
+        main = { 
+        stmt_node = Sfundec_list s; stmt_loc = $startpos, $endpos } } }
+
+    | globals = global*
+     s = funcs* EOF
+        { { exports = [];
+            globals = {stmt_node = Sglobal_list globals; stmt_loc = $startpos, $endpos};
+            main = { stmt_node = Sfundec_list s; stmt_loc = $startpos, $endpos } } }
 ;
 
 exports:
@@ -52,13 +58,25 @@ stmt_node:
     | c_stmt = control_stmt { c_stmt }
     | decl = declarations { decl }
     | ass = assignment { ass }
-    | func = function_def {func}
 ;
 
 control_stmt:
     | i_stmt = if_stmt {i_stmt}
     | loop = loop_stmt {loop}
 
+funcs: 
+    | func = function_def { {stmt_node = func; stmt_loc = $startpos, $endpos} }
+
+global:
+    dec = global_dec 
+    { { stmt_node = dec; stmt_loc = $startpos, $endpos } }
+
+global_dec:
+    | GLOBAL t = ty id = ident ASSIGN e = expr END { Sglobal_var({gvar_ty = t; gvar_name = id; gvar_expr = e}) } // variables
+    // | GLOBAL t = ty LBRACKET e1 = expr RBRACKET id = ident body = array_body_opt END {Sarr_decl(t, id, e1, body)} // array 
+    // | GLOBAL t = ty LBRACE e = expr RBRACE id = ident body = vector_body_opt END {Svec_decl(t, id, e, body)} // vector
+    // | GLOBAL t = ty LBRACE e1 = expr RBRACE LBRACE e2 = expr RBRACE id = ident body = matrix_body_opt END {Smat_decl(t, id, e1, e2, body)} // matrix
+    
 
 declarations:
     | LET d_type = dec_type {d_type}

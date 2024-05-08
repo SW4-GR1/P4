@@ -165,6 +165,9 @@ let rec pp_stmt s =
       let body_str = pp_stmt func.fun_body in
       pp_expr_type func.fun_ty ^ " " ^ func.fun_name ^ "(" ^ args_str ^ ") {\n" ^
       body_str ^ "\n}\n"
+  
+  | Sglobal_list(globals) -> "implement pretty print type for globals"
+  | Sfundec_list(funs) -> "implement pretty print type for fundec list"
 
   let pp_prog prog =
   (* let exports_str = pp_export_list prog.exports in *)
