@@ -65,16 +65,12 @@ let bad_arity ?loc p a =
 type funTable = (ty * ty list) symTab
 type varTable = ty symTab
 
-
-  
-  
     (* Function to convert parse location to location *)
   let loc_of_ploc (ploc : Ast.loc) : loc = ploc
 
   (* Initial function and variable tables *)
   let init_fun_table : funTable =
     SymTab.fromList [
-    (* ("int" (Int_ty, [Int_ty, Int_ty], (0,0))); Example *)
     ("sqrt", (Tint, [Tint]));
     ]
     let init_var_table : varTable = 
@@ -103,7 +99,34 @@ let check_eq_type t1 t2 = match t1, t2 with
   | Tfloat, Tfloat -> true
   | Tlongfloat, Tlongfloat -> true
   | Tbool, Tbool -> true
+  | Tint, Tlongint -> true
+  | Tlongint, Tint -> true
+  | Tfloat, Tlongfloat -> true
+  | Tlongfloat, Tfloat -> true
   | _, _ -> false 
+
+
+(*Same as above, but with some fewer cases. 
+   Used so we do not assign longint to int, but can assign int to longint
+*)
+let check_eq_type_strict t1 t2 = match t1, t2 with
+  | Tint, Tint -> true
+  | Tlongint, Tlongint -> true
+  | Tfloat, Tfloat -> true
+  | Tlongfloat, Tlongfloat -> true
+  | Tbool, Tbool -> true
+  | Tlongint, Tint -> true
+  | Tlongfloat, Tfloat -> true
+  | _, _ -> false
+
+
+(*If and operation is performed on eg. int and longint will return the 'bigger' type*)
+let is_subtype t1 t2 = match t1, t2 with
+  | Tlongint, _ -> Tlongint
+  | _, Tlongint -> Tlongint
+  | Tlongfloat, _ -> Tlongfloat
+  | _, Tlongfloat -> Tlongfloat
+  | _, _ -> t1
 
 (* Function to check valid typing of operands in expressions *)  
 let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * expr =
@@ -126,12 +149,14 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         let (t2, e2_bin) = checkExp ftab vtab e2 in
         if op = Mod then
           if check_eq_type t1 t2 && (check_eq_type t2 Tint || check_eq_type t2 Tlongint)
-            then (t2, { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t2 } )
+            then let ty' = is_subtype t1 t2 in
+              (ty', { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t2 } )
           else error ~loc ("Modulo operator should only be used on integers")
         else
           if is_number t1 then
-            if check_eq_type t1 t2 
-              then (t1, { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t1 } )
+            if check_eq_type t1 t2 then 
+              let ty' = is_subtype t1 t2 in
+                (ty', { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t1 } )
             else incompatible_types ~loc t1 t2
           else error ~loc ("Binary operator should only be used on numbers")
   
@@ -296,12 +321,14 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         let expr_option = match vdec.var_expr with
           | Some e -> 
             let (t, e') = checkExp ftab vtab e in
-            if check_eq_type t ty' then 
+            if check_eq_type_strict ty' t then 
               Some e'
             else
-              incompatible_types ~loc t ty'
+              incompatible_types ~loc ty' t
           | None -> None in 
 
+        (*We do not check here is an expr is a longint, since we adhere to the given
+           type in declaration*)
         let vdec' = { var_ty = ty'; var_name = id'; var_expr = expr_option } in
         ( ftab, vtab', Sdecl(vdec') )
 
@@ -313,7 +340,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       let var_option = SymTab.lookup id vtab in
       if is_some var_option then 
         let var_ty = get var_option in 
-        if check_eq_type var_ty t then
+        if check_eq_type_strict var_ty t then
           ( ftab, vtab, Sass(id, ass_ty, e') )
         else incompatible_types  ~loc var_ty t
       else error ~loc ("Variable " ^ id ^ " has not been declared.")
@@ -328,7 +355,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
           let vtab' = SymTab.bind name arr_ty vtab in
           let expr_option = match e with
           | Some(v) -> let checked_args =  List.map (fun elem -> checkExp ftab vtab elem) v in 
-            let arg_types_correct = List.fold_left(fun b (elem_ty, expr) -> b && (check_eq_type elem_ty ty')) true checked_args in
+            let arg_types_correct = List.fold_left(fun b (elem_ty, expr) -> b && (check_eq_type_strict ty' elem_ty)) true checked_args in
             if arg_types_correct then
               let expr_list = List.map (fun (elem_ty, expr) -> expr) checked_args in
               Some(expr_list)
@@ -347,7 +374,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
           | Tarr(t) -> t 
           | _ -> error ~loc (ident ^ " is not an array") in
         let checked_args =  List.map (fun elem -> checkExp ftab vtab elem) expr_list in 
-        let arg_types_correct = List.fold_left(fun b (elem_ty, expr) -> b && (check_eq_type elem_ty ty')) true checked_args in
+        let arg_types_correct = List.fold_left(fun b (elem_ty, expr) -> b && (check_eq_type_strict ty' elem_ty)) true checked_args in
           if arg_types_correct then
             let expr_list' = List.map (fun (elem_ty, expr) -> expr) checked_args in
             (ftab, vtab, Sarr_assign(ident, assign_op, expr_list'))
@@ -363,7 +390,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
           let (index_ty, index') = checkExp ftab vtab index in
           let (ty', e') = checkExp ftab vtab e in
           if check_eq_type index_ty Tint then
-            if check_eq_type arr_ty ty' then
+            if check_eq_type_strict arr_ty ty' then
               (ftab, vtab, Sarr_assign_elem(ident, index', aop, e'))
             else error ~loc ("The element you are trying to assign is not of the expected type: "^ (type_to_string arr_ty))
           else error ~loc ("Index lookup must evaluate to an integer value")
@@ -379,7 +406,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         let vtab' = SymTab.bind name vec_ty vtab in
         let expr_option = match e with
         | Some(v) -> let checked_args =  List.map (fun elem -> checkExp ftab vtab elem) v in 
-          let arg_types_correct = List.fold_left(fun b (elem_ty, expr) -> b && (check_eq_type elem_ty ty')) true checked_args in
+          let arg_types_correct = List.fold_left(fun b (elem_ty, expr) -> b && (check_eq_type_strict ty' elem_ty)) true checked_args in
           if arg_types_correct then
             let expr_list = List.map (fun (elem_ty, expr) -> expr) checked_args in
             Some(expr_list)
@@ -404,7 +431,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
                 let checked_rows = List.map (fun row -> 
                     List.map (fun elem -> checkExp ftab vtab elem) row) vv in
                 let row_types_correct = List.map (fun row ->
-                    List.fold_left (fun b (elem_ty, expr) -> b && (check_eq_type elem_ty ty')) true row) checked_rows in
+                    List.fold_left (fun b (elem_ty, expr) -> b && (check_eq_type_strict ty' elem_ty)) true row) checked_rows in
                 if List.for_all (fun x -> x) row_types_correct then
                     let expr_rows = List.map (fun row -> List.map snd row) checked_rows in
                     Some(expr_rows)
@@ -457,7 +484,7 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
       match s.stmt_node with
       | Ast.Sreturn(e) -> 
         let (ty', e') = checkExp ftab vtab e in
-        if check_eq_type ty' ftype then
+        if check_eq_type_strict ftype ty' then
           [Sreturn(e')]
         else error ~loc ("Return type does not match function declaration")
       | Ast.Sif(e, tbranch, fbranch) ->
@@ -494,7 +521,11 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
           | _ -> error ~loc ("Expected Slist in body of Sfor")
         in
         let inc_ident = match inc' with
-        | Sass(id,_ , _) -> id in
+        | Ssimple e -> (match e.expr_node with
+          | Eunop(id, _) -> id
+          | _ -> error ~loc ("Increment must be performed on variable " ^ dec_ident))
+        | Sass(id, _, _) -> id 
+        in 
         if is_bool cond_ty then
           if dec_ident = inc_ident then
             [Sfor(dec', cond', inc', Slist(body'))] @ checkFunBody_aux ftab' vtab' slist

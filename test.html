@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="height: 100%; width: 100%;">
+    <div style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+        <div>Resultat</div>
+        <div>|</div>
+        <div>|</div>
+        <div>v</div>
+        <div id="test" style="color: red; padding: 16px 48px; border: 2px solid black;"></div>
+    </div>
+    
+</body>
+<script>
+    WebAssembly.instantiateStreaming(fetch("test.wasm")).then(
+        (obj) => {
+            result = obj.instance.exports.funca(8, 4.2);
+            test_div = document.getElementById('test')
+            test_div.textContent = result
+            console.log(result)
+        }
+    )
+</script>
+</html>
