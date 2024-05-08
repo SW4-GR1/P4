@@ -211,7 +211,7 @@ let compile ttree =
   let exports = ttree.exports in 
     
   let stmts = (match ttree.stmts with
-  | Slist stmts -> stmts 
+  | Sfundec_list stmts -> stmts 
   | _ -> failwith "Expected a lists of statements")
   in  
   let compiled_exports = List.map ((function Xexport f_name -> export_func f_name) : export -> _) exports in
