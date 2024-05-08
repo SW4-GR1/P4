@@ -109,12 +109,10 @@ and fun_dec = {
  }
 
 
-type export = 
-  | Xexport of string
-  | Xlist of export list
+type export = Ast.export
 
  type prog = {
-    (* exports : export list; *)
+    exports : export list; 
     globals : stmt;
     stmts : stmt
  }

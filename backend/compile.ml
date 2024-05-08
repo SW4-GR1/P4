@@ -1,5 +1,6 @@
 open Wat
 open Frontend.Ttree
+
 open Option
 
 let reversed_condition (op : cond) : cond = match op with
@@ -34,7 +35,20 @@ let rec compile_stmt stmt =
   | Sdecl vdec -> let v_e = vdec.var_expr in if is_some v_e 
     then let e' = compile_expr (get v_e) in set_local vdec.var_name e'
     else Nop  (* Vi skal starte med at identificere alle variable deklarationer i en block i toppen*)
-  | Sass (id, ty, e) -> set_local id (compile_expr e)
+  | Sass (id, ass_ty, e) -> (match ass_ty with 
+    | Assign -> set_local id (compile_expr e)
+    | _ -> let ty = e.expr_ty in 
+           let e_id = {expr_node = Eident(id); expr_ty = ty} in
+            let (op : binop) = match ass_ty with 
+              | Add_assign -> Add
+              | Sub_assign -> Sub
+              | Mul_assign -> Mul
+              | Div_assign -> Div 
+          in let e' = {expr_node = Ebinop(op, e_id, e); expr_ty = ty} in 
+          set_local id (compile_expr e') )
+      
+
+    
   | Sif (e, s1, s2) -> compile_if e s1 s2
   | Sfor (init, cond, update, s) -> compile_for init cond update s
   | Swhile (e, s) -> compile_while e s
@@ -90,21 +104,20 @@ and compile_func fdec =
     
 
 and compile_while e s =
-  let loop_label = "loop_start" in
-  let condition_code = compile_expr e in
-  let body_code = compile_stmt s in
-  let compiled_while_code =
-    let then_block = Command (Cat (S("then"), body_code)) in
-    let else_block = Nop in
-    let else_construct =
-      if s = Slist [] then
-        Nop
-      else
-        Command (Cat (S("else"), else_block))
-    in
-    Command (Cat (S("block $" ^ loop_label), Cat (condition_code, Cat (S("(if (result i32)"), Cat (S("(then"), Cat (then_block, Cat (S("(br $" ^ loop_label ^ ")"), Cat (S(")"), Cat (else_construct, S(")"))))))))))
-  in
-  compiled_while_code
+  let cond' = match e.expr_node with 
+    | Ebool b -> bool_const b
+    | Econd (op, e1, e2) -> let br_op = reversed_condition op in 
+      compile_cond br_op e1 e2
+    | _ -> failwith "Unsupported condition"
+    in 
+  let block = S("block") in
+  let loop = S("loop") in
+  Command (Cat(block, 
+    Command(Cat(loop,
+      Cat(Command(Cat(S("br_if 1"),cond')), 
+        Cat(compile_stmt s, Command(S("br 0"))))))))
+
+
 
 and compile_stmt_list stmts = 
   match stmts with
@@ -195,10 +208,15 @@ and compile_declarations stmt_list =
 
   
 let compile ttree = 
-  match ttree.stmts with
-  | Slist stmts ->
-    let compiled_declarations = compile_declarations stmts in
-    let compiled_stmts = List.map compile_stmt stmts in
-    let compiled_code = List.fold_left (fun acc stmt -> Cat (acc, stmt)) Nop compiled_stmts in
-    Wat.module_ (Cat(compiled_declarations, compiled_code))
-| _ -> failwith "Expected a list of statements"
+  let exports = ttree.exports in 
+    
+  let stmts = (match ttree.stmts with
+  | Slist stmts -> stmts 
+  | _ -> failwith "Expected a lists of statements")
+  in  
+  let compiled_exports = List.map ((function Xexport f_name -> export_func f_name) : export -> _) exports in
+  let exports_code = List.fold_left  (fun acc export  -> Cat (acc, export)) Nop compiled_exports in
+  let compiled_declarations = compile_declarations stmts in
+  let compiled_stmts = List.map compile_stmt stmts in
+  let stmts_code = List.fold_left (fun acc stmt -> Cat (acc, stmt)) Nop compiled_stmts in
+  Wat.module_ (Cat(exports_code, stmts_code))

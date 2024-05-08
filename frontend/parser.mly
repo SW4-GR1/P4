@@ -43,7 +43,7 @@ prog:
 ;
 
 exports:
-    LBRACE export = export* RBRACE { export }
+    LBRACE exports = export* RBRACE { exports }
 
 export:
     |  EXPORT id = IDENT END  { Xexport(id) }

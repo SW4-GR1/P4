@@ -21,7 +21,7 @@ type log_op = And | Or
 
 type export = 
   | Xexport of string
-  | Xlist of export list
+
 
 
 type expr =

@@ -1,19 +1,6 @@
-int funcb(int x) {
-    return x + 1
-}
-
-
-int funca(int b){
-
-    let int a = 4;
-    for(let int i = 0; i < 7; i++) {
-        a = a + b;
-    }
-    
-    return funcb(a)
-}
-
-long_int fx(int a) {
+int f(int a) {
     return a;
 }
+
+
 
