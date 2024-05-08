@@ -1,16 +1,20 @@
 
-int funcb(int x) {
-    return x + 1
+int f(int a, int b) {
+    let int c;
+    a + b;
+    4 + 4;
+    return b;
 }
 
-
-int funca(int b){
-    (4 == 5) or (6 < 5);
-    let int a = 4;
-    for(let int i = 0; i < 7; i++) {
-        a -= b;
-    }
-    
-    return funcb(a)
+int h(int b, int a) {
+    let int c;
+    a + b;
+    4 + 5;
+    return a
 }
 
+let int x = 1;
+
+while ((x + 1) < 5){
+    x++;
+}
