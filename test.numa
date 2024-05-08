@@ -1,3 +1,4 @@
+{export f;}
 
 int f(int a, int b) {
     let int c;

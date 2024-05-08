@@ -551,13 +551,14 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
   
 (*prog -> exports -> stmt*)
 let update_parse_tree (ftab : funTable) (vtab : varTable) (p : Ast.prog) : prog =
-  let exports = p.exports in 
+  let export_list = p.exports in 
   let main = p.main in
-    let (_ftab, _vtab, typed_prog) = checkStmt ftab vtab main in
+    let (ftab_final, _vtab, typed_prog) = checkStmt ftab vtab main in
     List.iter (fun export -> match export with
-      | Ast.Xexport(fname) -> if is_none (SymTab.lookup fname ftab) then
-        unbound_function fname) exports;
-    { stmts = typed_prog } 
+      | Ast.Xexport(fname) -> if is_none (SymTab.lookup fname ftab_final) then
+        unbound_function fname) export_list;
+    { exports = export_list;
+      stmts = typed_prog } 
    
 
 let program p : prog = 

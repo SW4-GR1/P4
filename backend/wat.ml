@@ -101,6 +101,9 @@ let func_sig ret_ty name args =
   let args_str = String.concat " " (List.map (fun (arg_ty, arg_name) -> Printf.sprintf "(param $%s %s)" arg_name (type_to_string (ttype_wtype arg_ty))) args) in
   S(Printf.sprintf "func $%s %s (result %s)" name args_str (type_to_string wtype))
 
+let export_func f_name = Command (S(Printf.sprintf "export \"%s\" (func $%s)" f_name f_name))
+
+
 (* Tilføjer en main_func som der generes inde i indtil vi har vores egne funktioner på plads*)
 let main_func w = 
   Command (Cat (S "func $main (export \"main\") (result i32)",Cat(w, S (""))))

@@ -1,5 +1,6 @@
 open Wat
 open Frontend.Ttree
+
 open Option
 
 let reversed_condition (op : cond) : cond = match op with
@@ -207,10 +208,15 @@ and compile_declarations stmt_list =
 
   
 let compile ttree = 
-  match ttree.stmts with
-  | Slist stmts ->
-    let compiled_declarations = compile_declarations stmts in
-    let compiled_stmts = List.map compile_stmt stmts in
-    let compiled_code = List.fold_left (fun acc stmt -> Cat (acc, stmt)) Nop compiled_stmts in
-    Wat.module_ (Cat(compiled_declarations, compiled_code))
-| _ -> failwith "Expected a list of statements"
+  let exports = ttree.exports in 
+    
+  let stmts = (match ttree.stmts with
+  | Slist stmts -> stmts 
+  | _ -> failwith "Expected a lists of statements")
+  in  
+  let compiled_exports = List.map ((function Xexport f_name -> export_func f_name) : export -> _) exports in
+  let exports_code = List.fold_left  (fun acc export  -> Cat (acc, export)) Nop compiled_exports in
+  let compiled_declarations = compile_declarations stmts in
+  let compiled_stmts = List.map compile_stmt stmts in
+  let stmts_code = List.fold_left (fun acc stmt -> Cat (acc, stmt)) Nop compiled_stmts in
+  Wat.module_ (Cat(exports_code, stmts_code))
