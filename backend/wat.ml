@@ -44,13 +44,14 @@ type wasm =
   | Nop
   | Command of wasm (* Stuff der skal have enclosing parentheser *)
   | S of string (* keywords og stuff der ikke indgår som operander *)
-  | Cat of wasm * wasm
+  | Cat of wasm * wasm (* tilføjer linjeskift*)
+  | Combine of wasm * wasm 
   | Opcode of opcode * wasm_type * wasm list (* opcode, type, operands *)
 
 (* Funktion til at konvertere vores "wasm" til en string, så vi kan skrive det til en fil *)
   let rec to_string w =
     match w with
-      | Nop -> "nop"
+      | Nop -> ""
       | Command wasm -> let str_w = to_string wasm in Printf.sprintf "(%s)" str_w 
       | S s -> Printf.sprintf "%s" s
       | Cat (w1, w2) -> Printf.sprintf "%s\n%s" (to_string w1) (to_string w2)
@@ -83,23 +84,31 @@ let binop op t a b =
 
 let cond op t a b = 
   let wtype = ttype_wtype t in Opcode (op, wtype, [a; b])
+let wasm_and e1 e2 = Command(S(Printf.sprintf "i32.and %s %s" (to_string e1) (to_string e2)))
+let wasm_or e1 e2 = Command(S(Printf.sprintf "i32.or %s %s" (to_string e1) (to_string e2)))
 
 let not ty e = let wtype = ttype_wtype ty in
   Command(S(Printf.sprintf "%s.eqz %s" (type_to_string wtype) (to_string e)))
   
-
+let decl_local id ty = 
+  let wtype = ttype_wtype ty in
+  Command (S(Printf.sprintf "local $%s %s" id (type_to_string wtype))) 
 let get_local id = Command (S(Printf.sprintf "get_local $%s" id))
 let set_local id v = Command (S(Printf.sprintf "set_local $%s %s" id (to_string v)))
 
-
+let func_sig ret_ty name args = 
+  let wtype = ttype_wtype ret_ty in
+  let args_str = String.concat " " (List.map (fun (arg_ty, arg_name) -> Printf.sprintf "(param $%s %s)" arg_name (type_to_string (ttype_wtype arg_ty))) args) in
+  S(Printf.sprintf "func $%s %s (result %s)" name args_str (type_to_string wtype))
 
 (* Tilføjer en main_func som der generes inde i indtil vi har vores egne funktioner på plads*)
 let main_func w = 
-  Command (Cat (S "func $main (export \"main\")",Cat(w, S (""))))
+  Command (Cat (S "func $main (export \"main\") (result i32)",Cat(w, S (""))))
 
 (* Bare kode til selve modulet som alt andet skal nestes inde i*)
 let module_ w = 
-  Command (Cat(S("module"), w))
+  let indented_w = String.split_on_char '\n' (to_string w) |> List.map ((^) "\t") |> String.concat "\n" in
+  Command (Cat(S("module"), (S(indented_w))))
 
 
 (* Funktion der skriver vores "wasm" til en fil, ved at kalde to_string med vores compiled program*)

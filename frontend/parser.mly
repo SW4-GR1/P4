@@ -132,8 +132,8 @@ for_loop:
 ;
 
 while_loop:
-    | WHILE LPAREN c = cond RPAREN 
-        s = block { Swhile(c, { stmt_node = s; stmt_loc = $startpos, $endpos }) }
+    | WHILE LPAREN e = expr RPAREN 
+        s = block { Swhile(e, { stmt_node = s; stmt_loc = $startpos, $endpos }) }
 ;
 
 block:
@@ -160,7 +160,7 @@ param:
 ;
 
 func_body:
-    | stmts = separated_list(END, stmt) r = return_stmt
+    | stmts = stmt* r = return_stmt
         { {stmt_node = Slist (stmts @ [r]); stmt_loc = $startpos, $endpos } }
 ;
 
