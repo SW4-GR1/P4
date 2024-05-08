@@ -12,3 +12,9 @@ int h(int b, int a) {
     4 + 5;
     return a
 }
+
+let int x = 1;
+
+while ((x + 1) < 5){
+    x++;
+}

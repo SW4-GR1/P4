@@ -391,12 +391,12 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       else incompatible_types ~loc t_size Tint
 
     | Smat_decl(ty, ident, dim1, dim2, e) ->
-    let ty' = ty_of_pty ty in
-    let mat_ty = Tmat(ty') in
-    let (t_dim1, dim1') = checkExp ftab vtab dim1 in
-    let (t_dim2, dim2') = checkExp ftab vtab dim2 in
-    let name = ident.id in
-    if check_eq_type t_dim1 Tint && check_eq_type t_dim2 Tint then
+      let ty' = ty_of_pty ty in
+      let mat_ty = Tmat(ty') in
+      let (t_dim1, dim1') = checkExp ftab vtab dim1 in
+      let (t_dim2, dim2') = checkExp ftab vtab dim2 in
+      let name = ident.id in
+      if check_eq_type t_dim1 Tint && check_eq_type t_dim2 Tint then
         if is_none (SymTab.lookup name vtab) then
             let vtab' = SymTab.bind name mat_ty vtab in
             let expr_option = match e with
@@ -416,7 +416,13 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         else duplicated_field ~loc name
     else incompatible_types ~loc t_dim1 Tint
 
-
+    | Swhile(e, body) -> 
+      let (cond_ty, e') = checkExp ftab vtab e in
+      if check_eq_type cond_ty Tbool then
+        let (ftab', vtab', body') = checkStmt ftab vtab body in
+        (ftab', vtab', Swhile(e', body'))
+      else error ~loc ("Condition must evaluate to a boolean value")
+      
     | Slist(stmts) -> 
         let stmt_list = checkStmtList ftab vtab stmts in
           ( ftab, vtab, Slist(stmt_list) )
