@@ -34,7 +34,20 @@ let rec compile_stmt stmt =
   | Sdecl vdec -> let v_e = vdec.var_expr in if is_some v_e 
     then let e' = compile_expr (get v_e) in set_local vdec.var_name e'
     else Nop  (* Vi skal starte med at identificere alle variable deklarationer i en block i toppen*)
-  | Sass (id, ty, e) -> set_local id (compile_expr e)
+  | Sass (id, ass_ty, e) -> (match ass_ty with 
+    | Assign -> set_local id (compile_expr e)
+    | _ -> let ty = e.expr_ty in 
+           let e_id = {expr_node = Eident(id); expr_ty = ty} in
+            let (op : binop) = match ass_ty with 
+              | Add_assign -> Add
+              | Sub_assign -> Sub
+              | Mul_assign -> Mul
+              | Div_assign -> Div 
+          in let e' = {expr_node = Ebinop(op, e_id, e); expr_ty = ty} in 
+          set_local id (compile_expr e') )
+      
+
+    
   | Sif (e, s1, s2) -> compile_if e s1 s2
   | Sfor (init, cond, update, s) -> compile_for init cond update s
   | Swhile (e, s) -> compile_while e s

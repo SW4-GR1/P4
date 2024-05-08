@@ -5,10 +5,10 @@ int funcb(int x) {
 
 
 int funca(int b){
-
+    (4 == 5) or (6 < 5);
     let int a = 4;
     for(let int i = 0; i < 7; i++) {
-        a = a + b;
+        a -= b;
     }
     
     return funcb(a)
