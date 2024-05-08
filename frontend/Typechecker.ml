@@ -474,7 +474,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
 
     | Sfundec_list(stmts) ->
       let (ftab', _vtab, stmt_list) = checkStmtList ftab vtab stmts in
-        (ftab', vtab, Sglobal_list(stmt_list))
+        (ftab', vtab, Sfundec_list(stmt_list))
 
     | _ -> assert false
 
