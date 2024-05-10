@@ -18,7 +18,7 @@
 <script>
     WebAssembly.instantiateStreaming(fetch("test.wasm")).then(
         (obj) => {
-            result = obj.instance.exports.funca(8, 4.2);
+            result = obj.instance.exports.f(8);
             test_div = document.getElementById('test')
             test_div.textContent = result
             console.log(result)

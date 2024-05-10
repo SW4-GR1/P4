@@ -2,11 +2,16 @@
 	
 	(export "f" (func $f))
 	
-	(global $x i32 (i32.const 4))
+	(global $x (mut i32) (i32.const 4))
+	(global $y (mut f32) (f32.const 7.400000))
 	
 	(func $f (param $a i32) (result i32)
 		
 		
-		(set_local $a (i32.add (get_local $a) (get_global $x)))
-		(set_global $x (i32.add (get_global $x) (get_local $a)))
-		(get_local $a)))
+		(if
+		(f32.gt (get_global $y) (f32.const 7.200000))
+		(then
+		(set_global $x (i32.const 3)))
+		(else
+		(set_global $x (i32.const 5))))
+		(get_global $x)))

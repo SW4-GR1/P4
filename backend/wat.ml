@@ -108,7 +108,7 @@ let func_sig ret_ty name args =
 
 let export_func f_name = Command (S(Printf.sprintf "export \"%s\" (func $%s)" f_name f_name))
 let global_var name ty init_value = let w_ty = ttype_wtype ty in 
-  Command(S(Printf.sprintf "global $%s %s %s" name (type_to_string w_ty) (to_string init_value)))
+  Command(S(Printf.sprintf "global $%s (mut %s) %s" name (type_to_string w_ty) (to_string init_value)))
 
 (* Tilføjer en main_func som der generes inde i indtil vi har vores egne funktioner på plads*)
 let main_func w = 
