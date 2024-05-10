@@ -166,8 +166,12 @@ let rec pp_stmt s =
       pp_expr_type func.fun_ty ^ " " ^ func.fun_name ^ "(" ^ args_str ^ ") {\n" ^
       body_str ^ "\n}\n"
   
-  | Sglobal_list(globals) -> "implement pretty print type for globals"
-  | Sfundec_list(funs) -> "implement pretty print type for fundec list"
+  | Sglobal_list(globals) -> let stmt_list = List.map pp_stmt globals in
+  String.concat "\n" stmt_list
+  | Sfundec_list(funcs) -> let stmt_list = List.map pp_stmt funcs in
+  String.concat "\n" stmt_list
+  |Sglobal_var(gdec) -> 
+  "global" ^ " " ^ pp_expr_type gdec.gvar_ty ^ " "  ^ gdec.gvar_name ^ " = " ^ pp_expr gdec.gvar_expr
 
   let pp_prog prog =
   (* let exports_str = pp_export_list prog.exports in *)
