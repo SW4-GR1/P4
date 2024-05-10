@@ -1,7 +1,17 @@
 open Frontend
+open Backend
 open Format
 open Lexing
 open Ast
+open OUnit2
+open Testing 
+
+(*unittesting*)
+let master_suite = "Master Suite" >::: [
+  Lexer_tests.suite;
+]
+
+let run_tests() = run_test_tt_main master_suite
 
 let parse_only = ref false
 let type_only = ref false
@@ -33,6 +43,7 @@ let localisation pos =
   eprintf "File \"%s\", line %d, characters %d-%d:\n" !ifile l (c-1) c
 
 let () =
+
   Arg.parse options (set_file ifile) usage;
 
   if !ifile="" then begin eprintf "Please provide a source file"; exit 1 end;
@@ -48,10 +59,10 @@ let () =
   let buf = Lexing.from_channel f in
 
   try
-    
+    run_tests();
+
     let p = Parser.prog Lexer.token buf in
     close_in f;
-    
     
     let parsetree = Pp_parse.pp_prog p in
     if !parse_only then exit 0 else
@@ -59,9 +70,9 @@ let () =
       let _p = Typechecker.program p in
       if !type_only then exit 0 else 
         let typed_tree = Pp_type.pp_prog _p in
-        print_endline typed_tree
+        print_endline typed_tree;
+        
     
-
   with
     | Lexer.Lexing_error c ->
 
@@ -72,4 +83,3 @@ let () =
 
 	localisation (Lexing.lexeme_start_p buf);
 	eprintf "Syntax error@.";
-	exit 1
