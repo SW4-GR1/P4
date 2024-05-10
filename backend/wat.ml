@@ -110,6 +110,8 @@ let export_func f_name = Command (S(Printf.sprintf "export \"%s\" (func $%s)" f_
 let global_var name ty init_value = let w_ty = ttype_wtype ty in 
   Command(S(Printf.sprintf "global $%s (mut %s) %s" name (type_to_string w_ty) (to_string init_value)))
 
+let return e = Command(S(Printf.sprintf "return %s" (to_string e)))
+
 (* Tilføjer en main_func som der generes inde i indtil vi har vores egne funktioner på plads*)
 let main_func w = 
   Command (Cat (S "func $main (export \"main\") (result i32)",Cat(w, S (""))))

@@ -14,4 +14,4 @@
 		(set_global $x (i32.const 3)))
 		(else
 		(set_global $x (i32.const 5))))
-		(get_global $x)))
+		(return (get_global $x))))

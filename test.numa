@@ -6,9 +6,11 @@ global float y = 7.4;
 int f(int a) {
     if(y > 7.2) {
       x = 3;
+      return x;
     }
     else{
       x = 5;
+      return x;
     }
 
     return x;
