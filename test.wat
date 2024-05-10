@@ -11,7 +11,9 @@
 		(if
 		(f32.gt (get_global $y) (f32.const 7.200000))
 		(then
-		(set_global $x (i32.const 3)))
+		(set_global $x (i32.const 3))
+		(return (get_global $x)))
 		(else
-		(set_global $x (i32.const 5))))
+		(set_global $x (i32.const 5))
+		(return (get_global $x))))
 		(return (get_global $x))))

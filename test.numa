@@ -11,9 +11,11 @@ int f(int a) {
     else{
       x = 5;
       return x;
+      x = 9;
     }
 
     return x;
+    4 + 4;
 }
 
 

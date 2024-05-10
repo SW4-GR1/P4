@@ -58,6 +58,7 @@ stmt_node:
     | c_stmt = control_stmt { c_stmt }
     | decl = declarations { decl }
     | ass = assignment { ass }
+    | ret = return_stmt { ret }
 ;
 
 control_stmt:
@@ -163,7 +164,7 @@ function_call:
 ;
 
 return_stmt:
-    | RETURN e = expr END?{ {stmt_node = Sreturn(e); stmt_loc = $startpos, $endpos } }
+    | RETURN e = expr END?{ Sreturn(e)} 
 ;
 
 function_def:
@@ -178,8 +179,8 @@ param:
 ;
 
 func_body:
-    | stmts = stmt* r = return_stmt
-        { {stmt_node = Slist (stmts @ [r]); stmt_loc = $startpos, $endpos } }
+    | stmts = stmt*
+        { {stmt_node = Slist (stmts); stmt_loc = $startpos, $endpos } }
 ;
 
 data_struc_assign:
