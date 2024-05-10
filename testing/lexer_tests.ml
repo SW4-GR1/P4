@@ -3,6 +3,7 @@ open Lexing
 open Frontend
 open Parser
 
+(* For debugging :) *)
 let token_to_string = function
   | ADD -> "ADD"
   | SUB -> "SUB"
@@ -58,7 +59,12 @@ let test_lexer input expected_output _test_ctxt =
   assert_equal ~printer:(fun tokens -> String.concat ", " (List.map token_to_string tokens))
                expected_output
                (get_all_tokens lexbuf)
-  
+let test_unterminated_multiline_comment _ =
+let input = "/* This is an unterminated comment\n 123" in
+let lexbuf = Lexing.from_string input in
+let exn = Frontend.Lexer.Lexing_error "Lexer - unterminated multi-line comment" in
+assert_raises exn (fun () -> Lexer.token lexbuf)
+
 let suite =
 "LexerTestSuite">::: [
   "test arithmetic operators">:::
@@ -130,5 +136,7 @@ let suite =
     [ "test multi-line comment">:: test_lexer "/* This is a multi-line \n comment */" [EOF];
       "test single-line comment">:: test_lexer "// Single-line comment\n 123" [INT 123; EOF];
     ];
+    
+   "test unterminated multi-line comment">:: test_unterminated_multiline_comment;
   
 ]
