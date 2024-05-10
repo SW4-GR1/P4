@@ -86,6 +86,7 @@ rule token = parse
   | "/*"                { multi_line_comment lexbuf }
   | "//"                { single_line_comment lexbuf }
   | eof                 { EOF }
+  | _                   { raise (Lexing_error "Lexer - unexpected character") }
 
 and multi_line_comment = parse 
   | "*/"                { token lexbuf }
