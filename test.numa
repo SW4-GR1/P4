@@ -1,22 +1,11 @@
 {export f;}
 
-global int x = 4;
-global float y = 7.4;
+global int x = 5000000000000;
 
 int f(int a) {
-    if(y > 7.2) {
-      x = 3;
-      return x;
-    }
-    else{
-      x = 5;
-      return x;
-      x = 9;
-    }
-
-    return x;
-    4 + 4;
+    a += x;
+    x+= a;
+    let int xyz = 5/0;
+    return a;
 }
-
-
 
