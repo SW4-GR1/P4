@@ -85,7 +85,7 @@ type stmt =
  | Sif of expr * stmt * stmt
  | Sreturn of expr
  | Sdecl of vdec
- | Sass of ident * assign_type * expr
+ | Sass of ident * ty * assign_type * expr
  | Sarr_decl of adec
  | Svec_decl of vecdec
  | Smat_decl of mdec

@@ -1,22 +1,20 @@
-{export f;}
+{ export fibonacci; }
 
-global int x = 4;
-global float y = 7.4;
-
-int f(int a) {
-    if(y > 7.2) {
-      x = 3;
-      return x;
+long_int fibonacci(int n) {
+    let long_int a = 0;
+    let long_int b = 1;
+    let long_int temp;
+    for(let int i = 0; i < n; i++) {
+        temp = a;
+        a = b;
+        b = temp + b;
     }
-    else{
-      x = 5;
-      return x;
-      x = 9;
-    }
-
-    return x;
-    4 + 4;
+    return b
 }
+
+
+
+
 
 
 

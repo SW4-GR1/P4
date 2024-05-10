@@ -293,7 +293,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       | Ssimple e -> (match e.expr_node with
         | Eunop(id, _) -> id
         | _ -> error ~loc ("Increment must be performed on variable " ^ dec_ident))
-      | Sass(id, _, _) -> id
+      | Sass(id,_, _, _) -> id
       in
       if is_bool cond_ty then
         if dec_ident = inc_ident then
@@ -341,7 +341,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       if is_some var_option then 
         let var_ty = get var_option in 
         if check_eq_type_strict var_ty t then
-          ( ftab, vtab, Sass(id, ass_ty, e') )
+          ( ftab, vtab, Sass(id, var_ty, ass_ty, e') )
         else incompatible_types  ~loc var_ty t
       else error ~loc ("Variable " ^ id ^ " has not been declared.")
       
@@ -551,7 +551,7 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
         | Ssimple e -> (match e.expr_node with
           | Eunop(id, _) -> id
           | _ -> error ~loc ("Increment must be performed on variable " ^ dec_ident))
-        | Sass(id, _, _) -> id 
+        | Sass(id,_, _, _) -> id 
         in 
         if is_bool cond_ty then
           if dec_ident = inc_ident then
