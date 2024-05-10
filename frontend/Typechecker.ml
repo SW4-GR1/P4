@@ -156,7 +156,10 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
           if is_number t1 then
             if check_eq_type t1 t2 then 
               let ty' = is_subtype t1 t2 in
-                (ty', { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t1 } )
+                if e2_bin.expr_node = Econst(0) then
+                  error ~loc("Division by 0 not allowed")
+                else 
+                  (ty', { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t1 } )
             else incompatible_types ~loc t1 t2
           else error ~loc ("Binary operator should only be used on numbers")
   
@@ -293,7 +296,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       | Ssimple e -> (match e.expr_node with
         | Eunop(id, _) -> id
         | _ -> error ~loc ("Increment must be performed on variable " ^ dec_ident))
-      | Sass(id, _, _) -> id
+      | Sass(id,_, _, _) -> id
       in
       if is_bool cond_ty then
         if dec_ident = inc_ident then
@@ -341,7 +344,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       if is_some var_option then 
         let var_ty = get var_option in 
         if check_eq_type_strict var_ty t then
-          ( ftab, vtab, Sass(id, ass_ty, e') )
+          ( ftab, vtab, Sass(id, var_ty, ass_ty, e') )
         else incompatible_types  ~loc var_ty t
       else error ~loc ("Variable " ^ id ^ " has not been declared.")
       
@@ -551,7 +554,7 @@ and checkFunBody (ftab : funTable) (vtab : varTable) (ftype : ty) (body : Ast.st
         | Ssimple e -> (match e.expr_node with
           | Eunop(id, _) -> id
           | _ -> error ~loc ("Increment must be performed on variable " ^ dec_ident))
-        | Sass(id, _, _) -> id 
+        | Sass(id,_, _, _) -> id 
         in 
         if is_bool cond_ty then
           if dec_ident = inc_ident then

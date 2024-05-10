@@ -101,6 +101,8 @@ let set_global id v = Command (S(Printf.sprintf "set_global $%s %s" id (to_strin
 let get_var id global = if global then get_global id else get_local id
 let set_var id v global = if global then set_global id v else set_local id v
 
+let extend_i64 var = Command(S(Printf.sprintf "i64.extend_i32_s %s" (to_string var)))
+
 let func_sig ret_ty name args = 
   let wtype = ttype_wtype ret_ty in
   let args_str = String.concat " " (List.map (fun (arg_ty, arg_name) -> Printf.sprintf "(param $%s %s)" arg_name (type_to_string (ttype_wtype arg_ty))) args) in

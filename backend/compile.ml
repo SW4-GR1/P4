@@ -40,20 +40,23 @@ let rec compile_stmt stmt =
     return e'
     
   | Sdecl vdec -> let v_e = vdec.var_expr in if is_some v_e 
-    then let e' = compile_expr (get v_e) in set_local vdec.var_name e'
+    then 
+    let t_opt = vdec.var_ty in let e' = compile_expr ~t_opt (get v_e) 
+    in set_local vdec.var_name e'
     else Nop  (* Vi skal starte med at identificere alle variable deklarationer i en block i toppen*)
-  | Sass (id, ass_ty, e) -> 
+  | Sass (id, id_ty, ass_op, e) -> 
     let is_global = check_global id in 
-    (match ass_ty with 
-    | Assign -> set_var id (compile_expr e) is_global
+    let t_opt = id_ty in
+    (match ass_op with 
+    | Assign -> set_var id (compile_expr ~t_opt e) is_global
     | _ -> let ty = e.expr_ty in 
-           let e_id = {expr_node = Eident(id); expr_ty = ty} in
-            let (op : binop) = match ass_ty with 
+           let e_id = {expr_node = Eident(id); expr_ty = id_ty} in
+            let (op : binop) = match ass_op with 
               | Add_assign -> Add
               | Sub_assign -> Sub
               | Mul_assign -> Mul
               | Div_assign -> Div 
-          in let e' = {expr_node = Ebinop(op, e_id, e); expr_ty = ty} in 
+          in let e' = {expr_node = Ebinop(op, e_id, e); expr_ty = id_ty} in 
           set_var id (compile_expr e') is_global)
       
 
@@ -134,11 +137,15 @@ and compile_stmt_list stmts =
   | s::[] -> compile_stmt s
   | s::slist -> Cat (compile_stmt s, compile_stmt_list slist)
   
-and compile_expr e =
-  let ty = e.expr_ty in
+and compile_expr ?t_opt e  =
+  let ty = (match t_opt with
+  | Some t -> t
+  | None -> e.expr_ty)
+  in
   match e.expr_node with
-    | Eident(id) -> let is_global = check_global id in
-      get_var id is_global
+    | Eident(id) -> let extend = e.expr_ty != ty in let is_global = check_global id in
+      if extend then extend_i64 (get_var id is_global)
+      else get_var id is_global
     | Econst c -> int_const ty c
     | Ebool b -> bool_const b
     | Efloat f -> float_const ty f
@@ -151,8 +158,9 @@ and compile_expr e =
     | _ -> failwith "Unsupported expression"
 
     and compile_binop op ty e1 e2 =
-      let e1' = compile_expr e1 in
-      let e2' = compile_expr e2 in
+      let t_opt = ty in
+      let e1' = compile_expr ~t_opt e1 in
+      let e2' = compile_expr ~t_opt e2 in
       match op with
       | Add -> binop add ty e1' e2'
   | Sub -> binop sub ty e1' e2'

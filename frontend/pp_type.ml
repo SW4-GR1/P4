@@ -82,7 +82,7 @@ let rec pp_stmt s =
   |Sdecl(x) -> if is_some x.var_expr then let init = get x.var_expr in
     "let" ^ " " ^ pp_expr_type x.var_ty ^ " "  ^ x.var_name ^ " = " ^ pp_expr init
     else "let" ^ " " ^ pp_expr_type x.var_ty ^ " " ^ x.var_name
-  |Sass(id, ass_type, expr) -> 
+  |Sass(id,_, ass_type, expr) -> 
       let aop = pp_a_op ass_type in 
       let expr_str = pp_expr expr in
     id ^ " " ^ aop ^ " " ^ expr_str
@@ -144,7 +144,7 @@ let rec pp_stmt s =
     let cond_str = pp_expr c in
     let reass_str = match reass with
       (* | Ssimple e -> pp_expr e *)
-      | Sass (ident, a_op, e) -> 
+      | Sass (ident,_, a_op, e) -> 
         "( " ^ ident ^ " " ^ pp_a_op a_op ^ " " ^ pp_expr e ^ " )"
       | Ssimple e -> pp_expr e
       | _ -> failwith "Unsupported statement node for for-loop reassignment in pp_stmt"
