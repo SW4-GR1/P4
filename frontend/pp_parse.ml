@@ -169,6 +169,13 @@ match stmt_instance.stmt_node with
     | Some body -> decl_str ^ " = {" ^ pp_matrix_body body ^ "}"
     | None -> decl_str
     end
+  | Sglobal_list(globals) -> let stmt_list = List.map pp_stmt globals in
+  String.concat "\n" stmt_list
+  | Sfundec_list(funcs) -> let stmt_list = List.map pp_stmt funcs in
+  String.concat "\n" stmt_list
+  | Sglobal_var(gdec) ->let decl_str = "global " ^ pp_types gdec.gvar_ty ^ " " ^ gdec.gvar_name.id 
+   ^ " " ^ pp_expr gdec.gvar_expr in
+   decl_str
   | _ -> failwith "Unexpected case encountered in pp_stmt"
 
 and pp_func func =

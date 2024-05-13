@@ -21,7 +21,7 @@ type log_op = And | Or
 
 type export = 
   | Xexport of string
-  | Xlist of export list
+
 
 
 type expr =
@@ -46,9 +46,15 @@ and expr_node =
   | EArr_lookup of ident * expr
 
 type vdec = {
-  var_ty : type_ident;
+  var_ty   : type_ident;
   var_name : ident;
   var_expr : expr option;  (* This field is optional *)
+}
+
+type global_vdec = {
+  gvar_ty   : type_ident;
+  gvar_name : ident;
+  gvar_expr : expr;
 }
 
 
@@ -84,6 +90,12 @@ and stmt_node =
   | Smat_assign_elem of string * expr * expr * assign_type * expr
   | Sfor of stmt * expr * stmt * stmt (*dec * cond * increment * body*)
   | Swhile of expr * stmt
+  | Sglobal_var of global_vdec
+  | Sglobal_list of stmt list
+  | Sfundec_list of stmt list
+  (* | Sglobal_arr
+  | Sglobal_mat
+  | Sglobal_vec *)
 
 
 (* type of function declaration *)
@@ -100,5 +112,6 @@ and fdec = {
 (* program of list of function declarations, followed by a statement *)
 type prog = {
   exports : export list;
+  globals : stmt;
   main : stmt;
 }

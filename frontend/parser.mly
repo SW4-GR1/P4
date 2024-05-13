@@ -4,7 +4,7 @@
 
 %token ADD MUL SUB DIV MOD EOF INC DEC
 %token LT GT EQ NEQ LEQ GEQ AND OR NOT
-%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END LET EXPORT
+%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA DOT RETURN END LET EXPORT GLOBAL
 %token ASSIGN ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
 %token<int> INT
 %token<float> FLOAT
@@ -28,16 +28,22 @@
 %%
 prog:
     exports = exports
-    s = stmt* 
+    globals = global*
+    s = funcs*
     EOF
-       { { exports = exports; main = { 
-        stmt_node = Slist s; stmt_loc = $startpos, $endpos } } }
-    | s = stmt* EOF { { exports = []; main = { 
-        stmt_node = Slist s; stmt_loc = $startpos, $endpos } } }
+       { { exports = exports; globals = {stmt_node = Sglobal_list globals; stmt_loc = $startpos, $endpos};
+        main = { 
+        stmt_node = Sfundec_list s; stmt_loc = $startpos, $endpos } } }
+
+    | globals = global*
+     s = funcs* EOF
+        { { exports = [];
+            globals = {stmt_node = Sglobal_list globals; stmt_loc = $startpos, $endpos};
+            main = { stmt_node = Sfundec_list s; stmt_loc = $startpos, $endpos } } }
 ;
 
 exports:
-    LBRACE export = export* RBRACE { export }
+    LBRACE exports = export* RBRACE { exports }
 
 export:
     |  EXPORT id = IDENT END  { Xexport(id) }
@@ -52,13 +58,26 @@ stmt_node:
     | c_stmt = control_stmt { c_stmt }
     | decl = declarations { decl }
     | ass = assignment { ass }
-    | func = function_def {func}
+    | ret = return_stmt { ret }
 ;
 
 control_stmt:
     | i_stmt = if_stmt {i_stmt}
     | loop = loop_stmt {loop}
 
+funcs: 
+    | func = function_def { {stmt_node = func; stmt_loc = $startpos, $endpos} }
+
+global:
+    dec = global_dec 
+    { { stmt_node = dec; stmt_loc = $startpos, $endpos } }
+
+global_dec:
+    | GLOBAL t = ty id = ident ASSIGN e = expr END { Sglobal_var({gvar_ty = t; gvar_name = id; gvar_expr = e}) } // variables
+    // | GLOBAL t = ty LBRACKET e1 = expr RBRACKET id = ident body = array_body_opt END {Sarr_decl(t, id, e1, body)} // array 
+    // | GLOBAL t = ty LBRACE e = expr RBRACE id = ident body = vector_body_opt END {Svec_decl(t, id, e, body)} // vector
+    // | GLOBAL t = ty LBRACE e1 = expr RBRACE LBRACE e2 = expr RBRACE id = ident body = matrix_body_opt END {Smat_decl(t, id, e1, e2, body)} // matrix
+    
 
 declarations:
     | LET d_type = dec_type {d_type}
@@ -101,11 +120,11 @@ assign:
 ;
 
 if_stmt:
-    | IF LPAREN c = cond RPAREN LBRACE s = stmt+ RBRACE { Sif(c, 
+    | IF LPAREN e = expr RPAREN LBRACE s = stmt+ RBRACE { Sif(e, 
         {stmt_node = Slist s; stmt_loc = $startpos, $endpos},
         {stmt_node = Slist []; stmt_loc = $startpos, $endpos}) }
-    | IF LPAREN c = cond RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { 
-        Sif(c, 
+    | IF LPAREN e = expr RPAREN LBRACE s1 = stmt+ RBRACE ELSE LBRACE s2 = stmt+ RBRACE { 
+        Sif(e, 
         {stmt_node = Slist s1; stmt_loc = $startpos, $endpos},
         {stmt_node = Slist s2; stmt_loc = $startpos, $endpos}) }
 ;
@@ -132,8 +151,8 @@ for_loop:
 ;
 
 while_loop:
-    | WHILE LPAREN c = cond RPAREN 
-        s = block { Swhile(c, { stmt_node = s; stmt_loc = $startpos, $endpos }) }
+    | WHILE LPAREN e = expr RPAREN 
+        s = block { Swhile(e, { stmt_node = s; stmt_loc = $startpos, $endpos }) }
 ;
 
 block:
@@ -145,7 +164,7 @@ function_call:
 ;
 
 return_stmt:
-    | RETURN e = expr END?{ {stmt_node = Sreturn(e); stmt_loc = $startpos, $endpos } }
+    | RETURN e = expr END?{ Sreturn(e)} 
 ;
 
 function_def:
@@ -160,8 +179,8 @@ param:
 ;
 
 func_body:
-    | stmts = separated_list(END, stmt) r = return_stmt
-        { {stmt_node = Slist (stmts @ [r]); stmt_loc = $startpos, $endpos } }
+    | stmts = stmt*
+        { {stmt_node = Slist (stmts); stmt_loc = $startpos, $endpos } }
 ;
 
 data_struc_assign:

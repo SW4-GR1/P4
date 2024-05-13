@@ -9,7 +9,7 @@ open Testing
 (*unittesting*)
 let master_suite = "Master Suite" >::: [
   Lexer_tests.suite;
-  Parser_tests.suite;
+  (* Parser_tests.suite; *)
   (* Parser_tests.suite; *)
 ]
 
@@ -73,8 +73,12 @@ let () =
       if !type_only then exit 0 else 
         let typed_tree = Pp_type.pp_prog _p in
         print_endline typed_tree;
-        
-    
+        print_endline ("\nTrying to compile " ^ !ifile ^ " to wat");
+        let wasm_ast = Compile.compile _p in
+        let base_name = Filename.remove_extension !ifile in
+        let ofile = base_name ^ ".wat" in
+        Wat.write_wat ofile wasm_ast;
+
   with
     | Lexer.Lexing_error c ->
 

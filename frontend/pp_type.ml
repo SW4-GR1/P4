@@ -82,7 +82,7 @@ let rec pp_stmt s =
   |Sdecl(x) -> if is_some x.var_expr then let init = get x.var_expr in
     "let" ^ " " ^ pp_expr_type x.var_ty ^ " "  ^ x.var_name ^ " = " ^ pp_expr init
     else "let" ^ " " ^ pp_expr_type x.var_ty ^ " " ^ x.var_name
-  |Sass(id, ass_type, expr) -> 
+  |Sass(id,_, ass_type, expr) -> 
       let aop = pp_a_op ass_type in 
       let expr_str = pp_expr expr in
     id ^ " " ^ aop ^ " " ^ expr_str
@@ -144,7 +144,7 @@ let rec pp_stmt s =
     let cond_str = pp_expr c in
     let reass_str = match reass with
       (* | Ssimple e -> pp_expr e *)
-      | Sass (ident, a_op, e) -> 
+      | Sass (ident,_, a_op, e) -> 
         "( " ^ ident ^ " " ^ pp_a_op a_op ^ " " ^ pp_expr e ^ " )"
       | Ssimple e -> pp_expr e
       | _ -> failwith "Unsupported statement node for for-loop reassignment in pp_stmt"
@@ -165,6 +165,13 @@ let rec pp_stmt s =
       let body_str = pp_stmt func.fun_body in
       pp_expr_type func.fun_ty ^ " " ^ func.fun_name ^ "(" ^ args_str ^ ") {\n" ^
       body_str ^ "\n}\n"
+  
+  | Sglobal_list(globals) -> let stmt_list = List.map pp_stmt globals in
+  String.concat "\n" stmt_list
+  | Sfundec_list(funcs) -> let stmt_list = List.map pp_stmt funcs in
+  String.concat "\n" stmt_list
+  |Sglobal_var(gdec) -> 
+  "global" ^ " " ^ pp_expr_type gdec.gvar_ty ^ " "  ^ gdec.gvar_name ^ " = " ^ pp_expr gdec.gvar_expr
 
   let pp_prog prog =
   (* let exports_str = pp_export_list prog.exports in *)
