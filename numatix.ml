@@ -9,6 +9,8 @@ open Testing
 (*unittesting*)
 let master_suite = "Master Suite" >::: [
   Lexer_tests.suite;
+  Parser_tests.suite;
+  (* Parser_tests.suite; *)
 ]
 
 let run_tests() = run_test_tt_main master_suite

@@ -1,6 +1,6 @@
 open OUnit2
-open Lexing
 open Frontend
+open Lexing
 open Parser
 
 (* For debugging :) *)
@@ -35,6 +35,7 @@ let token_to_string = function
   | IF -> "IF"
   | ELSE -> "ELSE"
   | RETURN -> "RETURN"
+  | EXPORT -> "EXPORT"
   | INT_TY -> "INT_TY"
   | FLOAT_TY -> "FLOAT_TY"
   | LONG_INT_TY -> "LONG_INT_TY"
@@ -127,6 +128,7 @@ let suite =
       "test let keyword">:: test_lexerT "let" [LET; EOF];
       "test for keyword">:: test_lexerT "for" [FOR; EOF];
       "test while keyword">:: test_lexerT "while" [WHILE; EOF];
+      "test export keyword">:: test_lexerT "export" [EXPORT; EOF];
     ];
 
   "test literals and identifiers">:::
@@ -134,6 +136,7 @@ let suite =
       "test float literal">:: test_lexerT "3.14" [FLOAT 3.14; EOF];
       "test boolean literals">:: test_lexerT "true false" [BOOL true; BOOL false; EOF];
       "test identifier">:: test_lexerT "my_var" [IDENT "my_var"; EOF];
+      "test multiple tokens">:: test_lexerT "var1 var2" [IDENT "var1"; IDENT "var2"; EOF];
       "test identifiers with digits and underscores">:: test_lexerT "var1 var_2 _var" [IDENT "var1"; IDENT "var_2"; IDENT "_var"; EOF];
       "test various combinations">:: test_lexerT "var1 = 10; /* Assignment */ var2 *= 2.5" [IDENT "var1"; ASSIGN; INT 10; END; IDENT "var2"; MUL_ASSIGN; FLOAT 2.5; EOF];
     ];
