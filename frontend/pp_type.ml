@@ -175,5 +175,6 @@ let rec pp_stmt s =
 
   let pp_prog prog =
   (* let exports_str = pp_export_list prog.exports in *)
+  let globals_str = pp_stmt prog.globals in
   let main_str = pp_stmt prog.stmts in
-  main_str
+  globals_str ^ "\n" ^ main_str
