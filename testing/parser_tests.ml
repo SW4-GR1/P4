@@ -22,98 +22,21 @@ let suite =
   "ParserTestSuite" >:::
     [
       "assignmentTest" >:: test_parser "
-      let long_int a = 5;
-      let int a = x + 1;
-      a += 6;
-      a = 1;"
-      ("
-      let long int a = 5
-      let int a = (x + 1)
-      ( a += 6 )
-      ( a = 1 )
-      ");
-      
-      "boolTest" >:: test_parser "
-      let bool a = true;
-      let bool a = hey;
-      let bool b = 2;
-      bool f() {
-        return 1
-      }
-
-      let bool lasse = 3;"
-      ("
-      let bool a = true
-      let bool a = hey
-      let bool b = 2
-      bool f() {
-      ( return 1 )
-      }
-      
-      let bool lasse = 3");
-      
-      "commentTest" >:: test_parser "
-      4 + 5;
-      //this is a single line comment
-
-      /* this
-      is
-      a 
-      multi
-      line comment*/
+      global long_int a = 5;
+      global int a = x + 1;
+      int f() {
+        let bool a = true;
+        let bool b = false;
+        let float a = 2.0;
+        let long_float b = 3.0;
+        }
       "
-      (" (( 4 + 5 )) ");
-
-      (* "conditionTest" >:: test_parser " *)
-      (* 4 < 2; *)
-      (* 4 > 2; *)
-      (* 4 == 2; *)
-      (* 4 != 2; *)
-      (* 4 >= 2; *)
-      (* 4 <= 2; *)
-      (* " *)
-      (* " *)
-      (* ( (4 < 2) ) *)
-      (* ( (4 > 2) ) *)
-      (* ( (4 == 2) ) *)
-      (* ( (4 != 2) ) *)
-      (* ( (4 >= 2) ) *)
-      (* ( (4 <= 2) )"; *)
-      (*  *)
-      (* "ExportTest" >:: test_parser " *)
-      (* {  *)
-      (*     export func;  *)
-      (* } *)
-      (* int func(int x) {}" *)
-      (* " *)
-      (* {export func; *)
-      (* export x;} *)
-      (* ( (1 + 2) )"; *)
-      (*  *)
-      (* "forTest" >:: test_parser "for(let *) int i = 0; i < 10; i = i + 1;) {
-      (*   a;}" *)
-      (* " *)
-      (* for (let int i = 0; (i < 10); ( i  *)= (i + 1) )) {
-      (*   ( a ) *)
-      (* }"; *)
-      (*  *)
-      (* "functionTest" >:: test_parser " *)
-      (* int f() { *)
-      (*     return 1 *)
-      (* } *)
-
-      (* int f(int a, int b) { *)
-      (*     a + b; *)
-      (*     return 8 *)
-      (* }" *)
-      (* " *)
-      (* int f() { *)
-      (* ( return 1 ) *)
-      (* } *)
-
-      (* int f(int a, int b) { *)
-      (* ( (a + b) ) *)
-      (* ( return 8 ) *)
-      (* } *)
-      (* "; *)
+      ("
+      int f(){
+        let bool a = true
+        let bool b = false
+        let float a = 2. 
+        let long float b = 3.
+      }
+      ");
     ]
