@@ -1,6 +1,12 @@
 open Wat
 open Frontend.Ttree
 
+
+
+
+
+
+
 open Option
 
 let globals_map = Hashtbl.create 20
@@ -49,13 +55,13 @@ let rec compile_stmt stmt =
     let t_opt = id_ty in
     (match ass_op with 
     | Assign -> set_var id (compile_expr ~t_opt e) is_global
-    | _ -> let ty = e.expr_ty in 
-           let e_id = {expr_node = Eident(id); expr_ty = id_ty} in
+    | _ ->  let e_id = {expr_node = Eident(id); expr_ty = id_ty} in
             let (op : binop) = match ass_op with 
               | Add_assign -> Add
               | Sub_assign -> Sub
               | Mul_assign -> Mul
               | Div_assign -> Div 
+              | _ -> failwith("How did we end up here")
           in let e' = {expr_node = Ebinop(op, e_id, e); expr_ty = id_ty} in 
           set_var id (compile_expr e') is_global)
       
@@ -168,7 +174,7 @@ and compile_expr ?t_opt e  =
     binop op_str ty e1' e2'
   | Mul -> binop mul ty e1' e2'
   | Mod -> binop rem_s ty e1' e2'
-  | _ -> failwith "Unsupported binary operator"
+  
   
   and compile_cond op e1 e2 =
   let ty = e1.expr_ty in
@@ -185,7 +191,7 @@ and compile_expr ?t_opt e  =
     cond op_str ty e1' e2'
     | Geq -> let op_str = if is_int_type ty then (ge ^ "_s") else ge in
     cond op_str ty e1' e2'
-  | _ -> failwith "Unsupported conditional operator"
+ 
   
 and compile_logical_operators op e1 e2 = 
   let e1' = compile_expr e1 in
@@ -193,7 +199,7 @@ and compile_logical_operators op e1 e2 =
   match (op : log_op) with 
   | And -> wasm_and e1' e2' 
   | Or -> wasm_or e1' e2'
-  | _ -> failwith "Unsupported logical operator"
+  
 
 and compile_Fcall id e_list =
   let compiled_args = List.map compile_expr e_list in
@@ -205,13 +211,13 @@ and compile_declarations stmt_list =
   let table = Hashtbl.create 10 in
   let rec find_declarations stmt_list =
     List.iter (function
-      | Sdecl { var_name; var_ty } -> Hashtbl.add table var_name var_ty
+      | Sdecl { var_name; var_ty; _} -> Hashtbl.add table var_name var_ty
       | Sif(_, Slist tbranch, Slist fbranch) -> 
         find_declarations tbranch;
         find_declarations fbranch
       | Swhile(_, Slist body) -> find_declarations body
       | Sfor(local, _, _, Slist body) -> (match local with
-        | Sdecl { var_name; var_ty } -> Hashtbl.add table var_name var_ty
+        | Sdecl { var_name; var_ty; _} -> Hashtbl.add table var_name var_ty
         | _ -> ());  
         find_declarations body
       | _ -> ()
@@ -227,19 +233,22 @@ and compile_declarations stmt_list =
   
 let compile ttree = 
   let exports = ttree.exports in 
-    
   let stmts = (match ttree.stmts with
   | Sfundec_list stmts -> stmts 
   | _ -> failwith "Expected a lists of statements ahhh") in
   let globals = (match ttree.globals with
   | Sglobal_list stmts -> stmts
   | _ -> failwith "Somethings wrong with da globals") in
-  let globals_map_aux = List.iter ( function Sglobal_var(dec) -> Hashtbl.add globals_map dec.gvar_name dec.gvar_ty) globals in  
-  let compiled_globals = List.map((function Sglobal_var {gvar_ty = t; gvar_name = n; gvar_expr = e } -> global_var n t (compile_expr e) ) : stmt -> _) globals in
+  List.iter (function 
+  | Sglobal_var(dec) -> Hashtbl.add globals_map dec.gvar_name dec.gvar_ty
+  | _ -> failwith "Unexpected statement in globals list") globals;
+  let compiled_globals = List.map (function
+  | Sglobal_var {gvar_ty = t; gvar_name = n; gvar_expr = e } -> global_var n t (compile_expr e)
+  | _ -> failwith "Unexpected statement in globals list") globals in
   let globals_code = List.fold_left  (fun acc global  -> Cat (acc, global)) Nop compiled_globals in
   let compiled_exports = List.map ((function Xexport f_name -> export_func f_name) : export -> _) exports in
   let exports_code = List.fold_left  (fun acc export  -> Cat (acc, export)) Nop compiled_exports in
-  let compiled_declarations = compile_declarations stmts in
   let compiled_stmts = List.map compile_stmt stmts in
   let stmts_code = List.fold_left (fun acc stmt -> Cat (acc, stmt)) Nop compiled_stmts in
   Wat.module_ (Cat(Cat(exports_code, globals_code), stmts_code))
+ 

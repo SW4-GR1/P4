@@ -20,6 +20,7 @@ let ge : opcode = "ge"
 type wasm_type = I32 | I64 | F32 | F64
 
 
+
 let ttype_wtype ttype = match ttype with
   | Tbool -> I32
   | Tint -> I32
@@ -45,7 +46,6 @@ type wasm =
   | Command of wasm (* Stuff der skal have enclosing parentheser *)
   | S of string (* keywords og stuff der ikke indgår som operander *)
   | Cat of wasm * wasm (* tilføjer linjeskift*)
-  | Combine of wasm * wasm 
   | Opcode of opcode * wasm_type * wasm list (* opcode, type, operands *)
 
 (* Funktion til at konvertere vores "wasm" til en string, så vi kan skrive det til en fil *)

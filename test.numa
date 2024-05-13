@@ -1,9 +1,9 @@
-{ export fibonacci; }
-global int x = 5000000000000;
+{ export f; }
+global int x = 50000;
 
 int f(int a) {
     a += x;
     x+= a;
-    let int xyz = 5/0;
+    let int xyz = 5/1;
     return a;
 }

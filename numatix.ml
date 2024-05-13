@@ -2,7 +2,8 @@ open Frontend
 open Backend
 open Format
 open Lexing
-open Ast
+
+
 
 let parse_only = ref false
 let type_only = ref false
