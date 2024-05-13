@@ -200,5 +200,6 @@ let rec pp_export_list exports =
     
 let pp_prog prog =
   let exports_str = pp_export_list prog.exports in
+  let globals_str = pp_stmt prog.globals in
   let main_str = pp_stmt prog.main in
-  exports_str ^ "\n" ^ main_str
+  exports_str ^ "\n" ^ globals_str ^ "\n" ^ main_str
