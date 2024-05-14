@@ -3,17 +3,10 @@ open Backend
 open Format
 open Lexing
 open Ast
-open OUnit2
-open Testing 
 
-(*unittesting*)
-let master_suite = "Master Suite" >::: [
-  Lexer_tests.suite;
-  Parser_tests.suite; 
 
-]
 
-let run_tests() = run_test_tt_main master_suite
+
 
 let parse_only = ref false
 let type_only = ref false

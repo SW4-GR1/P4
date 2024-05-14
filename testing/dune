@@ -1,11 +1,6 @@
-(library
- (name testing)
- (libraries str frontend backend ounit2)
- (modules Lexer_tests Parser_tests)
+(test
+ (name tests)
+ (modules Lexer_tests Parser_tests Typechecker_tests Tests)
+ (libraries ounit2 frontend str)
  (flags
   (:standard -warn-error -A)))
-
-(test
- (name typechecker_tests)
- (modules Typechecker_tests)
- (libraries ounit2 frontend str))

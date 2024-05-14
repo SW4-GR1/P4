@@ -1,6 +1,5 @@
 open OUnit2
 open Frontend
-open Lexing
 open Parser
 
 (* For debugging :) *)
