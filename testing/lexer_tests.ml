@@ -156,3 +156,5 @@ let suite =
     "test invalid tokens">:: test_lexerE "var1 = 10; /* Assignment */ var2 *= 2.5 $" (Frontend.Lexer.Lexing_error "Lexer - unexpected character");
     ]
 ]
+
+let _ = run_test_tt_main suite 
