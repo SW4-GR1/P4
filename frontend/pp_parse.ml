@@ -30,11 +30,11 @@ let rec pp_expr expr_instance =
       "(" ^ id ^ unop_str ^ ")"
   | ECond(op, e1, e2) -> 
       let cond_str = match op with
-      | Lt -> "{"
+      | Lt -> "<"
       | Gt -> ">"
       | Eq -> "=="
       | Neq -> "!="
-      | Leq -> "{="
+      | Leq -> "<="
       | Geq -> ">=" in
       "(" ^ pp_expr e1 ^ " " ^ cond_str ^ " " ^ pp_expr e2 ^ ")"
   | ELog(op, e1, e2) -> 
@@ -52,17 +52,17 @@ let rec pp_expr expr_instance =
   | EArr_lookup(id, e) -> "(" ^ id.id ^ "[" ^ pp_expr e ^ "]" ^ ")"
   | EVector(e_list) -> 
     let e_list_str = String.concat ", " (List.map pp_expr e_list) in
-    "{" ^ e_list_str ^ ">"
+    "{" ^ e_list_str ^ "}"
 
 
 let rec pp_cond = function
   | ECond(op, e1, e2) ->
     let op_str = match op with
-    | Lt -> "{"
+    | Lt -> "<"
     | Gt -> ">"
     | Eq -> "=="
     | Neq -> "!="
-    | Leq -> "{="
+    | Leq -> "<="
     | Geq -> ">="
    in
     "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
