@@ -54,7 +54,6 @@ let () =
   let buf = Lexing.from_channel f in
 
   try
-    run_tests();
 
     let p = Parser.prog Lexer.token buf in
     close_in f;
