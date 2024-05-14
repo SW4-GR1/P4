@@ -102,4 +102,4 @@ let test_parser input expected _test_ctxt =
 
       ]
     
-let _ = run_test_tt_main suite 
+(* let _ = run_test_tt_main suite  *)

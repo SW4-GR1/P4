@@ -153,7 +153,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
               (ty', { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t2 } )
           else error ~loc ("Modulo operator should only be used on integers")
         else
-          if is_number t1 then
+          if is_number t1 && is_number t2 then
             if check_eq_type t1 t2 then 
               let ty' = is_subtype t1 t2 in
                 if e2_bin.expr_node = Econst(0) then
