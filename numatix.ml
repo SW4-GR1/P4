@@ -60,11 +60,11 @@ let () =
     
     let parsetree = Pp_parse.pp_prog p in
     if !parse_only then exit 0 else
-      let _ = print_endline parsetree in
+      (* let _ = print_endline parsetree in *)
       let _p = Typechecker.program p in
       if !type_only then exit 0 else 
         let typed_tree = Pp_type.pp_prog _p in
-        print_endline typed_tree;
+        (* print_endline typed_tree; *)
         print_endline ("\nTrying to compile " ^ !ifile ^ " to wat");
         let wasm_ast = Compile.compile _p in
         let base_name = Filename.remove_extension !ifile in
