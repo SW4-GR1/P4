@@ -1,6 +1,6 @@
 (executable
  (name numatix)
- (libraries str frontend backend testing ounit2)
+ (libraries str frontend backend testing)
  (promote (until-clean))
  (flags
   (:standard -warn-error -A)))
