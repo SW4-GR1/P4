@@ -6,12 +6,20 @@
 		
 		(local $i i32)
 		
+		(set_local $x (i32.add (get_local $x) (i32.const 1)))
+		(get_local $x)
 		(block
 		(set_local $i (i32.const 5))
 		(loop
 		(br_if 1
 		(i32.ge_s (get_local $i) (get_local $x)))
+		(block
+		(loop
+		(br_if 1
+		(i32.ge_s (get_local $x) (i32.const 2)))
 		(set_local $x (i32.add (get_local $x) (i32.const 1)))
+		(get_local $x)
+		(br 0)))
 		(set_local $i (i32.add (get_local $i) (i32.const 1)))
 		(br 0)))
 		(block
