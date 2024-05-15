@@ -179,6 +179,21 @@ let test_multiple_arguments_function _ctxt =
   let expected_output = "intfoo(intx,inty){(return(x+y))}" in
   test_parser input expected_output _ctxt
 
+let test_conditional_and _ctxt =
+  let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; BOOL_TY; IDENT "x"; ASSIGN; LPAREN; BOOL true; AND; BOOL false; RPAREN; END; RBRACE] in
+  let expected_output = "intfoo(){letboolx=(true&&false)}" in
+  test_parser input expected_output _ctxt
+
+let test_conditional_or _ctxt =
+  let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; BOOL_TY; IDENT "x"; ASSIGN; LPAREN; BOOL true; OR; BOOL false; RPAREN; END; RBRACE] in
+  let expected_output = "intfoo(){letboolx=(true||false)}" in
+  test_parser input expected_output _ctxt
+
+ let test_conditional_not _ctxt =
+  let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; BOOL_TY; IDENT "x"; ASSIGN; NOT; BOOL true; END; RBRACE] in
+  let expected_output = "intfoo(){letboolx=!true}" in
+  test_parser input expected_output _ctxt
+  
   (* Test Suite *)
 let suite = "ParserTests" >::: [
   "test_parse_decl_without_global_fails" >:: test_decl_without_global;
@@ -212,6 +227,9 @@ let suite = "ParserTests" >::: [
   "test_parse_function_for_loop_in_if" >:: test_function_for_loop_in_if;
   "test_parse_function_while_loop_in_if" >:: test_function_while_loop_in_if;
   "test_parse_multiple_arguments_function" >:: test_multiple_arguments_function;
+  "test_parse_conditional_and" >:: test_conditional_and;
+  "test_parse_conditional_or" >:: test_conditional_or;
+  "test_parse_conditional_not" >:: test_conditional_not;
   
 ]
 
