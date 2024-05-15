@@ -3,6 +3,15 @@ open Frontend
 open Frontend.Ast 
 
 let dummy_loc_str = "line 0, start column -1, end column -1"
+let mock_position = {
+  Lexing.pos_fname = "mock_file";
+  pos_lnum = 1;
+  pos_bol = 0;
+  pos_cnum = 1;
+}
+
+let dummy_loc = (mock_position, mock_position)
+
 let mk_ident s = { id = s; id_loc = (Lexing.dummy_pos, Lexing.dummy_pos) }
 let mk_expr e = { expr_node = e; expr_loc = (Lexing.dummy_pos, Lexing.dummy_pos) }
 
