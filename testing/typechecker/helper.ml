@@ -15,6 +15,8 @@ let dummy_loc = (mock_position, mock_position)
 let mk_ident s = { id = s; id_loc = (Lexing.dummy_pos, Lexing.dummy_pos) }
 let mk_expr e = { expr_node = e; expr_loc = (Lexing.dummy_pos, Lexing.dummy_pos) }
 
+let mk_stmt st =   { stmt_node = st; stmt_loc =  (Lexing.dummy_pos, Lexing.dummy_pos) }
+
 let mk_vtab = SymTab.fromList [] (* empty variable table *)
 let mk_ftab = SymTab.fromList [] (* empty function table *)
 
