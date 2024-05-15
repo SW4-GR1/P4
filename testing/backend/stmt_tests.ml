@@ -115,8 +115,28 @@ let test_compile_stmt_assign_longint_varofint _test_ctxt =
   let expected_wat = "(set_local$x(i64.extend_i32_s(get_local$y)))" in
   let generated_wat = Wat.to_string (Compile.compile_stmt input) in
   let stripped_wat = remove_whitespace generated_wat in
-  print_endline stripped_wat;
   assert_equal expected_wat stripped_wat
+
+let test_compile_stmt_for_loop _test_ctxt =
+  let input = Sfor 
+  (Sdecl (mk_vdec Tint "x" (Some (mk_expr (Econst 1) Tint)))
+  , mk_expr (Econd (Lt, (mk_expr (Eident "x") Tint) , (mk_expr (Econst 8) Tint))) Tint
+  , Sass ("x", Tint, Add_assign, (mk_expr (Econst 1) Tint))
+  , Slist [(Ssimple (mk_expr (Econst 1) Tint))] )  in
+  let expected_wat = "(block(set_local$x(i32.const1))(loop(br_if1(i32.ge_s(get_local$x)(i32.const8)))(drop(i32.const1))(set_local$x(i32.add(get_local$x)(i32.const1)))(br0)))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
+let test_compile_stmt_while_loop _test_ctxt =
+  let input = Swhile 
+  (mk_expr (Econd (Lt, (mk_expr (Eident "x") Tint) , (mk_expr (Econst 8) Tint))) Tint
+  , Slist [(Ssimple (mk_expr (Econst 1) Tint))] )  in
+  let expected_wat = "(block(loop(br_if1(i32.ge_s(get_local$x)(i32.const8)))(drop(i32.const1))(br0)))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
 
 let stmt_tests = "BackendStmtTests" >::: [
     "test_compile_stmt_Ssimple" >:: test_compile_stmt_Ssimple_binop
@@ -135,4 +155,6 @@ let stmt_tests = "BackendStmtTests" >::: [
   ; "test_compile_stmt_assign_int_int" >:: test_compile_stmt_assign_int_int
   ; "test_compile_stmt_assign_longint_int" >:: test_compile_stmt_assign_longint_int
   ; "test_compile_stmt_assign_longint_varofint" >:: test_compile_stmt_assign_longint_varofint
+  ; "test_compile_stmt_for_loop" >:: test_compile_stmt_for_loop
+  ; "test_compile_stmt_while_loop" >:: test_compile_stmt_while_loop
 ] 
