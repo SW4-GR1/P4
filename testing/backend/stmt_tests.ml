@@ -59,6 +59,64 @@ let test_compile_stmt_function_declaration_two_args _test_ctxt =
   let stripped_wat = remove_whitespace generated_wat in
   assert_equal expected_wat stripped_wat
 
+let test_compile_stmt_if _test_ctxt =
+  let input = Sif (mk_expr (Ebool true) Tbool, Slist [Ssimple (mk_expr (Econst 1) Tint)], Slist []) in
+  let expected_wat = "(if(i32.const1)(then(drop(i32.const1))))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+   
+
+let test_compile_stmt_if_else _test_ctxt =
+  let input = Sif (mk_expr (Ebool true) Tbool, Slist [Ssimple (mk_expr (Econst 1) Tint)], Slist [Ssimple (mk_expr (Econst 2) Tint)]) in
+  let expected_wat = "(if(i32.const1)(then(drop(i32.const1)))(else(drop(i32.const2))))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
+
+let test_compile_stmt_return _test_ctxt =
+  let input = Sreturn (mk_expr (Econst 1) Tint) in
+  let expected_wat = "(return(i32.const1))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
+let test_compile_stmt_vdec_start_value _test_ctxt =
+  let input = Sdecl (mk_vdec Tint "x" (Some (mk_expr (Econst 1) Tint))) in
+  let expected_wat = "(set_local$x(i32.const1))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
+let test_compile_stmt_vdec_no_start_value _test_ctxt =
+  let input = Sdecl (mk_vdec Tint "x" None) in
+  let expected_wat = "" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
+
+let test_compile_stmt_assign_int_int _test_ctxt =
+  let input = Sass ("x", Tint, Assign, (mk_expr (Econst 2) Tint)) in
+  let expected_wat = "(set_local$x(i32.const2))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
+let test_compile_stmt_assign_longint_int _test_ctxt =
+  let input = Sass ("x", Tlongint, Assign, (mk_expr (Econst 2) Tint)) in
+  let expected_wat = "(set_local$x(i64.const2))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+let test_compile_stmt_assign_longint_varofint _test_ctxt =
+  let input = Sass ("x", Tlongint, Assign, (mk_expr (Eident "y") Tint)) in
+  let expected_wat = "(set_local$x(i64.extend_i32_s(get_local$y)))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  print_endline stripped_wat;
+  assert_equal expected_wat stripped_wat
 
 let stmt_tests = "BackendStmtTests" >::: [
     "test_compile_stmt_Ssimple" >:: test_compile_stmt_Ssimple_binop
@@ -69,5 +127,12 @@ let stmt_tests = "BackendStmtTests" >::: [
   ; "test_compile_stmt_function_declaration_no_args" >:: test_compile_stmt_function_declaration_no_args
   ; "test_compile_stmt_function_declaration_one_arg" >:: test_compile_stmt_function_declaration_one_arg
   ; "test_compile_stmt_function_declaration_two_args" >:: test_compile_stmt_function_declaration_two_args
-  
+  ; "test_compile_stmt_if" >:: test_compile_stmt_if
+  ; "test_compile_stmt_if_else" >:: test_compile_stmt_if_else
+  ; "test_compile_stmt_return" >:: test_compile_stmt_return
+  ; "test_compile_stmt_vdec" >:: test_compile_stmt_vdec_start_value
+  ; "test_compile_stmt_vdec_no_start_value" >:: test_compile_stmt_vdec_no_start_value
+  ; "test_compile_stmt_assign_int_int" >:: test_compile_stmt_assign_int_int
+  ; "test_compile_stmt_assign_longint_int" >:: test_compile_stmt_assign_longint_int
+  ; "test_compile_stmt_assign_longint_varofint" >:: test_compile_stmt_assign_longint_varofint
 ] 
