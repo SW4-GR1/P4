@@ -163,7 +163,16 @@ let test_function_decrement _ctxt =
   let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; INT_TY; IDENT "x"; END; IDENT "x"; DEC; END; RBRACE] in
   let expected_output = "intfoo(){letintx((x--))}" in
   test_parser input expected_output _ctxt
-  
+
+let test_function_for_loop_in_if _ctxt =
+  let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; INT_TY; IDENT "x"; END; IF; LPAREN; IDENT "x"; RPAREN; LBRACE; FOR; LPAREN; LET; INT_TY; IDENT "i"; ASSIGN; INT 0; END; IDENT "i"; LT; INT 10; END; IDENT "i"; ADD_ASSIGN; INT 1; RPAREN; LBRACE; IDENT "x"; ADD_ASSIGN; IDENT "i"; END; RBRACE; RBRACE; RBRACE] in
+  let expected_output = "intfoo(){letintxif(x){for(letinti=0;(i<10);(i+=1)){(x+=i)}}}" in
+  test_parser input expected_output _ctxt
+
+let test_function_while_loop_in_if _ctxt =
+  let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; INT_TY; IDENT "x"; END; IF; LPAREN; IDENT "x"; RPAREN; LBRACE; WHILE; LPAREN; IDENT "x"; LT; INT 10; RPAREN; LBRACE; IDENT "x"; ADD_ASSIGN; INT 1; END; RBRACE; RBRACE; RBRACE] in
+  let expected_output = "intfoo(){letintxif(x){while((x<10)){(x+=1)}}}" in
+  test_parser input expected_output _ctxt
 
   (* Test Suite *)
 let suite = "ParserTests" >::: [
@@ -195,6 +204,8 @@ let suite = "ParserTests" >::: [
   "test_parse_global_bool_decl" >:: test_global_bool_decl;
   "test_parse_function_increment" >:: test_function_increment;
   "test_parse_function_decrement" >:: test_function_decrement;
+  "test_parse_function_for_loop_in_if" >:: test_function_for_loop_in_if;
+  "test_parse_function_while_loop_in_if" >:: test_function_while_loop_in_if;
   
 ]
 
