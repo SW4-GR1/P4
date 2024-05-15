@@ -8,7 +8,10 @@ main.exe:
 	dune build numatix.exe
 
 tests:
-	powershell -File ./frontend/lexParserTests/tests.ps1 ./numatix.exe
+	cd ./testing && dune runtest
+
+# tests:
+# 	powershell -File ./frontend/lexParserTests/tests.ps1 ./numatix.exe
 
 clean:
 	dune clean
