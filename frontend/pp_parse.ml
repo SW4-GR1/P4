@@ -39,10 +39,10 @@ let rec pp_expr expr_instance =
       "(" ^ pp_expr e1 ^ " " ^ cond_str ^ " " ^ pp_expr e2 ^ ")"
   | ELog(op, e1, e2) -> 
       let op_str = match op with
-      | And -> "&&"
-      | Or -> "||" in
+      | And -> "and "
+      | Or -> "or " in
       "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
-  | ENot e -> "!" ^ pp_expr e
+  | ENot e -> "not " ^ pp_expr e
   | EFcall(id, args) -> 
       let args_str = String.concat ", " (List.map pp_expr args) in
       id.id ^ "( " ^ args_str ^ " )"
@@ -174,7 +174,7 @@ match stmt_instance.stmt_node with
   | Sfundec_list(funcs) -> let stmt_list = List.map pp_stmt funcs in
   String.concat "\n" stmt_list
   | Sglobal_var(gdec) ->let decl_str = "global " ^ pp_types gdec.gvar_ty ^ " " ^ gdec.gvar_name.id 
-   ^ " " ^ pp_expr gdec.gvar_expr in
+   ^ "=" ^ pp_expr gdec.gvar_expr in
    decl_str
   | _ -> failwith "Unexpected case encountered in pp_stmt"
 

@@ -37,7 +37,28 @@ let test_compile_stmt_Slist_two _test_ctxt =
   let generated_wat = Wat.to_string (Compile.compile_stmt input) in
   let stripped_wat = remove_whitespace generated_wat in
   assert_equal expected_wat stripped_wat
-  
+
+let test_compile_stmt_function_declaration_no_args _test_ctxt =
+  let input = Sfunc (mk_fundec Tint "main" [] (Slist [Ssimple (mk_expr (Econst 1) Tint)])) in
+  let expected_wat = "(func$main(resulti32)(drop(i32.const1)))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
+let test_compile_stmt_function_declaration_one_arg _test_ctxt =
+  let input = Sfunc (mk_fundec Tint "main" [(Tint, "x")] (Slist [Ssimple (mk_expr (Econst 1) Tint)])) in
+  let expected_wat = "(func$main(param$xi32)(resulti32)(drop(i32.const1)))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
+let test_compile_stmt_function_declaration_two_args _test_ctxt =
+  let input = Sfunc (mk_fundec Tint "main" [(Tint, "x"); (Tint, "y")] (Slist [Ssimple (mk_expr (Econst 1) Tint)])) in
+  let expected_wat = "(func$main(param$xi32)(param$yi32)(resulti32)(drop(i32.const1)))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
 
 let stmt_tests = "BackendStmtTests" >::: [
     "test_compile_stmt_Ssimple" >:: test_compile_stmt_Ssimple_binop
@@ -45,4 +66,8 @@ let stmt_tests = "BackendStmtTests" >::: [
   ; "test_compile_stmt_Slist_empty" >:: test_compile_stmt_Slist_empty
   ; "test_compile_stmt_Slist_one" >:: test_compile_stmt_Slist_one
   ; "test_compile_stmt_Slist_two" >:: test_compile_stmt_Slist_two
+  ; "test_compile_stmt_function_declaration_no_args" >:: test_compile_stmt_function_declaration_no_args
+  ; "test_compile_stmt_function_declaration_one_arg" >:: test_compile_stmt_function_declaration_one_arg
+  ; "test_compile_stmt_function_declaration_two_args" >:: test_compile_stmt_function_declaration_two_args
+  
 ] 
