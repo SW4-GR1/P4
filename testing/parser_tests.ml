@@ -181,17 +181,17 @@ let test_multiple_arguments_function _ctxt =
 
 let test_conditional_and _ctxt =
   let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; BOOL_TY; IDENT "x"; ASSIGN; LPAREN; BOOL true; AND; BOOL false; RPAREN; END; RBRACE] in
-  let expected_output = "intfoo(){letboolx=(true&&false)}" in
+  let expected_output = "intfoo(){letboolx=(trueandfalse)}" in
   test_parser input expected_output _ctxt
 
 let test_conditional_or _ctxt =
   let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; BOOL_TY; IDENT "x"; ASSIGN; LPAREN; BOOL true; OR; BOOL false; RPAREN; END; RBRACE] in
-  let expected_output = "intfoo(){letboolx=(true||false)}" in
+  let expected_output = "intfoo(){letboolx=(trueorfalse)}" in
   test_parser input expected_output _ctxt
 
  let test_conditional_not _ctxt =
   let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; BOOL_TY; IDENT "x"; ASSIGN; NOT; BOOL true; END; RBRACE] in
-  let expected_output = "intfoo(){letboolx=!true}" in
+  let expected_output = "intfoo(){letboolx=nottrue}" in
   test_parser input expected_output _ctxt
   
   (* Test Suite *)

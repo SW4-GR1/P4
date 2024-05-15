@@ -39,10 +39,10 @@ let rec pp_expr expr_instance =
       "(" ^ pp_expr e1 ^ " " ^ cond_str ^ " " ^ pp_expr e2 ^ ")"
   | ELog(op, e1, e2) -> 
       let op_str = match op with
-      | And -> "&&"
-      | Or -> "||" in
+      | And -> "and "
+      | Or -> "or " in
       "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
-  | ENot e -> "!" ^ pp_expr e
+  | ENot e -> "not " ^ pp_expr e
   | EFcall(id, args) -> 
       let args_str = String.concat ", " (List.map pp_expr args) in
       id.id ^ "( " ^ args_str ^ " )"
