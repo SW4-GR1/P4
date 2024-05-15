@@ -171,7 +171,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         | _ -> false in
       if check_eq_type t1 t2 && (is_number t1 || bool_allowed) then 
       (Tbool, { expr_node = Econd(op, e1_bin, e2_bin); expr_ty = Tbool } )
-      else incompatible_types ~loc t1 t2
+      else error ~loc ("Invalid operation on non-numeric types")
 
   | EUnop(id, op) ->
       let ident_type_opt = SymTab.lookup id vtab in
