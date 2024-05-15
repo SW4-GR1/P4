@@ -174,6 +174,11 @@ let test_function_while_loop_in_if _ctxt =
   let expected_output = "intfoo(){letintxif(x){while((x<10)){(x+=1)}}}" in
   test_parser input expected_output _ctxt
 
+let test_multiple_arguments_function _ctxt =
+  let input = [INT_TY; IDENT "foo"; LPAREN; INT_TY; IDENT "x"; COMMA; INT_TY; IDENT "y"; RPAREN; LBRACE; RETURN; IDENT "x"; ADD; IDENT "y"; END; RBRACE] in
+  let expected_output = "intfoo(intx,inty){(return(x+y))}" in
+  test_parser input expected_output _ctxt
+
   (* Test Suite *)
 let suite = "ParserTests" >::: [
   "test_parse_decl_without_global_fails" >:: test_decl_without_global;
@@ -206,6 +211,7 @@ let suite = "ParserTests" >::: [
   "test_parse_function_decrement" >:: test_function_decrement;
   "test_parse_function_for_loop_in_if" >:: test_function_for_loop_in_if;
   "test_parse_function_while_loop_in_if" >:: test_function_while_loop_in_if;
+  "test_parse_multiple_arguments_function" >:: test_multiple_arguments_function;
   
 ]
 
