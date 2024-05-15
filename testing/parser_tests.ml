@@ -193,6 +193,11 @@ let test_conditional_or _ctxt =
   let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; BOOL_TY; IDENT "x"; ASSIGN; NOT; BOOL true; END; RBRACE] in
   let expected_output = "intfoo(){letboolx=nottrue}" in
   test_parser input expected_output _ctxt
+
+let test_export _ctxt =
+  let input = [LBRACE; EXPORT; IDENT "foo"; END; RBRACE] in
+  let expected_output = "{exportfoo;}" in
+  test_parser input expected_output _ctxt
   
   (* Test Suite *)
 let suite = "ParserTests" >::: [
@@ -230,6 +235,7 @@ let suite = "ParserTests" >::: [
   "test_parse_conditional_and" >:: test_conditional_and;
   "test_parse_conditional_or" >:: test_conditional_or;
   "test_parse_conditional_not" >:: test_conditional_not;
+  "test_parse_export" >:: test_export;
   
 ]
 
