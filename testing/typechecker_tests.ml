@@ -9,6 +9,7 @@ let suite = "TypecheckerTests" >::: [
   Fcall_tests.fcall_tests;
   Log_tests.log_tests;
   Unop_tests.unop_tests;
+  Not_tests.not_tests;
     (* Add more tests here *)
 ] 
   

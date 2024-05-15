@@ -174,7 +174,7 @@ match stmt_instance.stmt_node with
   | Sfundec_list(funcs) -> let stmt_list = List.map pp_stmt funcs in
   String.concat "\n" stmt_list
   | Sglobal_var(gdec) ->let decl_str = "global " ^ pp_types gdec.gvar_ty ^ " " ^ gdec.gvar_name.id 
-   ^ " " ^ pp_expr gdec.gvar_expr in
+   ^ "=" ^ pp_expr gdec.gvar_expr in
    decl_str
   | _ -> failwith "Unexpected case encountered in pp_stmt"
 

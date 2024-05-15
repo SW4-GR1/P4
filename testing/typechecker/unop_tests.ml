@@ -8,14 +8,19 @@ let test_typechecker_unop_inc_on_int test_ctxt =
   let vtab = SymTab.bind "x" Ttree.Tint mk_vtab in
   let ftab = mk_ftab in
   let (ty, expr) = Typechecker.checkExp ftab vtab ast in
-  assert_equal Ttree.Tint ty
+  let expected_out = "(INT(x++))" in
+  let ttree_string = remove_whitespace (Pp_type.pp_expr expr) in
+  assert_equal expected_out ttree_string
 
 let test_typechecker_unop_dec_on_longint test_ctxt =
   let ast = mk_expr (EUnop ("y", Dec)) in
   let vtab = SymTab.bind "y" Ttree.Tlongint mk_vtab in
   let ftab = mk_ftab in
   let (ty, expr) = Typechecker.checkExp ftab vtab ast in
-  assert_equal Ttree.Tlongint ty
+  let expected_out = "(L_INT(y--))" in
+  let ttree_string = remove_whitespace (Pp_type.pp_expr expr) in
+  assert_equal expected_out ttree_string
+
 
 let test_typechecker_unop_inc_on_bool test_ctxt =
   let ast = mk_expr (EUnop ("z", Inc)) in
