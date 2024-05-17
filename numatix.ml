@@ -71,6 +71,9 @@ let () =
         let base_name = Filename.remove_extension !ifile in
         let ofile = base_name ^ ".wat" in
         Wat.write_wat ofile wasm_ast;
+        let exit_status = Sys.command ("wat2wasm " ^ ofile) in
+        if exit_status <> 0 then
+          print_endline "Error: wat2wasm command failed. Please ensure that WABT is installed on your system if you wish for the for the WAT to be compiled down to wasm."
 
   with
     | Lexer.Lexing_error c ->

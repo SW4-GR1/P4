@@ -1,8 +1,9 @@
-open OUnit2
-open Helper 
+open OUnit2 
 open Frontend 
 open Frontend.Ast
-
+open Test_utils.Mkast
+open Test_utils.Strutils
+open Test_utils.Typecheckerutils
 
 let test_typechecker_elog_and_operator_1_bool_1_integer test_ctxt =
   let ast = mk_expr (ELog (And, mk_expr (EBool false), mk_expr (EConst 2))) in

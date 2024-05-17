@@ -1,7 +1,9 @@
 open OUnit2
-open Helper 
 open Frontend 
 open Frontend.Ast
+open Test_utils.Mkast
+open Test_utils.Strutils
+open Test_utils.Typecheckerutils
 
 let test_typechecker_unop_inc_on_int test_ctxt =
   let ast = mk_expr (EUnop ("x", Inc)) in

@@ -1,7 +1,8 @@
 open OUnit2
 open Backend
 open Frontend.Ttree
-open Helper
+open Test_utils.Mkttree
+open Test_utils.Strutils
 
 
 let test_compile_module_empty _test_ctxt =

@@ -1,7 +1,9 @@
 open OUnit2
 open Frontend
 open Frontend.Ast
-open Helper 
+open Test_utils.Mkast
+open Test_utils.Strutils
+open Test_utils.Typecheckerutils
 
 let test_typecheck_binop_add_const _test_ctxt = 
   (* Create an AST representing the expression "1 + 1" *)
