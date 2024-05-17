@@ -31,8 +31,7 @@ let test_typechecker_fcall_correct_call_2_arguments_2_integers _test_ctxt =
   let ast = mk_expr (EFcall (mk_ident "f", [mk_expr (EConst 1); mk_expr (EConst 2)])) in
   let ftab = SymTab.bind "f" (Ttree.Tint, [Ttree.Tint; Ttree.Tint]) mk_ftab in
   let vtab = mk_vtab in
-  let vtab' = vtab in
-  let (ty, expr) = Typechecker.checkExp ftab vtab' ast in
+  let (ty, expr) = Typechecker.checkExp ftab vtab ast in
   let expected_out = "f((INT1),(INT2))" in
   let ttree_string = remove_whitespace (Pp_type.pp_expr expr) in
   assert_equal expected_out ttree_string
@@ -41,8 +40,7 @@ let test_typechecker_fcall_correct_call_2_arguments_1_integer_1_bool _test_ctxt 
   let ast = mk_expr (EFcall (mk_ident "f", [mk_expr (EConst 1); mk_expr (EBool true)])) in
   let ftab = SymTab.bind "f" (Ttree.Tint, [Ttree.Tint; Ttree.Tbool]) mk_ftab in
   let vtab = mk_vtab in
-  let vtab' = vtab in
-  let (ty, expr) = Typechecker.checkExp ftab vtab' ast in
+  let (ty, expr) = Typechecker.checkExp ftab vtab ast in
   let expected_out = "f((INT1),(BOOLtrue))" in
   let ttree_string = remove_whitespace (Pp_type.pp_expr expr) in
   assert_equal expected_out ttree_string
@@ -51,8 +49,7 @@ let test_typechecker_fcall_correct_call_1_argument_1_float _test_ctxt =
   let ast = mk_expr (EFcall (mk_ident "f", [mk_expr (EFloat 1.1)])) in
   let ftab = SymTab.bind "f" (Ttree.Tint, [Ttree.Tfloat]) mk_ftab in
   let vtab = mk_vtab in
-  let vtab' = vtab in
-  let (ty, expr) = Typechecker.checkExp ftab vtab' ast in
+  let (ty, expr) = Typechecker.checkExp ftab vtab ast in
   let expected_out = "f((FLOAT1.1))" in
   let ttree_string = remove_whitespace (Pp_type.pp_expr expr) in
   assert_equal expected_out ttree_string

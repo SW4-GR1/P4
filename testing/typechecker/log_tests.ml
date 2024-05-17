@@ -22,8 +22,7 @@ let test_typechecker_log_correct_and _test_ctxt =
   let ast = mk_expr (ELog (And, mk_expr (EBool false), mk_expr (EBool false))) in
   let ftab = mk_ftab in 
   let vtab = mk_vtab in
-  let vtab' = vtab in
-  let (ty, expr) = Typechecker.checkExp ftab vtab' ast in
+  let (ty, expr) = Typechecker.checkExp ftab vtab ast in
   let expected_out = "(BOOL((BOOLfalse)and(BOOLfalse)))" in
   let ttree_string = remove_whitespace (Pp_type.pp_expr expr) in
   assert_equal expected_out ttree_string
@@ -32,8 +31,7 @@ let test_typechecker_log_correct_or _test_ctxt =
   let ast = mk_expr (ELog (Or, mk_expr (EBool false), mk_expr (EBool false))) in
   let ftab = mk_ftab in 
   let vtab = mk_vtab in
-  let vtab' = vtab in
-  let (ty, expr) = Typechecker.checkExp ftab vtab' ast in
+  let (ty, expr) = Typechecker.checkExp ftab vtab ast in
   let expected_out = "(BOOL((BOOLfalse)or(BOOLfalse)))" in
   let ttree_string = remove_whitespace (Pp_type.pp_expr expr) in
   assert_equal expected_out ttree_string
