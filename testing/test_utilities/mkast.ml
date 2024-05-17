@@ -20,5 +20,5 @@ let mk_gvdec ty name expr = {gvar_ty = ty; gvar_name = name; gvar_expr = expr}
 
 let mk_prog exports gvardecs fundecs =
   { exports = exports;
-    globals = gvardecs;
-    main = fundecs;}
+    globals = mk_stmt gvardecs;
+    main = mk_stmt fundecs;}

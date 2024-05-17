@@ -17,7 +17,7 @@ let typeCodegen_test input_ast expected_output =
 
 let test_gvardec _ctxt =
   let global_var = mk_stmt (Sglobal_var (mk_gvdec Int_ty (mk_ident "x") (mk_expr (EConst 1)))) in
-  let input_ast = (mk_prog [] (mk_stmt (Sglobal_list([global_var]))) (mk_stmt (Sfundec_list([])))) in
+  let input_ast = (mk_prog [] (Sglobal_list([global_var])) (Sfundec_list([]))) in
   let expected_wat = "(module(global$x(muti32)(i32.const1)))" in
   typeCodegen_test input_ast expected_wat
 
