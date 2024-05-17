@@ -15,3 +15,10 @@ let mk_ident s = { id = s; id_loc = (Lexing.dummy_pos, Lexing.dummy_pos) }
 let mk_expr e = { expr_node = e; expr_loc = (Lexing.dummy_pos, Lexing.dummy_pos) }
 
 let mk_stmt st = { stmt_node = st; stmt_loc = (Lexing.dummy_pos, Lexing.dummy_pos) }
+
+let mk_gvdec ty name expr = {gvar_ty = ty; gvar_name = name; gvar_expr = expr}
+
+let mk_prog exports gvardecs fundecs =
+  { exports = exports;
+    globals = gvardecs;
+    main = fundecs;}
