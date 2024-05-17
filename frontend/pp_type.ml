@@ -40,8 +40,8 @@ let rec pp_expr e =
     let op_str = match op with
     | Eq -> "=="
     | Neq -> "!="
-    | Lt -> "{"
-    | Leq -> "{="
+    | Lt -> "<"
+    | Leq -> "<="
     | Gt -> ">"
     | Geq -> ">=" in
     let ppty = pp_expr_type e.expr_ty in
@@ -65,11 +65,11 @@ let rec pp_expr e =
   | Efcall(id, e_list) -> let expr_list = List.map pp_expr e_list in
     id ^ "(" ^ String.concat ", " expr_list ^ ")"
   | Evector(e_list) -> let expr_list = List.map pp_expr e_list in
-    "(" ^ pp_expr_type e.expr_ty ^ "{" ^ String.concat ", " expr_list ^ ">" ^ ")"
+    "(" ^ pp_expr_type e.expr_ty ^ "{" ^ String.concat ", " expr_list ^ "}" ^ ")"
  | Ematrix(e_list_list) ->
     let pp_row e_list = List.map pp_expr e_list in
     let expr_rows = List.map pp_row e_list_list in
-    "Matrix(" ^ (String.concat ", " (List.map (fun row -> "[" ^ (String.concat ", " row) ^ "]") expr_rows)) ^ ")"
+    "Matrix(" ^ (String.concat ", " (List.map (fun row -> "{" ^ (String.concat ", " row) ^ "}") expr_rows)) ^ ")"
 
   | _ -> "BBBBBBBBBBBBBB"
 

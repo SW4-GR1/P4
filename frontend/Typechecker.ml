@@ -150,16 +150,16 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         if op = Mod then
           if check_eq_type t1 t2 && (check_eq_type t2 Tint || check_eq_type t2 Tlongint)
             then let ty' = is_subtype t1 t2 in
-              (ty', { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t2 } )
+              (ty', { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = ty' } )
           else error ~loc ("Modulo operator should only be used on integers")
         else
-          if is_number t1 then
+          if is_number t1 && is_number t2 then
             if check_eq_type t1 t2 then 
               let ty' = is_subtype t1 t2 in
                 if e2_bin.expr_node = Econst(0) then
                   error ~loc("Division by 0 not allowed")
                 else 
-                  (ty', { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = t1 } )
+                  (ty', { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = ty' } )
             else incompatible_types ~loc t1 t2
           else error ~loc ("Binary operator should only be used on numbers")
   
@@ -171,7 +171,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         | _ -> false in
       if check_eq_type t1 t2 && (is_number t1 || bool_allowed) then 
       (Tbool, { expr_node = Econd(op, e1_bin, e2_bin); expr_ty = Tbool } )
-      else incompatible_types ~loc t1 t2
+      else error ~loc ("Invalid operation on non-numeric types")
 
   | EUnop(id, op) ->
       let ident_type_opt = SymTab.lookup id vtab in
@@ -194,7 +194,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         else let str_of_lop op = match op with
         | Ast.And -> "and" 
         | Ast.Or -> "or" in
-         error ~loc (str_of_lop op ^ " operator applied to a non-boolean type")
+         error ~loc ("operator applied to a non-boolean type")
          
 | ENot(e1) ->
       let (t1, e1_bin) = checkExp ftab vtab e1 in

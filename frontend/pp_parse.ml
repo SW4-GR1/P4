@@ -30,19 +30,19 @@ let rec pp_expr expr_instance =
       "(" ^ id ^ unop_str ^ ")"
   | ECond(op, e1, e2) -> 
       let cond_str = match op with
-      | Lt -> "{"
+      | Lt -> "<"
       | Gt -> ">"
       | Eq -> "=="
       | Neq -> "!="
-      | Leq -> "{="
+      | Leq -> "<="
       | Geq -> ">=" in
       "(" ^ pp_expr e1 ^ " " ^ cond_str ^ " " ^ pp_expr e2 ^ ")"
   | ELog(op, e1, e2) -> 
       let op_str = match op with
-      | And -> "&&"
-      | Or -> "||" in
+      | And -> "and "
+      | Or -> "or " in
       "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
-  | ENot e -> "!" ^ pp_expr e
+  | ENot e -> "not " ^ pp_expr e
   | EFcall(id, args) -> 
       let args_str = String.concat ", " (List.map pp_expr args) in
       id.id ^ "( " ^ args_str ^ " )"
@@ -52,17 +52,17 @@ let rec pp_expr expr_instance =
   | EArr_lookup(id, e) -> "(" ^ id.id ^ "[" ^ pp_expr e ^ "]" ^ ")"
   | EVector(e_list) -> 
     let e_list_str = String.concat ", " (List.map pp_expr e_list) in
-    "{" ^ e_list_str ^ ">"
+    "{" ^ e_list_str ^ "}"
 
 
 let rec pp_cond = function
   | ECond(op, e1, e2) ->
     let op_str = match op with
-    | Lt -> "{"
+    | Lt -> "<"
     | Gt -> ">"
     | Eq -> "=="
     | Neq -> "!="
-    | Leq -> "{="
+    | Leq -> "<="
     | Geq -> ">="
    in
     "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"
@@ -174,7 +174,7 @@ match stmt_instance.stmt_node with
   | Sfundec_list(funcs) -> let stmt_list = List.map pp_stmt funcs in
   String.concat "\n" stmt_list
   | Sglobal_var(gdec) ->let decl_str = "global " ^ pp_types gdec.gvar_ty ^ " " ^ gdec.gvar_name.id 
-   ^ " " ^ pp_expr gdec.gvar_expr in
+   ^ "=" ^ pp_expr gdec.gvar_expr in
    decl_str
   | _ -> failwith "Unexpected case encountered in pp_stmt"
 

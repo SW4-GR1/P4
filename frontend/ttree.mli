@@ -78,7 +78,8 @@ type mdec = {
   mat_cols : expr;   
   mat_expr : expr list list option;  (* This field is optional *)
 }
-type stmt = 
+
+type stmt =
  | Ssimple of expr
  | Slist of stmt list
  | Sfunc of fun_dec

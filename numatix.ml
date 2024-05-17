@@ -5,6 +5,10 @@ open Lexing
 
 
 
+
+
+
+
 let parse_only = ref false
 let type_only = ref false
 
@@ -35,6 +39,7 @@ let localisation pos =
   eprintf "File \"%s\", line %d, characters %d-%d:\n" !ifile l (c-1) c
 
 let () =
+
   Arg.parse options (set_file ifile) usage;
 
   if !ifile="" then begin eprintf "Please provide a source file"; exit 1 end;
@@ -50,27 +55,23 @@ let () =
   let buf = Lexing.from_channel f in
 
   try
-    
+
     let p = Parser.prog Lexer.token buf in
     close_in f;
     
-    
     let parsetree = Pp_parse.pp_prog p in
     if !parse_only then exit 0 else
-      let _ = print_endline parsetree in
+      (* let _ = print_endline parsetree in *)
       let _p = Typechecker.program p in
       if !type_only then exit 0 else 
         let typed_tree = Pp_type.pp_prog _p in
-        print_endline typed_tree;
+        (* print_endline typed_tree; *)
         print_endline ("\nTrying to compile " ^ !ifile ^ " to wat");
         let wasm_ast = Compile.compile _p in
         let base_name = Filename.remove_extension !ifile in
         let ofile = base_name ^ ".wat" in
         Wat.write_wat ofile wasm_ast;
-        
-        
 
-    
   with
     | Lexer.Lexing_error c ->
 

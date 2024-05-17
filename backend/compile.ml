@@ -1,12 +1,5 @@
 open Wat
 open Frontend.Ttree
-
-
-
-
-
-
-
 open Option
 
 let globals_map = Hashtbl.create 20

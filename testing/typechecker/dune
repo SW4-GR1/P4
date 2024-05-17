@@ -1,0 +1,5 @@
+(library
+ (name typechecker_testing)
+ (libraries str frontend ounit2)
+ (flags
+  (:standard -warn-error -A)))
