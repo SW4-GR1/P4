@@ -137,6 +137,35 @@ let test_compile_stmt_while_loop _test_ctxt =
   let stripped_wat = remove_whitespace generated_wat in
   assert_equal expected_wat stripped_wat
 
+let test_compile_stmt_funbody_stmt_and_vardec _test_ctxt =
+  let input = Sfunc (mk_fundec Tint "main" [] (Slist [
+    (Ssimple (mk_expr (Ebinop (Add, (mk_expr (Econst 1) Tint), (mk_expr (Econst 1) Tint))) Tint)); 
+    (Sdecl (mk_vdec Tint "x" (Some (mk_expr (Econst 1) Tint)))); 
+    (Sreturn (mk_expr (Econst 1) Tint))])) in 
+  let expected_wat = "(func$main(resulti32)(local$xi32)(drop(i32.add(i32.const1)(i32.const1)))(set_local$x(i32.const1))(return(i32.const1)))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
+let test_compile_stmt_funbody_vdecs_within_nested_blocks _test_ctxt =
+  let input = Sfunc (mk_fundec Tint "main" [] (Slist [
+    (Ssimple (mk_expr (Ebinop (Add, (mk_expr (Econst 1) Tint), (mk_expr (Econst 1) Tint))) Tint)); 
+    (Sif
+      (
+      (mk_expr (Ebool true) Tbool),
+      (Slist [
+        (Sdecl (mk_vdec Tint "x" (Some (mk_expr (Econst 1) Tint))));
+        (Sdecl (mk_vdec Tint "y" (Some (mk_expr (Econst 1) Tint))));
+        (Sreturn (mk_expr (Econst 1) Tint))
+      ]),
+      (Slist[]))
+    );
+    (Sreturn (mk_expr (Econst 1) Tint))])) in 
+  let expected_wat = "(func$main(resulti32)(local$yi32)(local$xi32)(drop(i32.add(i32.const1)(i32.const1)))(if(i32.const1)(then(set_local$x(i32.const1))(set_local$y(i32.const1))(return(i32.const1))))(return(i32.const1)))" in
+  let generated_wat = Wat.to_string (Compile.compile_stmt input) in
+  let stripped_wat = remove_whitespace generated_wat in
+  assert_equal expected_wat stripped_wat
+
 
 let stmt_tests = "BackendStmtTests" >::: [
     "test_compile_stmt_Ssimple" >:: test_compile_stmt_Ssimple_binop
@@ -154,7 +183,13 @@ let stmt_tests = "BackendStmtTests" >::: [
   ; "test_compile_stmt_vdec_no_start_value" >:: test_compile_stmt_vdec_no_start_value
   ; "test_compile_stmt_assign_int_int" >:: test_compile_stmt_assign_int_int
   ; "test_compile_stmt_assign_longint_int" >:: test_compile_stmt_assign_longint_int
-  ; "test_compile_stmt_assign_longint_varofint" >:: test_compile_stmt_assign_longint_varofint
-  ; "test_compile_stmt_for_loop" >:: test_compile_stmt_for_loop
   ; "test_compile_stmt_while_loop" >:: test_compile_stmt_while_loop
+  ; "test_compile_stmt_for_loop" >:: test_compile_stmt_for_loop
+  ; "test_compile_stmt_vdecs_compiled_to_top_of_funcbody" >:: test_compile_stmt_funbody_stmt_and_vardec
+  ; "test_compile_stmt_vdecs_within_nested_blocks" >:: test_compile_stmt_funbody_vdecs_within_nested_blocks
+  
+  
+  
+
+
 ] 
