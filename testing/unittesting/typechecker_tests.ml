@@ -12,6 +12,7 @@ let suite = "TypecheckerTests" >::: [
   Not_tests.not_tests;
   If_tests.if_tests;
   Fdec_tests.fdec_tests;
+  Return_tests.return_tests;
     (* Add more tests here *)
 ] 
   
