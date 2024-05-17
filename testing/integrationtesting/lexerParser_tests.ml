@@ -20,11 +20,6 @@ let pp_lexerParser str =
 let lexerparser_test input exspected _ctxt =
   assert_equal ~printer:(fun x -> x)  exspected (pp_lexerParser input)
 
-(*assert raise integration test of parser and lexer*)
-let test_parser_error input error _ctxt =
-  let lexbuf = Lexing.from_string input in
-  assert_raises (error) (fun () -> Parser.prog Lexer.token lexbuf)
-
   (* Test cases for lexer parser integrationtesting *)
 let global_int_decl _ctxt=
   let input = "global int x = 1;" in
@@ -146,6 +141,46 @@ let test_function_if_else_in_while _ctxt=
   let exspected = "intx(inta,intb){while((a<b)){if((a<b)){(returna)}else{(returnb)}}}" in
   lexerparser_test input exspected _ctxt
 
+let test_function_add_assign _ctxt=
+  let input = "int x(int a, int b){ a += b; return a; }" in
+  let exspected = "intx(inta,intb){(a+=b)(returna)}" in
+  lexerparser_test input exspected _ctxt
+
+let test_function_sub_assign _ctxt=
+  let input = "int x(int a, int b){ a -= b; return a; }" in
+  let exspected = "intx(inta,intb){(a-=b)(returna)}" in
+  lexerparser_test input exspected _ctxt
+
+let test_function_mul_assign _ctxt=
+  let input = "int x(int a, int b){ a *= b; return a; }" in
+  let exspected = "intx(inta,intb){(a*=b)(returna)}" in
+  lexerparser_test input exspected _ctxt
+
+let test_function_div_assign _ctxt=
+  let input = "int x(int a, int b){ a /= b; return a; }" in
+  let exspected = "intx(inta,intb){(a/=b)(returna)}" in
+  lexerparser_test input exspected _ctxt
+
+let test_increment _ctxt=
+  let input = "int x(int a, int b){ a++; return a; }" in
+  let exspected = "intx(inta,intb){((a++))(returna)}" in
+  lexerparser_test input exspected _ctxt
+
+let test_decrement _ctxt=
+  let input = "int x(int a, int b){ a--; return a; }" in
+  let exspected = "intx(inta,intb){((a--))(returna)}" in
+  lexerparser_test input exspected _ctxt
+
+let test_increment_in_loop _ctxt=
+  let input = "int x(int a, int b){ for(let int i = 0; i < 10; i++){ a++; } return a; }" in
+  let exspected = "intx(inta,intb){for(letinti=0;(i<10);(i++)){((a++))}(returna)}" in
+  lexerparser_test input exspected _ctxt
+
+let test_decrement_in_loop _ctxt=
+  let input = "int x(int a, int b){ for(let int i = 0; i < 10; i++){ a--; } return a; }" in
+  let exspected = "intx(inta,intb){for(letinti=0;(i<10);(i++)){((a--))}(returna)}" in
+  lexerparser_test input exspected _ctxt
+
 (* Test cases for parser error testing *)
 
 (* Test suite for lexer parser integration testing *)
@@ -175,11 +210,14 @@ let suite = "LexerParser" >::: [
     "Test function if in while" >:: test_function_if_in_while;
     "Test function if else in for" >:: test_function_if_else_in_for;
     "Test function if else in while" >:: test_function_if_else_in_while;
+    "Test function add assign" >:: test_function_add_assign;
+    "Test function sub assign" >:: test_function_sub_assign;
+    "Test function mul assign" >:: test_function_mul_assign;
+    "Test function div assign" >:: test_function_div_assign;
+    "Test increment" >:: test_increment;
+    "Test decrement" >:: test_decrement;
+    "Test increment in loop" >:: test_increment_in_loop;
+    "Test decrement in loop" >:: test_decrement_in_loop;
+    
     ];
-
-    "Assert Raise Integration test" >:::[
-    ];
-
-
-
-  ]
+]
