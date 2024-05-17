@@ -32,6 +32,7 @@ let test_parser_error input _ctxt =
     | Parser.Error -> ()
     | _ -> assert_failure "Expected parser to raise a Parser.Error exception"
 
+(* Test Cases *)
 let test_decl_without_global _ctxt =
   let input = [LET; INT_TY; IDENT "xy"; ASSIGN; INT 4; END] in
   test_parser_error input _ctxt

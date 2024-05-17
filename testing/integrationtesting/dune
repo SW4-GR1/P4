@@ -1,0 +1,5 @@
+(library
+ (name integration_testing)
+ (libraries str frontend backend ounit2)
+ (flags
+  (:standard -warn-error -A)))
