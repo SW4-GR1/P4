@@ -1,7 +1,9 @@
 open OUnit2
 open Frontend 
 open Frontend.Ast
-open Helper
+open Test_utils.Mkast
+open Test_utils.Strutils
+open Test_utils.Typecheckerutils
 
 
 let test_typechecker_datatype_const _test_ctxt =

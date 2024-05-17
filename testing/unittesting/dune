@@ -1,5 +1,12 @@
 (library
  (name unit_testing)
- (libraries str frontend backend backend_testing typechecker_testing ounit2)
+ (libraries
+  str
+  frontend
+  backend
+  backend_testing
+  test_utils
+  typechecker_testing
+  ounit2)
  (flags
   (:standard -warn-error -A)))

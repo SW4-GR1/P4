@@ -1,7 +1,8 @@
 open OUnit2
 open Backend
 open Frontend.Ttree
-open Helper
+open Test_utils.Mkttree
+open Test_utils.Strutils
 
 let test_compile_stmt_Ssimple_binop _test_ctxt =
   let stmt = Ssimple (mk_expr (Ebinop(Add, mk_expr(Econst 1) Tint, mk_expr(Econst 1) Tint)) Tint) in

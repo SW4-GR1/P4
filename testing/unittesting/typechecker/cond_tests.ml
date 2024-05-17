@@ -1,7 +1,9 @@
 open OUnit2
-open Helper 
 open Frontend 
 open Frontend.Ast
+open Test_utils.Mkast
+open Test_utils.Strutils
+open Test_utils.Typecheckerutils
 
 (* Tests for conditional expressions *)
 
