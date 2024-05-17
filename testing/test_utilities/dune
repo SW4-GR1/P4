@@ -1,0 +1,5 @@
+(library
+ (name test_utils)
+ (libraries str frontend backend)
+ (flags
+  (:standard -warn-error -A)))

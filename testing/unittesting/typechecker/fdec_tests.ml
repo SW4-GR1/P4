@@ -1,8 +1,10 @@
 open OUnit2
-open Helper 
 open Frontend 
 open Frontend.Ast
 open Frontend.Ttree
+open Test_utils.Mkast
+open Test_utils.Strutils
+open Test_utils.Typecheckerutils
 
 let test_typechecker_func_no_args_no_body test_ctxt =
   let arg_dec = [(Int_ty, mk_ident "x"); (Bool_ty, mk_ident "y")]in 

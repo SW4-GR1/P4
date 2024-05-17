@@ -1,7 +1,8 @@
 open OUnit2
 open Backend
 open Frontend.Ttree
-open Helper
+open Test_utils.Mkttree
+open Test_utils.Strutils
 
 let test_compile_const_int _test_ctxt =
   let input = mk_expr (Econst 1) Tint in 

@@ -3,10 +3,12 @@ open Frontend
 open Parser
 open Lexing
 open Pp_parse
+open Helper
 
 (* Helper function to remove whitespaces from a string for easier comparison*)
 
-let remove_whitespace s = Str.global_replace (Str.regexp "[ \t\n\r]+") "" s
+
+
 
 (* Helper function to pretty print the AST from our lexer and parser*)
 let pp_lexerParser str =

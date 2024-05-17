@@ -5,8 +5,10 @@ open Parser
 open Pp_parse
 open Lexing
 open Lexer
+open Test_utils.Strutils
 
-let remove_whitespace s = Str.global_replace (Str.regexp "[ \t\n\r]+") "" s
+
+
 let dummy_lexbuf = Lexing.from_string ""
 
 (* Mock lexer for testing of the parser *)
