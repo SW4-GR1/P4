@@ -18,6 +18,15 @@ let mk_stmt st = { stmt_node = st; stmt_loc = (Lexing.dummy_pos, Lexing.dummy_po
 
 let mk_gvdec ty name expr = {gvar_ty = ty; gvar_name = name; gvar_expr = expr}
 
+let mk_assign_type a = 
+  match a with
+  | "Assign" -> Assign
+  | "Add_assign" -> Add_assign
+  | "Sub_assign" -> Sub_assign
+  | "Mul_assign" -> Mul_assign
+  | "Div_assign" -> Div_assign
+  | _ -> failwith "Invalid assign type"
+
 let mk_prog exports gvardecs fundecs =
   { exports = exports;
     globals = mk_stmt gvardecs;

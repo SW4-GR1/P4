@@ -6,7 +6,7 @@ open Test_utils.Strutils
 open Test_utils.Typecheckerutils
 
 
-let test_typechecker_decl_valid test_ctxt =
+let test_typechecker_decl_valid _ =
   let vdec = { var_ty = Int_ty; var_name = mk_ident "x"; var_expr = Some (mk_expr (EConst 2)) } in
   let ast = mk_stmt (Sdecl vdec) in
   let ftab = mk_ftab in
