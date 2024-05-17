@@ -17,171 +17,169 @@ let pp_lexerParser str =
   remove_whitespace (pp_prog ast)
 
   (*assert equal integration test of parser and lexer*)
-let lexerparser_test input exspected _ctxt =
-  assert_equal ~printer:(fun x -> x)  exspected (pp_lexerParser input)
+let lexerparser_test input expected _ctxt =
+  assert_equal ~printer:(fun x -> x)  expected (pp_lexerParser input)
 
   (* Test cases for lexer parser integrationtesting *)
 let global_int_decl _ctxt=
   let input = "global int x = 1;" in
-  let exspected = "globalintx=1" in
-  lexerparser_test input exspected _ctxt
+  let expected = "globalintx=1" in
+  lexerparser_test input expected _ctxt
 
 let global_float_decl _ctxt=
   let input = "global float x = 1.0;" in
-  let exspected = "globalfloatx=1." in
-  lexerparser_test input exspected _ctxt
+  let expected = "globalfloatx=1." in
+  lexerparser_test input expected _ctxt
 
 let global_longInt_decl _ctxt=
   let input = "global long_int x = 1;" in
-  let exspected = "globallongintx=1" in
-  lexerparser_test input exspected _ctxt
+  let expected = "globallongintx=1" in
+  lexerparser_test input expected _ctxt
 
 let global_longFloat_decl _ctxt=
   let input = "global long_float x = 1.0;" in
-  let exspected = "globallongfloatx=1." in
-  lexerparser_test input exspected _ctxt
+  let expected = "globallongfloatx=1." in
+  lexerparser_test input expected _ctxt
 
 let global_bool_decl _ctxt=
   let input = "global bool x = true;" in
-  let exspected = "globalboolx=true" in
-  lexerparser_test input exspected _ctxt
+  let expected = "globalboolx=true" in
+  lexerparser_test input expected _ctxt
 
 let int_function_decl_test _ctxt=
   let input = "int x(){ return 1; }" in
-  let exspected = "intx(){(return1)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(){(return1)}" in
+  lexerparser_test input expected _ctxt
 
 let float_function_decl_test _ctxt=
   let input = "float x(){ return 1.0; }" in
-  let exspected = "floatx(){(return1.)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "floatx(){(return1.)}" in
+  lexerparser_test input expected _ctxt
 
 let longInt_function_decl_test _ctxt=
   let input = "long_int x(){ return 1; }" in
-  let exspected = "longintx(){(return1)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "longintx(){(return1)}" in
+  lexerparser_test input expected _ctxt
 
 let longFloat_function_decl_test _ctxt=
   let input = "long_float x(){ return 1.0; }" in
-  let exspected = "longfloatx(){(return1.)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "longfloatx(){(return1.)}" in
+  lexerparser_test input expected _ctxt
 
 let bool_function_decl_test _ctxt=
   let input = "bool x(){ return true; }" in
-  let exspected = "boolx(){(returntrue)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "boolx(){(returntrue)}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_decl_with_args _ctxt=
   let input = "int x(int a, float b){ return 1; }" in
-  let exspected = "intx(inta,floatb){(return1)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,floatb){(return1)}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_decl_with_body_and_args _ctxt=
   let input = "int x(int a, float b){ let int c = 1; return c; }" in
-  let exspected = "intx(inta,floatb){letintc=1(returnc)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,floatb){letintc=1(returnc)}" in
+  lexerparser_test input expected _ctxt
 
 let test_decl_inside_fucntion _ctxt=
   let input = "int x(int a, float b){ let int c = 1; return c; }" in
-  let exspected = "intx(inta,floatb){letintc=1(returnc)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,floatb){letintc=1(returnc)}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_for_loop _ctxt=
   let input = "int x(int a, float b){ for(let int i = 0; i < 10; i++){ return i; } }" in
-  let exspected = "intx(inta,floatb){for(letinti=0;(i<10);(i++)){(returni)}}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,floatb){for(letinti=0;(i<10);(i++)){(returni)}}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_while_loop _ctxt=
   let input = "int x(int a, float b){ while(a < 10){ return a; } }" in
-  let exspected = "intx(inta,floatb){while((a<10)){(returna)}}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,floatb){while((a<10)){(returna)}}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_while_in_for _ctxt=
   let input = "int x(int a, float b){ for(let int i = 0; i < 10; i++){ while(a < 10){ return a; } } }" in
-  let exspected = "intx(inta,floatb){for(letinti=0;(i<10);(i++)){while((a<10)){(returna)}}}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,floatb){for(letinti=0;(i<10);(i++)){while((a<10)){(returna)}}}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_for_in_while _ctxt=
   let input = "int x(int a, float b){ while(a < 10){ for(let int i = 0; i < 10; i++){ return a; } } }" in
-  let exspected = "intx(inta,floatb){while((a<10)){for(letinti=0;(i<10);(i++)){(returna)}}}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,floatb){while((a<10)){for(letinti=0;(i<10);(i++)){(returna)}}}" in
+  lexerparser_test input expected _ctxt
 
 let test_all_binop_function _ctxt=
   let input = "int x(int a, int b){ return a + b - a * b / a % b; }" in
-  let exspected = "intx(inta,intb){(return((a+b)-(((a*b)/a)%b)))}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){(return((a+b)-(((a*b)/a)%b)))}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_if _ctxt=
   let input = "int x(int a, int b){ if(a < b){ return a; }}" in
-  let exspected = "intx(inta,intb){if((a<b)){(returna)}}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){if((a<b)){(returna)}}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_if_else _ctxt=
   let input = "int x(int a, int b){ if(a < b){ return a; } else { return b; }}" in
-  let exspected = "intx(inta,intb){if((a<b)){(returna)}else{(returnb)}}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){if((a<b)){(returna)}else{(returnb)}}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_if_in_for _ctxt=
   let input = "int x(int a, int b){ for(let int i = 0; i < 10; i++){ if(a < b){ return a; } } }" in
-  let exspected = "intx(inta,intb){for(letinti=0;(i<10);(i++)){if((a<b)){(returna)}}}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){for(letinti=0;(i<10);(i++)){if((a<b)){(returna)}}}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_if_in_while _ctxt=
   let input = "int x(int a, int b){ while(a < b){ if(a < b){ return a; } } }" in
-  let exspected = "intx(inta,intb){while((a<b)){if((a<b)){(returna)}}}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){while((a<b)){if((a<b)){(returna)}}}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_if_else_in_for _ctxt=
   let input = "int x(int a, int b){ for(let int i = 0; i < 10; i++){ if(a < b){ return a; } else { return b; } } }" in
-  let exspected = "intx(inta,intb){for(letinti=0;(i<10);(i++)){if((a<b)){(returna)}else{(returnb)}}}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){for(letinti=0;(i<10);(i++)){if((a<b)){(returna)}else{(returnb)}}}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_if_else_in_while _ctxt=
   let input = "int x(int a, int b){ while(a < b){ if(a < b){ return a; } else { return b; } } }" in
-  let exspected = "intx(inta,intb){while((a<b)){if((a<b)){(returna)}else{(returnb)}}}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){while((a<b)){if((a<b)){(returna)}else{(returnb)}}}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_add_assign _ctxt=
   let input = "int x(int a, int b){ a += b; return a; }" in
-  let exspected = "intx(inta,intb){(a+=b)(returna)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){(a+=b)(returna)}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_sub_assign _ctxt=
   let input = "int x(int a, int b){ a -= b; return a; }" in
-  let exspected = "intx(inta,intb){(a-=b)(returna)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){(a-=b)(returna)}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_mul_assign _ctxt=
   let input = "int x(int a, int b){ a *= b; return a; }" in
-  let exspected = "intx(inta,intb){(a*=b)(returna)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){(a*=b)(returna)}" in
+  lexerparser_test input expected _ctxt
 
 let test_function_div_assign _ctxt=
   let input = "int x(int a, int b){ a /= b; return a; }" in
-  let exspected = "intx(inta,intb){(a/=b)(returna)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){(a/=b)(returna)}" in
+  lexerparser_test input expected _ctxt
 
 let test_increment _ctxt=
   let input = "int x(int a, int b){ a++; return a; }" in
-  let exspected = "intx(inta,intb){((a++))(returna)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){((a++))(returna)}" in
+  lexerparser_test input expected _ctxt
 
 let test_decrement _ctxt=
   let input = "int x(int a, int b){ a--; return a; }" in
-  let exspected = "intx(inta,intb){((a--))(returna)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){((a--))(returna)}" in
+  lexerparser_test input expected _ctxt
 
 let test_increment_in_loop _ctxt=
   let input = "int x(int a, int b){ for(let int i = 0; i < 10; i++){ a++; } return a; }" in
-  let exspected = "intx(inta,intb){for(letinti=0;(i<10);(i++)){((a++))}(returna)}" in
-  lexerparser_test input exspected _ctxt
+  let expected = "intx(inta,intb){for(letinti=0;(i<10);(i++)){((a++))}(returna)}" in
+  lexerparser_test input expected _ctxt
 
 let test_decrement_in_loop _ctxt=
   let input = "int x(int a, int b){ for(let int i = 0; i < 10; i++){ a--; } return a; }" in
-  let exspected = "intx(inta,intb){for(letinti=0;(i<10);(i++)){((a--))}(returna)}" in
-  lexerparser_test input exspected _ctxt
-
-(* Test cases for parser error testing *)
+  let expected = "intx(inta,intb){for(letinti=0;(i<10);(i++)){((a--))}(returna)}" in
+  lexerparser_test input expected _ctxt
 
 (* Test suite for lexer parser integration testing *)
 let suite = "LexerParser" >::: [
