@@ -17,6 +17,7 @@ let suite = "TypecheckerTests" >::: [
   Vardec_tests.vardec_tests;
   Gvardec_tests.gvardec_tests;
   Vassign_tests.vassign_tests;
+  While_tests.while_tests;
     (* Add more tests here *)
 ] 
   

@@ -14,8 +14,6 @@ let test_typechecker_assign_valid _ =
   let (_, _, typechecked_ast) = Typechecker.checkStmt ftab vtab ast in
   let expected_out = "letINTx" ^"x=(INT3)" in
   let ttree_string = remove_whitespace (Pp_type.pp_stmt typechecked_ast) in
-  print_endline ("Expected: " ^ expected_out);
-  print_endline ("Actual: " ^ ttree_string);
   assert_equal expected_out ttree_string
 
 let test_typechecker_assign_valid_long_int_and_int _ =
@@ -26,8 +24,6 @@ let test_typechecker_assign_valid_long_int_and_int _ =
   let (_, _, typechecked_ast) = Typechecker.checkStmt ftab vtab ast in
   let expected_out = "letL_INTx" ^"x=(INT3)" in
   let ttree_string = remove_whitespace (Pp_type.pp_stmt typechecked_ast) in
-  print_endline ("Expected: " ^ expected_out);
-  print_endline ("Actual: " ^ ttree_string);
   assert_equal expected_out ttree_string
 let test_typechecker_assign_ident_not_declared _ =
   let ast = mk_stmt (Sass( "x", mk_assign_type "Assign", mk_expr(EConst 3)) ) in
