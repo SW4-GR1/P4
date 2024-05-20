@@ -7,3 +7,7 @@ int f(int a) {
     let int xyz = 5/1;
     return a;
 }
+
+int f() {
+    return 2;
+}

@@ -11,4 +11,8 @@
 		(set_local $a (i32.add (get_local $a) (get_global $x)))
 		(set_global $x (i32.add (get_global $x) (get_local $a)))
 		(set_local $xyz (i32.div_s (i32.const 5) (i32.const 1)))
-		(return (get_local $a))))
+		(return (get_local $a)))
+	(func $f  (result i32)
+		
+		
+		(return (i32.const 2))))
