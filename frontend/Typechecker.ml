@@ -329,9 +329,6 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
             else
               incompatible_types ~loc ty' t
           | None -> None in 
-
-        (*We do not check here is an expr is a longint, since we adhere to the given
-           type in declaration*)
         let vdec' = { var_ty = ty'; var_name = id'; var_expr = expr_option } in
         ( ftab, vtab', Sdecl(vdec') )
 
