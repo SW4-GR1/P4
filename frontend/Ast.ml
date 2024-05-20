@@ -44,6 +44,7 @@ and expr_node =
   | EVector of expr list
   | EMatrix of expr list list
   | EArr_lookup of ident * expr
+  | ENeg of expr
 
 type vdec = {
   var_ty   : type_ident;

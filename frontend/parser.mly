@@ -211,8 +211,9 @@ expr_node:
     | id = ident                     { EIdent(id) }
     | condition = cond               { condition.expr_node }
     | LPAREN e = expr RPAREN         { e.expr_node }
-    | SUB e = expr %prec uminus      { EBinop(Sub, {
-                                        expr_node = EConst(0); expr_loc = $loc}, e) }
+    // | SUB e = expr %prec uminus      { EBinop(Sub, {
+    //                                     expr_node = EConst(0); expr_loc = $loc}, e) }
+    | SUB e = expr %prec uminus      { ENeg(e) }
     | f_call = function_call         { f_call }
     | LBRACKET body = expr_body RBRACKET 
                                      {EArray(body) }

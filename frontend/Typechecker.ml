@@ -167,7 +167,13 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
                   (ty', { expr_node = Ebinop(op, e1_bin, e2_bin); expr_ty = ty' } )
             else incompatible_types ~loc t1 t2
           else error ~loc ("Binary operator should only be used on numbers")
-  
+  | ENeg(e) -> 
+      let (t', e') = checkExp ftab vtab e in
+      if (check_eq_type Tint t') then
+        (t', {expr_node = Ebinop(Sub, {expr_node = Econst(0); expr_ty = t'}, e'); expr_ty=t' } )
+      else if (check_eq_type Tfloat t') then
+        (t', {expr_node = Ebinop(Sub, {expr_node = Efloat(0.0); expr_ty = t'}, e'); expr_ty=t' } )
+      else error ~loc ("Negation operator should only be used on numbers")
   | ECond(op, e1, e2) -> let (t1, e1_bin) = checkExp ftab vtab e1 in
       let (t2, e2_bin) = checkExp ftab vtab e2 in
       let bool_allowed = match op with 

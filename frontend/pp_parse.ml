@@ -53,6 +53,8 @@ let rec pp_expr expr_instance =
   | EVector(e_list) -> 
     let e_list_str = String.concat ", " (List.map pp_expr e_list) in
     "{" ^ e_list_str ^ "}"
+  | ENeg(e) -> let e_str = pp_expr e in
+                "-"^e_str      
 
 
 let rec pp_cond = function
