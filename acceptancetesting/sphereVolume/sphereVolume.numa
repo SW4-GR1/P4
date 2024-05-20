@@ -1,0 +1,18 @@
+{export f;}
+
+float powerof (float base, int exponent){
+    let float sum = 1.0;
+    for(let int i = 0; i < exponent; i = i +1) {
+        sum *= base;
+        }
+        return sum
+}
+
+
+
+float f(float radius){
+    let float pi = 3.14159;
+    return (4.0/3.0) * pi * powerof(radius, 3);
+
+}
+
