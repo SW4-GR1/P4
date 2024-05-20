@@ -1,8 +1,0 @@
-
-float f() {
-    for(let int i = 0; i < 2; i++) {
-        2 + 2;
-    }
-    3 + f();
-    return 4.2
-}
