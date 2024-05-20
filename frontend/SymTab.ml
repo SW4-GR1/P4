@@ -10,6 +10,14 @@ let rec lookup n tab =
       then Some i1
       else lookup n (SymTab rest) 
 
+let rec check n tab = 
+  match tab with
+  | SymTab [] -> false
+  | SymTab ((n1, i1)::rest) ->
+      if n = n1
+      then true
+      else check n (SymTab rest) 
+
 let bind n i (SymTab stab) = 
   SymTab ((n,i) :: stab)
 
