@@ -28,7 +28,6 @@ let rec type_to_string = function
   | Tbool -> "bool"
   | Tarr(t) -> "array of " ^ type_to_string t
 
-
 (* Function to convert location to string *)
 let string_of_location ((start_pos, end_pos) : loc) : string =
   let line = start_pos.pos_lnum in
@@ -127,6 +126,12 @@ let is_subtype t1 t2 = match t1, t2 with
   | Tlongfloat, _ -> Tlongfloat
   | _, Tlongfloat -> Tlongfloat
   | _, _ -> t1
+
+
+let check_symtabs id ftab vtab = 
+  let vtab_exists = SymTab.check id vtab in
+  let ftab_exists = SymTab.check id ftab in
+  vtab_exists || ftab_exists  
 
 (* Function to check valid typing of operands in expressions *)  
 let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * expr =
@@ -310,6 +315,10 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       let (vtab',f_args) = checkArgList ftab vtab fdec.args in
       let arg_type_list = List.map(fun (ty,_ident) -> ty) f_args in
       let f_name = fdec.fun_name.id in
+      let name_exists = check_symtabs f_name ftab vtab in
+      if name_exists then
+        duplicated_field ~loc f_name
+      else
       let ftab' = SymTab.bind f_name (f_type, arg_type_list) ftab in
       let body' = checkFunBody ftab' vtab' f_type fdec.body in
       let fdec' = {fun_ty = f_type; fun_name = f_name; fun_args = f_args; fun_body = Slist(body')} in
@@ -318,7 +327,9 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
     | Sdecl(vdec) -> 
       let ty' = ty_of_pty vdec.var_ty in 
       let id' = vdec.var_name.id in
-      if is_none (SymTab.lookup id' vtab) then
+      if (check_symtabs id' ftab vtab) then
+        duplicated_field ~loc id'
+      else
         let vtab' =  SymTab.bind id' ty' vtab in
 
         let expr_option = match vdec.var_expr with
@@ -331,8 +342,6 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
           | None -> None in 
         let vdec' = { var_ty = ty'; var_name = id'; var_expr = expr_option } in
         ( ftab, vtab', Sdecl(vdec') )
-
-      else duplicated_field ~loc id'
       
     | Sass(ident, ass_ty, e) -> 
       let id = ident in 
@@ -351,7 +360,9 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         let (t_size, size') = checkExp ftab vtab size in
         let name = ident.id in
         if check_eq_type t_size Tint then
-        if is_none (SymTab.lookup name vtab) then
+        if (check_symtabs name ftab vtab) then
+          duplicated_field ~loc name
+        else
           let vtab' = SymTab.bind name arr_ty vtab in
           let expr_option = match e with
           | Some(v) -> let checked_args =  List.map (fun elem -> checkExp ftab vtab elem) v in 
@@ -362,8 +373,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
             else error ~loc ("An element in the array is not of the correct type")
           | None -> None in
           let adec' = {arr_ty = ty'; arr_name = name; arr_size = size'; arr_expr = expr_option } in
-          ( ftab, vtab', Sarr_decl(adec') )
-        else duplicated_field ~loc name
+          ( ftab, vtab', Sarr_decl(adec') ) 
         else incompatible_types ~loc t_size Tint
 
     | Sarr_assign(ident, assign_op, expr_list) -> 
@@ -402,7 +412,9 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       let (t_size, size') = checkExp ftab vtab size in
       let name = ident.id in
       if check_eq_type t_size Tint then
-      if is_none (SymTab.lookup name vtab) then
+      if(check_symtabs name ftab vtab) then
+        duplicated_field ~loc name
+      else
         let vtab' = SymTab.bind name vec_ty vtab in
         let expr_option = match e with
         | Some(v) -> let checked_args =  List.map (fun elem -> checkExp ftab vtab elem) v in 
@@ -414,7 +426,6 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
         | None -> None in
         let vecdec' = {vec_ty = ty'; vec_name = name; vec_size = size'; vec_expr = expr_option } in
         ( ftab, vtab', Svec_decl(vecdec') )
-      else duplicated_field ~loc name
       else incompatible_types ~loc t_size Tint
 
     | Smat_decl(ty, ident, dim1, dim2, e) ->
@@ -424,7 +435,9 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
       let (t_dim2, dim2') = checkExp ftab vtab dim2 in
       let name = ident.id in
       if check_eq_type t_dim1 Tint && check_eq_type t_dim2 Tint then
-        if is_none (SymTab.lookup name vtab) then
+        if (check_symtabs name ftab vtab) then
+          duplicated_field ~loc name
+        else
             let vtab' = SymTab.bind name mat_ty vtab in
             let expr_option = match e with
             | Some(vv) ->
@@ -440,7 +453,6 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
             in
             let matdec' = { mat_ty = ty'; mat_name = name; mat_rows = dim1'; mat_cols = dim2'; mat_expr = expr_option } in
             (ftab, vtab', Smat_decl(matdec'))
-        else duplicated_field ~loc name
     else incompatible_types ~loc t_dim1 Tint
 
     | Swhile(e, body) -> 
@@ -494,8 +506,8 @@ and checkArgList (ftab : funTable) (vtab : varTable) (args : Ast.arg_dec list) :
   | [] -> (vtab, [])
   | (arg_ty, arg_ident)::arglist ->
     let arg_id = arg_ident.id in
-    let arg_exists = SymTab.lookup arg_id vtab in
-    if is_none arg_exists then
+    let arg_exists = check_symtabs arg_id ftab vtab in
+    if (not arg_exists) then
       let arg_ty' = ty_of_pty arg_ty in
       let vtab' = SymTab.bind arg_id arg_ty' vtab in 
       let (vtab_last, arglist') = checkArgList ftab vtab' arglist in
