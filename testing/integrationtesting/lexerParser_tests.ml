@@ -86,6 +86,26 @@ let test_decl_inside_fucntion _ctxt=
   let expected = "intx(inta,floatb){letintc=1(returnc)}" in
   lexerparser_test input expected _ctxt
 
+let test_decl_inside_loop_for _ctxt=
+  let input = "int x(int a, float b){ for(let int i = 0; i < 10; i++){ let int c = 1; return c; } }" in
+  let expected = "intx(inta,floatb){for(letinti=0;(i<10);(i++)){letintc=1(returnc)}}" in
+  lexerparser_test input expected _ctxt
+
+let test_decl_inside_loop_while _ctxt=
+  let input = "int x(int a, float b){ while(a < 10){ let int c = 1; return c; } }" in
+  let expected = "intx(inta,floatb){while((a<10)){letintc=1(returnc)}}" in
+  lexerparser_test input expected _ctxt
+
+let test_decl_inside_if _ctxt=
+  let input = "int x(int a, float b){ if(a < 10){ let int c = 1; return c; } }" in
+  let expected = "intx(inta,floatb){if((a<10)){letintc=1(returnc)}}" in
+  lexerparser_test input expected _ctxt
+
+let test_decl_inside_if_else _ctxt=
+  let input = "int x(int a, float b){ if(a < 10){ let int c = 1; return c; } else { let int d = 2; return d; } }" in
+  let expected = "intx(inta,floatb){if((a<10)){letintc=1(returnc)}else{letintd=2(returnd)}}" in
+  lexerparser_test input expected _ctxt
+
 let test_function_for_loop _ctxt=
   let input = "int x(int a, float b){ for(let int i = 0; i < 10; i++){ return i; } }" in
   let expected = "intx(inta,floatb){for(letinti=0;(i<10);(i++)){(returni)}}" in
@@ -197,6 +217,10 @@ let suite = "LexerParser" >::: [
     "Test function Decl with args" >:: test_function_decl_with_args;
     "Test function Decl with body and args" >:: test_function_decl_with_body_and_args;
     "Test decl inside function" >:: test_decl_inside_fucntion;
+    "Test decl inside loop" >:: test_decl_inside_loop_for;
+    "Test decl inside loop while" >:: test_decl_inside_loop_while;
+    "Test decl inside if" >:: test_decl_inside_if;
+    "Test decl inside if else" >:: test_decl_inside_if_else;
     "Test function for loop" >:: test_function_for_loop;
     "Test function while loop" >:: test_function_while_loop;
     "Test function while in for" >:: test_function_while_in_for;
