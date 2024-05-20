@@ -17,9 +17,9 @@
 </body>
 <script>
     // I skal ændre kun root folder name feks ./loop/test.wasm
-    WebAssembly.instantiateStreaming(fetch("./toApower/test.wasm")).then(
+    WebAssembly.instantiateStreaming(fetch("./icosahedronVolume/test.wasm")).then(
         (obj) => {
-            result = obj.instance.exports.f(2,2);
+            result = obj.instance.exports.f(5.0);
             test_div = document.getElementById('test')
             test_div.textContent = result
             console.log(result)
