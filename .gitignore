@@ -36,3 +36,5 @@ _opam/i
 
 test.numa
 test.wat
+test.wasm
+
