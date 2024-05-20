@@ -34,3 +34,5 @@ _opam/i
 # Local vscode settings
 /.vscode
 
+test.numa
+test.wat
