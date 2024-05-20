@@ -15,6 +15,7 @@ let suite = "TypecheckerTests" >::: [
   Return_tests.return_tests;
   Vardec_tests.vardec_tests;
   Vassign_tests.vassign_tests;
+  While_tests.while_tests;
     (* Add more tests here *)
 ] 
   

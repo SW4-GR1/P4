@@ -13,8 +13,6 @@ let test_typechecker_return_outside_function test_ctxt =
   let typecheck = fun () -> let _ = Typechecker.checkStmt ftab vtab ast in ()
   in assert_raises (mk_error "Return statement outside of function") typecheck
 
-  
-
 let return_tests = "returnTests" >::: [
   "test_typechecker_return_outside_function" >:: test_typechecker_return_outside_function;
 ]

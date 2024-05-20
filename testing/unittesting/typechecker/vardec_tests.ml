@@ -18,6 +18,17 @@ let test_typechecker_decl_valid _ =
   print_endline ("Actual: " ^ ttree_string);
   assert_equal expected_out ttree_string
 
+let test_typechecker_decl_valid_no_assignment _ =
+  let vdec = { var_ty = Int_ty; var_name = mk_ident "x"; var_expr = None } in
+  let ast = mk_stmt (Sdecl vdec) in
+  let ftab = mk_ftab in
+  let vtab = mk_vtab in
+  let (_, _, typechecked_ast) = Typechecker.checkStmt ftab vtab ast in
+  let expected_out = "letINTx" in
+  let ttree_string = remove_whitespace (Pp_type.pp_stmt typechecked_ast) in
+  print_endline ("Expected: " ^ expected_out);
+  print_endline ("Actual: " ^ ttree_string);
+  assert_equal expected_out ttree_string
 let test_typechecker_decl_duplicate _ =
   let vdec = { var_ty = Int_ty; var_name = mk_ident "x"; var_expr = Some (mk_expr (EConst 2)) } in
   let vdec2 = { var_ty = Int_ty; var_name = mk_ident "x"; var_expr = Some (mk_expr (EConst 22)) } in
@@ -39,5 +50,6 @@ let test_typechecker_decl_incompatible _ =
 let vardec_tests = "vardecTests" >::: [
   "test_typechecker_decl_valid" >:: test_typechecker_decl_valid;
   "test_typechecker_decl_duplicate" >:: test_typechecker_decl_duplicate;
-  "test_typechecker_decl_incompatible" >:: test_typechecker_decl_incompatible
+  "test_typechecker_decl_incompatible" >:: test_typechecker_decl_incompatible;
+  "test_typechecker_decl_valid_no_assignment" >:: test_typechecker_decl_valid_no_assignment;
 ]
