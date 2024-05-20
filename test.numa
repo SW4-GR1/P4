@@ -1,9 +1,0 @@
-{ export f; }
-global int x = 50000;
-
-int f(int a) {
-    a += x;
-    x+= a;
-    let int xyz = 5/1;
-    return a;
-}
