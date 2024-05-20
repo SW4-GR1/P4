@@ -60,7 +60,7 @@ let test_typechecker_func_no_args_no_return test_ctxt =
     fun_type = Int_ty; 
     fun_name = mk_ident "f"; 
     args = arg_dec; 
-    body = mk_stmt (Slist [mk_stmt (Sif ((mk_expr (EConst 1)), (mk_stmt (Sreturn (mk_expr (EConst 1)))), (mk_stmt (Slist [] ))))]);
+    body = mk_stmt (Slist [mk_stmt (Sif ((mk_expr (EBool true)), (mk_stmt (Sreturn (mk_expr (EConst 1)))), (mk_stmt (Slist [] ))))]);
   } in
   let ast = mk_stmt (Sfunc fdec) in
   let ftab = mk_ftab in
