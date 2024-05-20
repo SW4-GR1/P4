@@ -1,18 +1,19 @@
 (module
 	
-	(export "f" (func $f))
 	
-	(global $x (mut i32) (i32.const 50000))
 	
-	(func $f (param $a i32) (result i32)
-		
-		(local $xyz i32)
-		
-		(set_local $a (i32.add (get_local $a) (get_global $x)))
-		(set_global $x (i32.add (get_global $x) (get_local $a)))
-		(set_local $xyz (i32.div_s (i32.const 5) (i32.const 1)))
-		(return (get_local $a)))
 	(func $f  (result i32)
 		
+		(local $i i32)
 		
-		(return (i32.const 2))))
+		(block
+		(set_local $i (i32.const 0))
+		(loop
+		(br_if 1
+		(i32.ge_s (get_local $i) (i32.const 2)))
+		(drop
+		(i32.add (i32.const 2) (i32.const 2)))
+		(set_local $i (i32.add (get_local $i) (i32.const 1)))
+		(get_local $i)
+		(br 0)))
+		(return (i32.const 4))))

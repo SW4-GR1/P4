@@ -1,13 +1,8 @@
-{ export f; }
-global int x = 50000;
 
-int f(int a) {
-    a += x;
-    x+= a;
-    let int xyz = 5/1;
-    return a;
-}
-
-int f() {
-    return 2;
+float f() {
+    for(let int i = 0; i < 2; i++) {
+        2 + 2;
+    }
+    3 + f();
+    return 4.2
 }
