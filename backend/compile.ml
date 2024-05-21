@@ -230,8 +230,9 @@ let compile ttree =
   | Sfundec_list stmts -> stmts 
   | _ -> failwith "Expected a lists of statements ahhh") in
   let globals = (match ttree.globals with
-  | Sglobal_list stmts -> stmts
+  | Sglobal_list gls -> gls
   | _ -> failwith "Somethings wrong with da globals") in
+  let _ = Hashtbl.reset globals_map in
   List.iter (function 
   | Sglobal_var(dec) -> Hashtbl.add globals_map dec.gvar_name dec.gvar_ty
   | _ -> failwith "Unexpected statement in globals list") globals;

@@ -287,3 +287,15 @@ Author: Magnus K. Lundgren <magnus@themstrupvej.dk>
 Date:   Tue Feb 6 10:06:33 2024 +0100
 
     Initial commit
+let test_vars_with_similar_names _ctxt =
+  let vdec1 = mk_stmt (Sdecl {var_ty = Int_ty; var_name = mk_ident "x"; var_expr = None}) in
+  let vdec2 = mk_stmt (Sdecl {var_ty = Int_ty; var_name = mk_ident "x1"; var_expr = None}) in
+  let vdec3 = mk_stmt (Sdecl {var_ty = Int_ty; var_name = mk_ident "x2"; var_expr = None}) in
+  let assign1 = mk_stmt (Sass ("x", Add_assign, mk_expr (EConst 1))) in
+  let assign2 = mk_stmt (Sass ("x1", Sub_assign, mk_expr (EConst 2))) in
+  let assign3 = mk_stmt (Sass ("x2", Mul_assign, mk_expr (EConst 3))) in
+  let return = mk_stmt (Sreturn (mk_expr (EIdent (mk_ident "x")))) in
+  let functions = [mk_stmt (Sfunc (mk_fundec Int_ty "f" [] (Slist [vdec1; vdec2; vdec3; assign1; assign2; assign3; return])))] in
+  let input_ast = mk_prog [] (Sglobal_list []) (Sfundec_list functions) in
+  let expected_wat = "(module(func$f(resulti32)(local$xi32)(local$x1i32)(local$x2i32)(set_local$x(i32.add(get_local$x)(i32.const1)))(set_local$x1(i32.sub(get_local$x1)(i32.const2)))(set_local$x2(i32.mul(get_local$x2)(i32.const3)))(return(get_local$x))))" in
+  typeCodegen_test input_ast expected_wat

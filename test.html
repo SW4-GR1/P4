@@ -18,7 +18,7 @@
 <script>
     WebAssembly.instantiateStreaming(fetch("test.wasm")).then(
         (obj) => {
-            result = obj.instance.exports.fibonacci(4);
+            result = obj.instance.exports.f();
             test_div = document.getElementById('test')
             test_div.textContent = result
             console.log(result)
