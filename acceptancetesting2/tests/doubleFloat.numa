@@ -1,0 +1,5 @@
+{export f;}
+
+float f(float a){
+    return 2.0*a;
+}
