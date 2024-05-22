@@ -68,6 +68,11 @@ tests = [
         name : "fibonacci",
         args : ["int"],
         desc : "Finds the nth fibonacci number using a while loop"
+    },
+    {
+        name : "negate",
+        args : ["int", "int"],
+        desc : "negates and return arg 2 if arg 1 is true(1) else returns arg 2"
     }
 ]
 

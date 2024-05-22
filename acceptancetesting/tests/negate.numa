@@ -1,0 +1,8 @@
+{ export f;}
+
+bool f(bool should_negate, bool operand) {
+    if (should_negate) {
+        return not operand;
+    }
+    return operand
+}
