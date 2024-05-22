@@ -1,0 +1,6 @@
+(test
+ (name tests)
+ (modules Integration_tests Unit_tests Tests)
+ (libraries ounit2 frontend backend str unit_testing integration_testing)
+ (flags
+  (:standard -warn-error -A)))

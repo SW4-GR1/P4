@@ -1,0 +1,9 @@
+{export f;}
+
+long_int f (int start, int end){
+    let long_int sum = 0;
+    for(let int i = start; i <= end; i = i + 1) {
+        sum += i;
+        }
+        return sum
+}

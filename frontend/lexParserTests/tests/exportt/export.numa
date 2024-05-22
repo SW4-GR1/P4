@@ -1,0 +1,4 @@
+{ 
+    export func; 
+ }
+int func(int x) {}

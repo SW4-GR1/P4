@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "wat2wasm": "^3.0.0"
+  }
+}

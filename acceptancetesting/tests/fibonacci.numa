@@ -1,0 +1,15 @@
+{ export fibonacci; }
+
+long_int fibonacci(int n) {
+    let long_int a = 0;
+    let long_int b = 1;
+    let long_int temp;
+
+    for(let int i = 0; i < n; i++) {
+        temp = a;
+        a = b;
+        b = temp + b;
+    }
+
+    return b
+}   

@@ -1,0 +1,3 @@
+{export func;
+export x;}
+( (1 + 2) )

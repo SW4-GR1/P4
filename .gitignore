@@ -8,6 +8,8 @@
 *.cmxs
 *.cmxa
 *.exe
+*.wasm
+*.wat
 
 # ocamlbuild working directory
 *_build/
@@ -24,3 +26,17 @@
 _opam/i
 
 *.txt
+
+
+# remove vscode settings
+*.vscode/
+
+!/frontend/lexParserTests/**/*.txt
+
+# Local vscode settings
+/.vscode
+
+test.numa
+test.wat
+test.wasm
+
