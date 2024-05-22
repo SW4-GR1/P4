@@ -1,0 +1,11 @@
+{export sumOfPairs;}
+
+int sumOfPairs(int n) {
+    let int sum = 0;
+    for(let int i = 1; i <= n; i++) {
+        for(let int j = i; j <= n; j++) {
+            sum += i + j;
+        }
+    }
+    return sum;
+}
