@@ -208,6 +208,15 @@ let test_conditional_not_only_bool _ctxt =
   let expected_error = "Not operator applied to a non-boolean type" in
   test_parser_to_typechecker_error input expected_error _ctxt
 
+let test_export _ctxt =
+  let input = [LBRACE; EXPORT; IDENT "foo"; END; RBRACE; INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; RETURN; INT 1; END; RBRACE;] in
+  let expected_output = "{exportfoo;}INTfoo(){return(INT1)}" in
+  test_parser_to_typechecker input expected_output _ctxt
+
+let test_export_error _ctxt =
+  let input = [LBRACE; EXPORT; IDENT "foo"; END; RBRACE;] in
+  let expected_error = "Unbound function foo" in
+  test_parser_to_typechecker_error input expected_error _ctxt
 
 
 (*test suite*)
@@ -242,8 +251,7 @@ let suite = "ParserTypechecker_tests" >::: [
   "test_conditional_not" >:: test_conditional_not;
   "test_conditional_only_bool" >:: test_conditional_only_bool;
   "test_conditional_not_only_bool" >:: test_conditional_not_only_bool;
-  
-
-
+  "test_export" >:: test_export;
+  "test_export_error" >:: test_export_error;
 
 ]

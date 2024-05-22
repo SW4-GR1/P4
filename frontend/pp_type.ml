@@ -173,8 +173,15 @@ let rec pp_stmt s =
   |Sglobal_var(gdec) -> 
   "global" ^ " " ^ pp_expr_type gdec.gvar_ty ^ " "  ^ gdec.gvar_name ^ " = " ^ pp_expr gdec.gvar_expr
 
-  let pp_prog prog =
-  (* let exports_str = pp_export_list prog.exports in *)
+let pp_export_list exports = 
+  match exports with
+  | [] -> ""
+  | _ -> 
+      let exports_strs = List.map (function Ast.Xexport ident -> "export " ^ ident ^ ";") exports in
+      "{\n" ^ (String.concat "\n" exports_strs) ^ "\n}"
+
+let pp_prog prog =
+  let exports_str = pp_export_list prog.exports in
   let globals_str = pp_stmt prog.globals in
   let main_str = pp_stmt prog.stmts in
-  globals_str ^ "\n" ^ main_str
+  exports_str ^ "\n" ^  globals_str ^ "\n" ^ main_str
