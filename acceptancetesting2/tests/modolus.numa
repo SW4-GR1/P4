@@ -1,8 +1,0 @@
-{export f;}
-
-int f (int dividend, int divisor){
-    while(dividend >= divisor){
-        dividend -= divisor;
-    }
-    return dividend
-}

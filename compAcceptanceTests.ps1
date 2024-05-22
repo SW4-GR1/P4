@@ -1,5 +1,5 @@
 # Get the list of files in the directory
-$files = Get-ChildItem -Path .\acceptancetesting2\tests
+$files = Get-ChildItem -Path .\acceptancetesting\tests -Filter *.numa
 
 # Loop through each file
 foreach ($file in $files) {

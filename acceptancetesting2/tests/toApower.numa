@@ -1,9 +1,0 @@
-{export f;}
-
-int f (int base, int exponent){
-    let int sum = 1;
-    for(let int i = 0; i < exponent; i = i +1) {
-        sum *= base;
-        }
-        return sum
-}
