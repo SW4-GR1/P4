@@ -194,7 +194,7 @@ let rec checkExp (ftab : funTable) (vtab : varTable) (exp : Ast.expr) : ty * exp
           let str_of_op op = match op with 
             | Ast.Inc -> "++"
             | Ast.Dec -> "--" in
-          error ~loc (str_of_op op ^ " operator applied to a non-numeric type")
+          error ~loc (str_of_op op ^ " operator applied to a non-int type")
       | None -> error ~loc ("Variable " ^ id ^ " has not been declared"))
 
   | ELog(op, e1, e2) ->
