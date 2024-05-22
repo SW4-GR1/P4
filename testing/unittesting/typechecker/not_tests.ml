@@ -12,7 +12,7 @@ let test_typechecker_not_on_bool test_ctxt =
   let ftab = mk_ftab in
   let vtab = mk_vtab in
   let (ty, expr) = Typechecker.checkExp ftab vtab ast in
-  let expected_out = "(BOOL(!(BOOLtrue)))" in
+  let expected_out = "(BOOL(not(BOOLtrue)))" in
   let ttree_string = remove_whitespace (Pp_type.pp_expr expr) in
   assert_equal expected_out ttree_string
 

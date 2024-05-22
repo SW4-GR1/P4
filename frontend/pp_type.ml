@@ -54,11 +54,11 @@ let rec pp_expr e =
     "( " ^ ppty ^ "(" ^ ident ^ op_str ^")"^ " )"
   | Elog(o, e1, e2) ->
     let op_str = match o with
-    | And -> "and"
-    | Or -> "or" in
+    | And -> "and "
+    | Or -> "or " in
     let ppty = pp_expr_type e.expr_ty in
     "( " ^ ppty ^ "(" ^ pp_expr e1 ^ " " ^ op_str ^ " " ^ pp_expr e2 ^ ")"^ " )"
-  | Enot(e) -> "( " ^ pp_expr_type e.expr_ty ^ "(" ^ "!" ^ pp_expr e ^ ")"^ " )"
+  | Enot(e) -> "( " ^ pp_expr_type e.expr_ty ^ "(" ^ "not " ^ pp_expr e ^ ")"^ " )"
   | Earray(e_list) -> let expr_list = List.map pp_expr e_list in
      "(" ^ pp_expr_type e.expr_ty ^ "[" ^ String.concat ", " expr_list ^ "]" ^ ")"
   | Earr_lookup(id, e) -> "(" ^ pp_expr_type e.expr_ty ^ " (" ^ id ^ "[" ^ pp_expr e ^ "]" ^ ")" ^ ")"

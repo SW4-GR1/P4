@@ -5,11 +5,6 @@ open Lexing
 open Pp_parse
 open Helper
 
-(* Helper function to remove whitespaces from a string for easier comparison*)
-
-
-
-
 (* Helper function to pretty print the AST from our lexer and parser*)
 let pp_lexerParser str =
   let lexbuf = Lexing.from_string str in

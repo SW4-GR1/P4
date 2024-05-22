@@ -97,8 +97,8 @@ let test_function_all_assignment _ctxt =
   test_parser input expected_output _ctxt
 
 let test_function_loop_for _ctxt =
-  let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; INT_TY; IDENT "x"; END; FOR; LPAREN; LET; INT_TY; IDENT "i"; ASSIGN; INT 0; END; IDENT "i"; LT; INT 10; END; IDENT "i"; ADD_ASSIGN; INT 1; RPAREN; LBRACE; IDENT "x"; ADD_ASSIGN; IDENT "i"; END; RBRACE; RBRACE] in
-  let expected_output = "intfoo(){letintxfor(letinti=0;(i<10);(i+=1)){(x+=i)}}" in
+  let input = [INT_TY; IDENT "foo"; LPAREN; RPAREN; LBRACE; LET; INT_TY; IDENT "x"; END; FOR; LPAREN; LET; INT_TY; IDENT "i"; ASSIGN; INT 0; END; IDENT "i"; END; IDENT "i"; ADD_ASSIGN; INT 1; RPAREN; LBRACE; IDENT "x"; ADD_ASSIGN; IDENT "i"; END; RBRACE; RBRACE] in
+  let expected_output = "intfoo(){letintxfor(letinti=0;i;(i+=1)){(x+=i)}}" in
   test_parser input expected_output _ctxt
 
 let test_function_loop_while _ctxt =

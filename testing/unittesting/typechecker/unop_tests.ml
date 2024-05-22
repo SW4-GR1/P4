@@ -29,7 +29,7 @@ let test_typechecker_unop_inc_on_bool test_ctxt =
   let vtab = SymTab.bind "z" Ttree.Tbool mk_vtab in
   let ftab = mk_ftab in
   let typecheck = fun () -> let _ = Typechecker.checkExp ftab vtab ast in ()
-  in assert_raises (mk_error "++ operator applied to a non-numeric type") typecheck
+  in assert_raises (mk_error "++ operator applied to a non-int type") typecheck
 
 let test_typechecker_unop_on_undeclared_var test_ctxt =
   let ast = mk_expr (EUnop ("a", Inc)) in
