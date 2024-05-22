@@ -37,47 +37,59 @@ tests = [
 let parent = document.getElementById('accept');
 // Function to call a WebAssembly function from a file
 async function callWasmFunction(wasmFile, inputval) {
-    let test_div = document.getElementById(wasmFile.name);
-    const filename = "./tests/" + wasmFile.name + ".wasm";
-    try {
-        WebAssembly.instantiateStreaming(fetch(filename)).then(
-            (obj) => {
-        // const bytes = await fetch(filename);
-        const instance = obj.instance;
-        const functionNames = Object.keys(instance.exports);
-        const functions = instance.exports
-        
-        const args_str = console.log(`Give input values, expecting:${wasmFile.args}`);
-        if (functionNames.length > 0) {
-            const firstFunctionName = functionNames[0];
-            // const result = instance.exports[firstFunctionName](25.0);
-            const result = functions[firstFunctionName](inputval);
-            console.log(`Result from ${firstFunctionName} in ${filename}: ${result}`);
-            // let html = `<p>Result from calling ${firstFunctionName} in ${filename} with ${inputval}: ${result}</p>`;
-            let html = `<p>${filename}: ${wasmFile.desc} with input ${inputval}, result: ${result}</p>`;
-            html += `<input id="${wasmFile.name}Input" type="number" value="${inputval}">`;
-            html += `<button data-wasm-file='${JSON.stringify(wasmFile)}' onclick="runTest(this, '${wasmFile.name}Input')">Run Test</button>`;
-            test_div.innerHTML += html;
-        } else {
-            console.log(`No exported functions in ${filename}`);    
+    return new Promise((resolve, reject) => {
+        const filename = "./tests/" + wasmFile.name + ".wasm";
+        try {
+            WebAssembly.instantiateStreaming(fetch(filename)).then(
+                (obj) => {
+                    const instance = obj.instance;
+                    const functionNames = Object.keys(instance.exports);
+                    const functions = instance.exports
+                    
+                    const args_str = console.log(`Give input values, expecting:${wasmFile.args}`);
+                    if (functionNames.length > 0) {
+                        const firstFunctionName = functionNames[0];
+                        const result = functions[firstFunctionName](inputval);
+                        console.log(`Result from ${firstFunctionName} in ${filename}: ${result}`);
+                        let html = `<p>${filename}: ${wasmFile.desc} with input ${inputval}, result: ${result}</p>`;
+                        html += `<input id="${wasmFile.name}Input" type="number" value="${inputval}">`;
+                        html += `<button data-wasm-file='${JSON.stringify(wasmFile)}' onclick="runTest(this, '${wasmFile.name}Input')">Run Test</button>`;
+                        
+                        
+                        resolve(html); // Resolve the promise here
+                    } else {
+                        console.log(`No exported functions in ${filename}`);
+                        resolve(); // Resolve the promise here
+                    }
+                })
+        } catch (error) {
+            console.error(`Error calling function from ${filename}: ${error}`);
+            reject(error); // Reject the promise here
         }
-    })
-    } catch (error) {
-        console.error(`Error calling function from ${filename}: ${error}`);
-    }
+    });
 }
-
-function runTest(buttonElement, inputID) {
+async function runTest(buttonElement, inputID) {
     const wasmFile = JSON.parse(buttonElement.getAttribute('data-wasm-file'))
     const inputValue = parseFloat(document.getElementById(inputID).value);
-    callWasmFunction(wasmFile, inputValue);
+    const result = await callWasmFunction(wasmFile, inputValue);
+    document.getElementById(wasmFile.name).innerHTML = result;
 }
 
 // Call the WebAssembly function from each file in the list
-tests.forEach(test => {
-    parent.innerHTML += `<div id=${test.name}></div>`;
-    callWasmFunction(test, 25.0)});
+// Call the WebAssembly function from each file in the list
 
+Promise.all(tests.map(async test => {
+    parent.innerHTML += `<div id=${test.name}></div>`;
+    const result = await callWasmFunction(test, 25.0);
+    document.getElementById(test.name).innerHTML = result;
+    console.log(result);
+
+})).then(() => {
+    console.log(parent.innerHTML)
+    console.log('All tests completed');
+}).catch((error) => {
+    console.error('An error occurred:', error);
+});
 
 // WebAssembly.instantiateStreaming(fetch("./icosahedronVolume/test.wasm")).then(
 //     WebAssembly.instantiateStreaming(fetch("./icosahedronVolume/test.wasm")).then(
